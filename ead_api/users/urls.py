@@ -1,9 +1,12 @@
 from django.urls import path
-#from .views import register, login, logout, verifyEmail
+from .views import addUser, getUser, getAllUsers, searchUser, updateUser, disableUser, deleteUser 
 
 urlpatterns = [
-#    path('api/user/register/', register),
-#    path('api/user/login/', login),
-#    path('api/user/logout/', logout),
-#    path('api/user/verifyemail/<emailtoken>/', verifyEmail),
+    path('api/user/add/', addUser),
+    path('api/user/get/', getUser),
+    path('api/user/all/', getAllUsers),
+    path('api/user/search/', searchUser),
+    path('api/user/update/', updateUser),
+    path('api/user/disable/', disableUser),
+    path('api/user/delete/', deleteUser)
 ]
