@@ -10,6 +10,4 @@ class User(models.Model):
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(Admin, on_delete=models.SET_NULL, blank=True, null=True)
     updated_at = models.DateTimeField()
-
-    def __str__(self):
-        return f"id:{self.pk}, {self.name}, {self.email}"
+       
