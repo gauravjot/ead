@@ -1,26 +1,21 @@
 from rest_framework import serializers
 from .models import Admin, Session
 
-
-class UserSerializer(serializers.ModelSerializer):
+class AdminSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'name', 'email', 'verified',
-                  'password', 'created', 'updated']
+        model = Admin
+        fields = ['full_name', 'username', 'title',
+                  'active', 'password', 'created_at', 'updated_at']
         extra_kwargs = {
             'password': {'write_only': True, 'required': True},
-            'email': {'required': True},
-            'created': {'write_only': True},
-            'updated': {'write_only': True}
+            'username': {'required': True},
         }
-
 
 class SessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Session
-        fields = ['id', 'token', 'user', 'expire',
-                  'valid', 'created', 'ip', 'ua']
+        fields = ['token', 'admin', 'valid', 'created_at']
         extra_kwargs = {
-            'token': {'required': True},
-            'user': {'required': True},
+            'token': {'required': True, 'write_only': True},
+            'admin': {'required': True},
         }
