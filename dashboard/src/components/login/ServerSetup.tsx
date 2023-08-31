@@ -1,20 +1,17 @@
-import { doLogin } from "@/services/auth/login";
+import { doServerSetup } from "@/services/auth/server_setup";
 import React from "react";
 import { useMutation } from "react-query";
 import {AxiosError} from "axios";
 import {ErrorType} from "@/types/api";
 import Spinner from "@/components/utils/Spinner";
-import ServerSetup from "@/components/login/ServerSetup";
 
-export default function LoginBox() {
-  const [username, setUsername] = React.useState<string>("");
+export default function ServerSetup() {
   const [password, setPassword] = React.useState<string>("");
   const [error, setError] = React.useState<string>("");
-  const [newServerSetup, setNewServerSetup] = React.useState<boolean>(false);
 
   const mutation = useMutation({
     mutationFn: () => {
-      return doLogin(username, password)
+      return doServerSetup(password)
     },
     onSuccess: () => {
       console.log("Logged in")
@@ -29,38 +26,33 @@ export default function LoginBox() {
     }
   });
 
-  function login() {
+  function setup() {
     mutation.mutate();
   }
 
-  return <div className="relative"><div className="bg-white rounded-md p-7 shadow-lg max-w-[26rem]">
-    <h1 className="text-3xl font-bold tracking-tighter">Login</h1>
-    {error.length > 0 && <p className="mt-5 text-red-700">{error}</p>}
+  return <div className="bg-white rounded-md px-12 py-24 shadow-lg grid grid-cols-2 gap-12">
+    <div className="my-4"><h1 className="text-3xl font-bold tracking-tighter">Welcome</h1>
+    <p className="text-gray-700 leading-6 mt-7"><span>Few things to note</span><ul className="ml-4 block mt-3 list-disc"><li>The username for administrative account is <span className="italic">root</span> and cannot be changed.</li><li className="my-2">You can change password of root account later.</li><li>Root account cannot be disabled.</li></ul></p>
+    </div>
+    <div>{error.length > 0 && <p className="mt-5 text-red-700">{error}</p>}
     <form onSubmit={(e: React.FormEvent)=>{
       e.preventDefault();
-      if (username.length < 1 || password.length < 1) {
-        setError("One or more fields are empty.")
-      } else {
-        login();
+      if (password.length < 1) {
+        setError("Please enter a strong password.")
+      } else if (password.length < 8) {
+        setError("Password needs to be atleast 8 characters.")
+      }else {
+        setup();
       }
     }}>
     <fieldset disabled={mutation.isLoading || mutation.isSuccess}>
       <label className="block text-gray-600 text-sm py-1.5 mt-4" htmlFor="username">Username</label>
-      <input className={"block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300" + (error.length > 0 && username.length < 1 ? " border-red-500/70": "")} type="text" id="username" name="username" value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{setUsername(e.target.value)}}/>
+      <input className="block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300 disabled:bg-blue-50 disabled:text-gray-500" type="text" id="username" name="username" value="root" disabled={true}/>
       <label className="block text-gray-600 text-sm py-1.5 mt-2" htmlFor="password">Password</label> 
       <input className={"block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300" + (error.length > 0 && password.length < 1 ? " border-red-500/70": "")} type="password" id="password" name="password" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{setPassword(e.target.value)}}/>
       <button className="block w-full leading-[1] bg-gray-900 text-white font-bold mt-6 py-2 rounded focus:outline focus:outline-3 focus:outline-gray-300 disabled:bg-gray-700">{mutation.isLoading ? <Spinner /> : <span className="inline-block py-[0.36rem]">Continue</span>}</button>
     </fieldset>
     </form>
-    <p className="mt-5 text-gray-700 text-[0.875rem]">If you forgot your credentials, please contact your administrator.</p>
-    <p className="mt-3"><button className="text-sky-700 hover:underline text-sm" aria-expanded={newServerSetup} onClick={()=>{setNewServerSetup(true)}}>Setup new server</button></p>
-  </div>
-  <div aria-hidden={!newServerSetup} className="aria-hidable absolute inset-0">
-  <div className="fixed inset-0 bg-black/10 z-10"></div>
-  <div className="relative z-20">
-  <button onClick={()=>{setNewServerSetup(false)}} className="absolute top-0 right-0 hover:underline font-medium text-sm my-3 mx-4 p-2">Close</button>
-  <ServerSetup />
-  </div>
   </div>
   </div>
 }

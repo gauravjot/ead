@@ -91,3 +91,11 @@
     transform: rotateZ(360deg);
   }
 }
+
+
+.aria-hidable[aria-hidden="true"] {
+    display:none;
+}
+.aria-hidable[aria-hidden="false"] {
+    display:block;
+  }

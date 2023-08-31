@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import register, login, logout, me, update, disable, changePassword, getAllAdmins
+from .views import register, login, logout, me, update, disable, changePassword, getAllAdmins, initialSetup
 
 urlpatterns = [
+    path('api/admin/setup/', initialSetup),
     # self
     path('api/admin/register/', register),
     path('api/admin/login/', login),
