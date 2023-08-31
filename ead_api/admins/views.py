@@ -16,6 +16,34 @@ from .serializers import AdminSerializer
 from .sessions import issueToken, dropSession, getAdminID
 from .utils import tokenResponse, errorResponse, successResponse, hashThis
 
+# First time setup
+# -----------------------------------------------
+@api_view(['POST'])
+def initialSetup(request):
+    if not Admin.objects.exists():
+        return Response(data=errorResponse("Initial setup is already done. If you have lost the root password, then make a new server instance.","A0089"), status=status.HTTP_400_BAD_REQUEST)
+    # Initialize
+    adminSerializer = AdminSerializer(data=dict(
+        full_name="Root",
+        username="root",
+        password=hashPwd(str(request.data['password'])),
+        title="Global Administrative Account",
+        created_at=dateStamp,
+        updated_at=dateStamp,
+        active=True
+    ))
+
+    # -- check if data is without bad actors
+    if adminSerializer.is_valid():
+        adminSerializer.save()
+
+        # send token to user
+        token = issueToken(adminSerializer.data['username'])
+        return Response(data=successResponse({"admin": adminSerializer.data, **tokenResponse(token)}), status=status.HTTP_201_CREATED)
+    else:
+        return Response(data=errorResponse(adminSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
+
+
 # Sign Up function
 # -----------------------------------------------
 @api_view(['POST'])
@@ -111,10 +139,13 @@ def update(request):
 @api_view(['PUT'])
 def disable(request):
     adminID = getAdminID(request)
-    try:
-        # Block self-disabling
-        if adminID == str(request.data['username']):
+    # Block request to disable root account
+    if str(request.data['username']) == "root":
+        return Response(data=errorResponse("Cannot disable root account.", "A0088"), status=status.HTTP_400_BAD_REQUEST)
+    # Block self-disabling
+    if adminID == str(request.data['username']):
             return Response(data=errorResponse("Cannot disable own account.", "A0095"), status=status.HTTP_400_BAD_REQUEST)
+    try:
         # Switch account active to False
         otherAdmin = Admin.objects.get(username=str(request.data['username']))
         otherAdmin.active = False
