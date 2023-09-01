@@ -1,28 +1,28 @@
 import pytz
-import json
-import uuid
 from datetime import datetime
 # Security
 import bcrypt
-from secrets import token_hex
 # RestFramework
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 # Models & Serializers
-from .models import Admin
+from .models import Admin, Session
 from .serializers import AdminSerializer
 # Session
 from .sessions import issueToken, dropSession, getAdminID
-from .utils import tokenResponse, errorResponse, successResponse, hashThis
+from .utils import tokenResponse, errorResponse, successResponse
 
 # First time setup
 # -----------------------------------------------
+
+
 @api_view(['POST'])
 def initialSetup(request):
-    if not Admin.objects.exists():
-        return Response(data=errorResponse("Initial setup is already done. If you have lost the root password, then make a new server instance.","A0089"), status=status.HTTP_400_BAD_REQUEST)
+    if Admin.objects.exists():
+        return Response(data=errorResponse("Initial setup is already done. If you have lost the root password, then make a new server instance.", "A0089"), status=status.HTTP_400_BAD_REQUEST)
     # Initialize
+    dateStamp = datetime.now(pytz.utc)
     adminSerializer = AdminSerializer(data=dict(
         full_name="Root",
         username="root",
@@ -53,7 +53,7 @@ def register(request):
 
     # Check if username is available to register
     if Admin.objects.filter(username=str(request.data['username']).lower()).first():
-        return Response(data=errorResponse("Username already exists.","A0099"), status=status.HTTP_400_BAD_REQUEST)
+        return Response(data=errorResponse("Username already exists.", "A0099"), status=status.HTTP_400_BAD_REQUEST)
 
     adminSerializer = AdminSerializer(data=dict(
         full_name=str(request.data['full_name']),
@@ -77,6 +77,8 @@ def register(request):
 
 # Log In function, requires email and password
 # -----------------------------------------------
+
+
 @api_view(['POST'])
 def login(request):
     username = str(request.data['username']).lower()
@@ -98,6 +100,8 @@ def login(request):
 
 # Log Out function, requires token
 # -----------------------------------------------
+
+
 @api_view(['DELETE'])
 def logout(request):
     # Invalidate the token
@@ -131,11 +135,11 @@ def update(request):
 
         return Response(data=successResponse(AdminSerializer(admin).data), status=status.HTTP_200_OK)
     except Admin.DoesNotExist:
-        return Response(data=errorResponse("Invalid session.", "A0098"), status=status.HTTP_400_BAD_REQUEST) 
+        return Response(data=errorResponse("Invalid session.", "A0098"), status=status.HTTP_400_BAD_REQUEST)
 
 
 # Disable other Admin's account, requires token
-# ----------------------------------------------- 
+# -----------------------------------------------
 @api_view(['PUT'])
 def disable(request):
     adminID = getAdminID(request)
@@ -144,7 +148,7 @@ def disable(request):
         return Response(data=errorResponse("Cannot disable root account.", "A0088"), status=status.HTTP_400_BAD_REQUEST)
     # Block self-disabling
     if adminID == str(request.data['username']):
-            return Response(data=errorResponse("Cannot disable own account.", "A0095"), status=status.HTTP_400_BAD_REQUEST)
+        return Response(data=errorResponse("Cannot disable own account.", "A0095"), status=status.HTTP_400_BAD_REQUEST)
     try:
         # Switch account active to False
         otherAdmin = Admin.objects.get(username=str(request.data['username']))
@@ -183,13 +187,15 @@ def getAllAdmins(request):
     # Authenticate
     getAdminID(request)
     try:
-        admins = AdminSerializer(Admin.objects.all().order_by('full_name'), many=True)
-        return Response(data=successResponse({"admins":admins.data}), status=status.HTTP_200_OK)
+        admins = AdminSerializer(
+            Admin.objects.all().order_by('full_name'), many=True)
+        return Response(data=successResponse({"admins": admins.data}), status=status.HTTP_200_OK)
     except Admin.DoesNotExist:
-        return Response(data=errorResponse("No admins.","A0093"), status=status.HTTP_404_NOT_FOUND)
+        return Response(data=errorResponse("No admins.", "A0093"), status=status.HTTP_404_NOT_FOUND)
 
 # Helper Functions
 # -----------------------------------------------
+
 
 def hashPwd(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')

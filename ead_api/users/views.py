@@ -6,9 +6,11 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from admins.sessions import getAdminID
 # Serializers
 from .serializers import UserSerializer
+from .models import User
+from admins.sessions import getAdminID
+from admins.utils import errorResponse, successResponse
 
 
 # Create
@@ -19,7 +21,7 @@ def addUser(request):
     # Get requesting admin ID
     admin = getAdminID(request)
     if type(admin) is Response:
-       return admin
+        return admin
     # Add user
     dateStamp = datetime.now(pytz.utc)
     userSerializer = UserSerializer(data=dict(
@@ -50,7 +52,7 @@ def getUser(request):
     admin = getAdminID(request)
     if type(admin) is Response:
         return admin
-    # Get user 
+    # Get user
     try:
         user = User.objects.get(id=request['uid'])
         return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
@@ -100,7 +102,6 @@ def updateUser(request):
         return Response(data=errorResponse("Unable to update user.", "U0002"), status=status.HTTP_400_BAD_REQUEST)
 
 
-
 # Disable
 # -------------------------------
 
@@ -115,4 +116,4 @@ def deleteUser(request):
         User.objects.get(id=request.data['uid']).delete()
         return Response(data=successResponse(), status=status.HTTP_200_OK)
     except User.DoesNotExist:
-        return Response(data=errorResponse("User does not exist.","N0003"), status=status.HTTP_404_NOT_FOUND)
+        return Response(data=errorResponse("User does not exist.", "U0003"), status=status.HTTP_404_NOT_FOUND)
