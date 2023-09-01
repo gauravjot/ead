@@ -62,9 +62,9 @@
   bottom: 2px;
   animation: rotateX 0.5s infinite linear reverse;
 }
-.spinner-xs {
-  --loader-size: 20px;
-  --loader-border-size: 2px;
+.spinner-xl {
+  --loader-size: 80px;
+  --loader-border-size: 6px;
 }
 .spinner-sm {
   --loader-size: 25px;
@@ -80,8 +80,14 @@
 }
 .spinner-accent {
  --loader-border-color: #0ea5e9;
+  }
+.spinner-white {
+ --loader-border-color: white;
 }
 
+.spinner-black {
+ --loader-border-color: black;
+}
         
 @keyframes rotateX {
   from {

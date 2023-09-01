@@ -1,12 +1,12 @@
 import { doLogin } from "@/services/auth/login";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { useMutation } from "react-query";
 import {AxiosError} from "axios";
 import {ErrorType} from "@/types/api";
-import Spinner from "@/components/utils/Spinner";
 import ServerSetup from "@/components/login/ServerSetup";
+import Button from "../ui/Button";
 
-export default function LoginBox() {
+export default function LoginBox({setAdmin} : {setAdmin: Dispatch<SetStateAction<AdminType | null>>}) {
   const [username, setUsername] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
   const [error, setError] = React.useState<string>("");
@@ -16,8 +16,8 @@ export default function LoginBox() {
     mutationFn: () => {
       return doLogin(username, password)
     },
-    onSuccess: () => {
-      console.log("Logged in")
+    onSuccess: (data: any) => {
+      setAdmin({...data.data.admin, token: data.data.token})
     },
     onError: (error: AxiosError)=> {
       if (error.response) {
@@ -49,7 +49,12 @@ export default function LoginBox() {
       <input className={"block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300" + (error.length > 0 && username.length < 1 ? " border-red-500/70": "")} type="text" id="username" name="username" value={username} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{setUsername(e.target.value)}}/>
       <label className="block text-gray-600 text-sm py-1.5 mt-2" htmlFor="password">Password</label> 
       <input className={"block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300" + (error.length > 0 && password.length < 1 ? " border-red-500/70": "")} type="password" id="password" name="password" value={password} onChange={(e: React.ChangeEvent<HTMLInputElement>)=>{setPassword(e.target.value)}}/>
-      <button className="block w-full leading-[1] bg-gray-900 text-white font-bold mt-6 py-2 rounded focus:outline focus:outline-3 focus:outline-gray-300 disabled:bg-gray-700">{mutation.isLoading ? <Spinner /> : <span className="inline-block py-[0.36rem]">Continue</span>}</button>
+        <Button 
+          state={mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"}
+          styleType="primary-full-w"
+          children="Continue"
+          type="submit"
+        />
     </fieldset>
     </form>
     <p className="mt-5 text-gray-700 text-[0.875rem]">If you forgot your credentials, please contact your administrator.</p>
@@ -59,7 +64,7 @@ export default function LoginBox() {
   <div className="fixed inset-0 bg-black/10 z-10"></div>
   <div className="relative z-20">
   <button onClick={()=>{setNewServerSetup(false)}} className="absolute top-0 right-0 hover:underline font-medium text-sm my-3 mx-4 p-2">Close</button>
-  <ServerSetup />
+  <ServerSetup setAdmin={setAdmin} />
   </div>
   </div>
   </div>
