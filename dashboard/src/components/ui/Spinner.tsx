@@ -1,10 +1,10 @@
 interface Props {
-  size: "sm" | "md" | "lg" | "xl";
-  color: "white" | "black" | "accent";
+	size: "sm" | "md" | "lg" | "xl";
+	color: "white" | "black" | "gray" | "accent";
 }
 
 export default function Spinner(props: Props) {
-  let styles = "spinner spinner-" + props.size + " spinner-"+props.color;
+	const styles = "spinner spinner-" + props.size + " spinner-" + props.color;
 
-  return <span className={styles}></span>
+	return <span className={styles}></span>;
 }

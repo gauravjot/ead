@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Merriweather:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Merriweather:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,7 +6,7 @@
 
 @layer base {
 	body {
-		@apply text-gray-950 bg-white;
+		@apply text-gray-950 bg-[#f4f4f5];
 		@apply transition-colors duration-200;
 	}
 	code {
@@ -31,77 +31,78 @@
 }
 
 .spinner {
-  --loader-size: 35px;
-  --loader-border-size: 3px;
-  --loader-border-color: white;
-  width: var(--loader-size);
-  height: var(--loader-size);
-  border: var(--loader-border-size) solid var(--loader-border-color);
-  border-top-color: transparent;
-  border-right-color: transparent;
-  border-bottom-color: transparent;
-  background-color: transparent;
-  border-radius: 50%;
-  position: relative;
-  animation: rotateX 1s infinite linear;
-  display:inline-block;
+	--loader-size: 35px;
+	--loader-border-size: 3px;
+	--loader-border-color: white;
+	width: var(--loader-size);
+	height: var(--loader-size);
+	border: var(--loader-border-size) solid var(--loader-border-color);
+	border-top-color: transparent;
+	border-right-color: transparent;
+	border-bottom-color: transparent;
+	background-color: transparent;
+	border-radius: 50%;
+	position: relative;
+	animation: rotateX 1s infinite linear;
+	display: inline-block;
 }
 
 .spinner::before {
-  content:"";
-  border: var(--loader-border-size) solid var(--loader-border-color);
-  border-top-color: transparent;
-  border-left-color: transparent;
-  border-bottom-color: transparent;
-  background-color: transparent;
-  border-radius: 50%;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  right: 2px;
-  bottom: 2px;
-  animation: rotateX 0.5s infinite linear reverse;
+	content: "";
+	border: var(--loader-border-size) solid var(--loader-border-color);
+	border-top-color: transparent;
+	border-left-color: transparent;
+	border-bottom-color: transparent;
+	background-color: transparent;
+	border-radius: 50%;
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	right: 2px;
+	bottom: 2px;
+	animation: rotateX 0.5s infinite linear reverse;
 }
 .spinner-xl {
-  --loader-size: 80px;
-  --loader-border-size: 6px;
+	--loader-size: 80px;
+	--loader-border-size: 6px;
 }
 .spinner-sm {
-  --loader-size: 25px;
-  --loader-border-size: 2px;
+	--loader-size: 25px;
+	--loader-border-size: 2px;
 }
 .spinner-md {
-  --loader-size: 50px;
-  --loader-border-size: 4px;
+	--loader-size: 50px;
+	--loader-border-size: 4px;
 }
 .spinner-lg {
-  --loader-size: 60px;
-  --loader-border-size: 5px;
+	--loader-size: 60px;
+	--loader-border-size: 5px;
 }
 .spinner-accent {
- --loader-border-color: #0ea5e9;
-  }
+	--loader-border-color: #0ea5e9;
+}
 .spinner-white {
- --loader-border-color: white;
+	--loader-border-color: white;
 }
-
 .spinner-black {
- --loader-border-color: black;
+	--loader-border-color: black;
 }
-        
-@keyframes rotateX {
-  from {
-    transform: rotateZ(0deg);
-  }
-  to {
-    transform: rotateZ(360deg);
-  }
+.spinner-gray {
+	--loader-border-color: rgb(103, 103, 103);
 }
 
+@keyframes rotateX {
+	from {
+		transform: rotateZ(0deg);
+	}
+	to {
+		transform: rotateZ(360deg);
+	}
+}
 
 .aria-hidable[aria-hidden="true"] {
-    display:none;
+	display: none;
 }
 .aria-hidable[aria-hidden="false"] {
-    display:block;
-  }
+	display: block;
+}

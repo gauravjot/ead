@@ -1,28 +1,49 @@
+import { AdminType } from "@/types/admin";
+import { QuickLinkBar } from "./dashboard/QuickLinkBar";
 import Sidebar from "./dashboard/Sidebar";
+import AdminsList from "./dashboard/admins/AdminsList";
 import LoginBox from "./login/LoginBox";
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
+import Admins from "./dashboard/admins/Admins";
+
+export const AdminContext = React.createContext<{
+	admin: AdminType | null;
+	setAdmin: Dispatch<SetStateAction<AdminType | null>>;
+}>({
+	admin: null,
+	setAdmin: () => {
+		return null;
+	},
+});
 
 export default function Home() {
-  const AdminContext = React.createContext<AdminType | null>(null)
-  const [admin, setAdmin] = React.useState<AdminType | null>(null);
-  const [isSearchActive, setIsSearchActive] = React.useState<boolean>(false);
+	const [admin, setAdmin] = React.useState<AdminType | null>(null);
+	const [isSearchActive, setIsSearchActive] = React.useState<boolean>(false);
 
-  // sidebar
-  const [activeMenu, setActiveMenu] = React.useState<"admins"|"users"|"items">("admins");
+	// sidebar
+	const [activeMenu, setActiveMenu] = React.useState<"admins" | "users" | "items">(
+		"admins"
+	);
 
 	return admin ? (
-   <AdminContext.Provider value={admin}>
-      <div className="flex">
-        <div className="px-3 border-r fixed top-0 left-0 bottom-0">
-          <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} setIsSearchActive={setIsSearchActive}/> 
-        </div>
-        <div className="flex-1">
-        </div>
-      </div>
-    </AdminContext.Provider>
-  ):(
+		<AdminContext.Provider value={{ admin, setAdmin }}>
+			<div className="flex h-screen overflow-hidden">
+				<div className="px-3 border-r h-screen bg-white">
+					<Sidebar
+						activeMenu={activeMenu}
+						setActiveMenu={setActiveMenu}
+						setIsSearchActive={setIsSearchActive}
+					/>
+				</div>
+				<div className="flex-1 h-full overflow-hidden flex flex-col">
+					<QuickLinkBar />
+					{activeMenu === "admins" ? <Admins /> : <></>}
+				</div>
+			</div>
+		</AdminContext.Provider>
+	) : (
 		<div className="container max-w-5xl px-4 mx-auto py-6">
-      <LoginBox setAdmin={setAdmin}/>
+			<LoginBox setAdmin={setAdmin} />
 		</div>
 	);
 }
