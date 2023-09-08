@@ -10,11 +10,11 @@ import { useMutation } from "react-query";
 
 export default function AddNewAdmin(){
   const adminContext = useContext(AdminContext);
-  const {register, handleSubmit} = useForm();
+  const {register, handleSubmit, formState: { errors }} = useForm();
   const onSubmit = (d:any) => {
-    mutation.mutate(d)
+ mutation.mutate(d)
+   
   }
-
 
 	const mutation = useMutation({
 		mutationFn: (payload: AddAdminType) => {
@@ -35,7 +35,7 @@ export default function AddNewAdmin(){
   <div>
       <form onSubmit={handleSubmit(onSubmit)}>
       <fieldset>
-          <InputField id="full_name" inputType="text" register={register} label="Full Name"/>
+          <InputField id="full_name" required="This is required." minLength={2} errors={errors} inputType="text" register={register} label="Full Name"/>
         
           <InputField id="title" inputType="text" register={register} label="Job Title"/>     
           <InputField id="username" inputType="text" register={register} label="Username"/>
