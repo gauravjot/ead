@@ -69,9 +69,7 @@ def register(request):
     if adminSerializer.is_valid():
         adminSerializer.save()
 
-        # send token to user
-        token = issueToken(adminSerializer.data['username'])
-        return Response(data=successResponse({"admin": adminSerializer.data, **tokenResponse(token)}), status=status.HTTP_201_CREATED)
+        return Response(data=successResponse({"admin": adminSerializer.data}), status=status.HTTP_201_CREATED)
     else:
         return Response(data=errorResponse(adminSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
 

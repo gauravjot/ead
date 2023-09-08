@@ -2,6 +2,7 @@ import { AdminEntryType } from "@/types/admin";
 import AdminsList from "./AdminsList";
 import { useState } from "react";
 import AdminsDetailPanel from "./AdminsDetailPanel";
+import AddNewAdmin from "./AddNewAdmin";
 
 export default function Admins() {
 	const [activeItem, setActiveItem] = useState<AdminEntryType>();
@@ -13,6 +14,7 @@ export default function Admins() {
 			</div>
 			<div className="overflow-y-auto bg-white w-full">
 				<AdminsDetailPanel admin={activeItem} />
+        <AddNewAdmin />
 			</div>
 		</div>
 	);
