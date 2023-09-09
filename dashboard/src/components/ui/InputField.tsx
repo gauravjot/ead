@@ -67,13 +67,13 @@ export default function InputField({
 			<input
 				aria-invalid={errors && errors[id] ? "true" : "false"}
 				className={
-					"block w-full border px-3 py-1.5 rounded-md focus-visible:outline-3" +
+					"block border px-3 py-1.5 rounded-md focus-visible:outline-3" +
 					" focus-visible:outline-dodger-200 focus-visible:outline focus-visible:border-dodger-500" +
 					" transition:all disabled:bg-blue-50 disabled:text-gray-500" +
 					(errors && errors[id]
 						? " border-red-700 bg-red-50"
 						: " border-gray-300 bg-white") +
-					(width && width === "auto" && " max-w-[20rem]")
+					(width && width === "full" ? " w-full" : " w-full max-w-[20rem]")
 				}
 				type={inputType}
 				id={id}

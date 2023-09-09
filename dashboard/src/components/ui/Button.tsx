@@ -50,15 +50,11 @@ export default function Button(props: Props) {
 			{props.state === "default" ? (
 				<span className="inline-block py-[0.36rem]">{props.children}</span>
 			) : props.state === "loading" ? (
-				<Spinner
-					size="sm"
-					color={props.styleType.includes("outline") ? "black" : "white"}
-				/>
+				<Spinner size="sm" color={props.outline ? "black" : "white"} />
 			) : (
 				<span
 					className={
-						"ic-lg ic-done " +
-						(props.styleType.includes("outline") ? "ic-black" : "ic-white")
+						"ic-lg ic-done " + (props.outline ? "ic-black" : "ic-white")
 					}
 				></span>
 			)}

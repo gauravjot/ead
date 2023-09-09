@@ -42,7 +42,12 @@ export default function Admins() {
 					<AdminsList activeItem={activeItem} setActiveItem={setActiveItem} />
 				</div>
 				<div className="overflow-y-auto bg-white w-full">
-					<AdminsDetailPanel admin={activeItem} />
+					{activeItem?.username && (
+						<AdminsDetailPanel
+							key={activeItem.username}
+							adminID={activeItem.username}
+						/>
+					)}
 				</div>
 			</div>
 			<div aria-hidden={!showAddUserUI} className="aria-hidable absolute inset-0">
