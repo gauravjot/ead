@@ -7,7 +7,7 @@ interface Props {
 	styleType: "primary" | "black" | "danger";
 	state: "default" | "loading" | "done";
 	type: "button" | "submit" | "reset";
-	size?: "base" | "small" | "large";
+	size?: "xsmall" | "base" | "small" | "large";
 	outline?: boolean;
 	disabled?: boolean;
 	width?: "auto" | "full";
@@ -23,7 +23,7 @@ export default function Button(props: Props) {
 			: "bg-dodger-600 text-white outline-dodger-100 focus:bg-dodger-700/90",
 		black: props.outline
 			? "border border-gray-600 text-gray-700 outline-gray-200 focus:bg-gray-50"
-			: "bg-gray-900 text-white outline-gray-200 focus:bg-gray-800",
+			: "bg-gray-900 text-white outline-gray-300 focus:bg-gray-800",
 		danger: props.outline
 			? "border border-red-600 text-red-600 outline-red-200 focus:bg-red-50"
 			: "bg-red-600 text-white outline-red-200 focus:bg-red-700",
@@ -31,6 +31,8 @@ export default function Button(props: Props) {
 	const buttonSizing =
 		(props.size === "base"
 			? "text-bb py-1.5 px-4"
+			: props.size === "xsmall"
+			? "text-[0.8rem] py-px px-1.5"
 			: props.size === "small"
 			? "text-sm py-0.5 px-2"
 			: props.size === "large"

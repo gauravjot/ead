@@ -30,6 +30,10 @@
 @layer utilities {
 }
 
+.container {
+	@apply md:w-[70%];
+}
+
 .spinner {
 	--loader-size: 35px;
 	--loader-border-size: 3px;
@@ -104,5 +108,5 @@
 	display: none;
 }
 .aria-hidable[aria-hidden="false"] {
-	display: block;
+	@apply block;
 }

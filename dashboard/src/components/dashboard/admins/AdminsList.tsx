@@ -20,9 +20,6 @@ export default function AdminsList({
 
 	return (
 		<>
-			<div className="capitalize text-sm mt-2 mb-5 text-gray-500 font-thin tracking-wider">
-				ADMINS
-			</div>
 			<div className="flex flex-col gap-4">
 				{admins.isSuccess ? (
 					admins.data.data.admins.map((admin: AdminEntryType) => {
