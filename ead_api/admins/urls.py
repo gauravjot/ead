@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import register, login, logout, me, update, disable, changePassword, getAllAdmins, initialSetup
+from .views import register, login, logout, me, adminInfo, update, enable, disable, updateAdmin, changeMyPassword, changePassword, getAllAdmins, initialSetup
 
 urlpatterns = [
     path('api/admin/setup/', initialSetup),
@@ -9,8 +9,12 @@ urlpatterns = [
     path('api/admin/logout/', logout),
     path('api/admin/me/', me),
     path('api/admin/update/', update),
-    path('api/admin/changepassword/', changePassword),
+    path('api/admin/changemypswd/', changeMyPassword),
     # moderate other admins
+    path('api/admin/info/<username>/', adminInfo),
     path('api/admin/disable/', disable),
+    path('api/admin/enable/', enable),
+    path('api/admin/changeprofile/', updateAdmin),
+    path('api/admin/changepswd/', changePassword),
     path('api/admin/all/', getAllAdmins),
 ]
