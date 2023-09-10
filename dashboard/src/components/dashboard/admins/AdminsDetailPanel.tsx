@@ -221,8 +221,6 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 										state={
 											changePswdMutation.isLoading
 												? "loading"
-												: changePswdMutation.isSuccess
-												? "done"
 												: "default"
 										}
 										styleType="black"
@@ -242,7 +240,7 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 							Update Profile
 						</h3>
 						<p className="text-bb text-gray-500">
-							Change name and title of the admin.
+							Make changes to name and title of the admin.
 						</p>
 						{changeProfileMutation.isError && (
 							<p className="text-bb text-red-700 my-4">
@@ -295,8 +293,6 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 										state={
 											changeProfileMutation.isLoading
 												? "loading"
-												: changeProfileMutation.isSuccess
-												? "done"
 												: "default"
 										}
 										styleType="black"

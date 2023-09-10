@@ -54,12 +54,14 @@ export default function AdminsList({
 								<button
 									key={admin.username}
 									className={
-										"text-left bg-white rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-gray-300 focus:outline-2" +
+										"text-left rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
 										(activeItem &&
 										activeItem.username === admin.username
-											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-600 shadow-lg"
+											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-lg"
 											: " shadow-md") +
-										(admin.active === false && " opacity-60")
+										(admin.active === false
+											? " opacity-70 shadow-none"
+											: " bg-white")
 									}
 									onClick={() => {
 										setActiveItem(admin);
