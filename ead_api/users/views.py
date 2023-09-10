@@ -32,7 +32,8 @@ def addUser(request):
         title=str(request.data['title'])[0:48],
         created_at=dateStamp,
         updated_at=dateStamp,
-        created_by=admin
+        created_by=admin.username,
+        updated_by=admin.username
     ))
 
     # -- check if data is without bad actors
@@ -47,14 +48,14 @@ def addUser(request):
 # -------------------------------
 
 @api_view(['GET'])
-def getUser(request):
+def getUser(request, id):
     # Get requesting admin ID
     admin = getAdminID(request)
     if type(admin) is Response:
         return admin
     # Get user
     try:
-        user = User.objects.get(id=request['uid'])
+        user = User.objects.get(id=id)
         return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response(data=errorResponse("User does not exist.", "U0001"), status=status.HTTP_404_NOT_FOUND)
@@ -95,6 +96,7 @@ def updateUser(request):
         user.email = str(request.data['email'])[0:64]
         user.phone = str(request.data['phone'])[0:20]
         user.updated_at = datetime.now(pytz.utc)
+        user.updated_by = admin
         user.save()
 
         return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
