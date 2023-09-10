@@ -5,6 +5,7 @@ import AdminsList from "./dashboard/admins/AdminsList";
 import LoginBox from "./login/LoginBox";
 import React, { Dispatch, SetStateAction } from "react";
 import Admins from "./dashboard/admins/Admins";
+import Users from "./dashboard/users/Users";
 
 export const AdminContext = React.createContext<{
 	admin: AdminType | null;
@@ -22,7 +23,7 @@ export default function Home() {
 
 	// sidebar
 	const [activeMenu, setActiveMenu] = React.useState<"admins" | "users" | "items">(
-		"admins"
+		"users"
 	);
 
 	return admin ? (
@@ -38,6 +39,7 @@ export default function Home() {
 				<div className="flex-1 h-full overflow-hidden flex flex-col">
 					<QuickLinkBar />
 					{activeMenu === "admins" ? <Admins /> : <></>}
+					{activeMenu === "users" ? <Users /> : <></>}
 				</div>
 			</div>
 		</AdminContext.Provider>

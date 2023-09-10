@@ -42,7 +42,7 @@ export default function Sidebar({
 						setIsSearchActive(true);
 					}}
 				>
-					<span className="ic-lg ic-gray-75 ic-search"></span>
+					<span className="ic-lg ic-gray-50 ic-search"></span>
 				</button>
 				{menu.map((item) => {
 					return (
@@ -64,7 +64,7 @@ export default function Sidebar({
 								className={
 									(activeMenu === item.type
 										? "ic-accent"
-										: "ic-gray-75") +
+										: "ic-gray-50") +
 									" ic-lg " +
 									item.icon
 								}

@@ -1,23 +1,21 @@
 import { AdminContext } from "@/components/Home";
 import Spinner from "@/components/ui/Spinner";
-import { getAllAdmins } from "@/services/admins/all_admins";
-import { AdminEntryType } from "@/types/admin";
+import { getAllUsers } from "@/services/user/all_users";
 import { ErrorType } from "@/types/api";
+import { UserType } from "@/types/user";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useQuery } from "react-query";
 
-export default function AdminsList({
+export default function UsersList({
 	activeItem,
 	setActiveItem,
 }: {
-	activeItem: AdminEntryType | undefined;
-	setActiveItem: Dispatch<SetStateAction<AdminEntryType | undefined>>;
+	activeItem: UserType | undefined;
+	setActiveItem: Dispatch<SetStateAction<UserType | undefined>>;
 }) {
 	const [keyword, setKeyword] = useState<string>("");
 	const adminContext = useContext(AdminContext);
-	const admins = useQuery(["admin_list"], () =>
-		getAllAdmins(adminContext.admin?.token)
-	);
+	const users = useQuery(["user_list"], () => getAllUsers(adminContext.admin?.token));
 
 	return (
 		<>
@@ -49,11 +47,11 @@ export default function AdminsList({
 					<button
 						title="Refresh"
 						onClick={() => {
-							admins.refetch();
+							users.refetch();
 						}}
 						className="h-8 w-8 hover:bg-gray-300 rounded flex place-items-center justify-center"
 					>
-						{admins.isFetching ? (
+						{users.isFetching ? (
 							<Spinner size="sm" color="black" />
 						) : (
 							<span className="ic ic-sync"></span>
@@ -62,48 +60,44 @@ export default function AdminsList({
 				</div>
 			</div>
 			<div className="flex flex-col gap-4 my-4">
-				{admins.isSuccess ? (
-					admins.data.data.admins.map((admin: AdminEntryType) => {
+				{users.isSuccess ? (
+					users.data.data.map((user: UserType) => {
 						return (
-							(admin.title.toLowerCase().includes(keyword.toLowerCase()) ||
-								admin.username
-									.toLowerCase()
-									.includes(keyword.toLowerCase()) ||
-								admin.full_name
+							(user.title.toLowerCase().includes(keyword.toLowerCase()) ||
+								user.name
 									.toLowerCase()
 									.includes(keyword.toLowerCase())) && (
 								<button
-									key={admin.username}
+									key={user.id + user.name + user.title}
 									className={
-										"text-left rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
-										(activeItem &&
-										activeItem.username === admin.username
+										"text-left bg-white rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
+										(activeItem && activeItem.id === user.id
 											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-lg"
-											: " shadow-md") +
-										(admin.active === false
-											? " opacity-70 shadow-none"
-											: " bg-white")
+											: " shadow-md")
 									}
 									onClick={() => {
-										setActiveItem(admin);
+										setActiveItem(user);
 									}}
 								>
-									<div className="text-bb font-medium">
-										{admin.full_name}
-									</div>
+									<div className="text-bb font-medium">{user.name}</div>
+									{user.email.length > 0 && (
+										<div className="mt-1 text-sm text-gray-600">
+											{user.email}
+										</div>
+									)}
 									<div className="mt-1 text-sm text-gray-600">
-										{admin.title}
+										{user.title}
 									</div>
 								</button>
 							)
 						);
 					})
-				) : admins.isLoading ? (
+				) : users.isLoading ? (
 					<div className="text-center py-24">
 						<Spinner color="gray" size="md" />
 					</div>
-				) : admins.isError ? (
-					<div>{(admins.error as ErrorType).message}</div>
+				) : users.isError ? (
+					<div>{(users.error as ErrorType).message}</div>
 				) : (
 					<></>
 				)}
