@@ -1,4 +1,4 @@
-import { dateTimePretty } from "../../../utils/datetime";
+import { dateTimePretty, timeSince } from "../../../utils/datetime";
 import Button from "@/components/ui/Button";
 import { useContext, useState } from "react";
 import { AdminContext } from "@/components/Home";
@@ -141,13 +141,11 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 					<div className="text-dodger-700 border-b-2 border-dodger-600 p-2">
 						Administer
 					</div>
-					<div className="text-gray-600 p-2">
-						Joined on {dateTimePretty(admin.created_at)}
-					</div>
 				</div>
 			</div>
 			<div className="mx-8 max-w-[1400px]">
-				<div className="grid grid-cols-2 gap-6 my-8">
+				{/* change password */}
+				<div className="grid grid-cols-2 gap-6 mb-8 mt-4">
 					<div>
 						<h3 className="text-md font-medium text-gray-800 my-4">
 							Change Password
@@ -382,6 +380,32 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 							</p>
 						)}
 					</div>
+				</div>
+				{/* profile information */}
+				<div className="border-t my-8 pt-2">
+					<h3 className="text-md font-medium text-gray-800 mb-4 my-4">
+						Information
+					</h3>
+					<table className="text-gray-600 text-bb">
+						<tbody>
+							<tr>
+								<td className="font-medium w-1/2 pb-1">Added on</td>
+								<td>{dateTimePretty(admin.created_at)}</td>
+							</tr>
+							<tr>
+								<td className="font-medium w-1/2 py-1">Added by</td>
+								<td>{admin.created_by}</td>
+							</tr>
+							<tr>
+								<td className="font-medium w-1/2 py-1">Updated</td>
+								<td>{timeSince(admin.updated_at)}</td>
+							</tr>
+							<tr>
+								<td className="font-medium w-1/2 pt-1">Updated by</td>
+								<td>{admin.updated_by}</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</>

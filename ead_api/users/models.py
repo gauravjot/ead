@@ -10,7 +10,7 @@ class User(models.Model):
     phone = models.CharField(max_length=20, null=True, blank=True)
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(
-        Admin, related_name='created_by', on_delete=models.SET_NULL, blank=True, null=True)
+        Admin, related_name='user_created_by', on_delete=models.SET_NULL, blank=True, null=True)
     updated_at = models.DateTimeField()
     updated_by = models.ForeignKey(
-        Admin, related_name='updated_by', on_delete=models.SET_NULL, blank=True, null=True)
+        Admin, related_name='user_updated_by', on_delete=models.SET_NULL, blank=True, null=True)

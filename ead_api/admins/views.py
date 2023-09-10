@@ -30,6 +30,8 @@ def initialSetup(request):
         title="Global Administrative Account",
         created_at=dateStamp,
         updated_at=dateStamp,
+        created_by="Intial setup",
+        updated_by="Intial setup",
         active=True
     ))
 
@@ -48,6 +50,9 @@ def initialSetup(request):
 # -----------------------------------------------
 @api_view(['POST'])
 def register(request):
+    adminID = getAdminID(request)
+    if type(adminID) is Response:
+        return adminID
     # -- user data & hash password
     dateStamp = datetime.now(pytz.utc)
 
@@ -62,7 +67,9 @@ def register(request):
         title=str(request.data['title']),
         created_at=dateStamp,
         updated_at=dateStamp,
-        active=True
+        updated_by=str(adminID.username),
+        active=True,
+        created_by=str(adminID.username)
     ))
 
     # -- check if data is without bad actors
@@ -147,6 +154,7 @@ def update(request):
         admin.full_name = str(request.data['full_name'])
         admin.title = str(request.data['title'])
         admin.updated_at = datetime.now(pytz.utc)
+        admin.updated_by = str(adminID.username)
         admin.save()
 
         return Response(data=successResponse(AdminSerializer(admin).data), status=status.HTTP_200_OK)
