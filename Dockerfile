@@ -1,7 +1,7 @@
 # pull official base image
 FROM python:3.11.5-slim-bookworm
 
-RUN apt-get update && apt install -y build-essential python3-dev supervisor nginx
+RUN apt-get update && apt install -y build-essential python3-dev supervisor
 RUN apt install -y --fix-missing && apt install -y curl
 RUN pip install uwsgi
 
@@ -23,13 +23,6 @@ WORKDIR /home/app/webapp/ead_api
 RUN python manage.py makemigrations
 RUN python manage.py migrate
 
-# Supervisor and uWSGI setup
-RUN cp /home/app/webapp/config/supervisor.conf /etc/supervisor/conf.d
-RUN service supervisor stop
-RUN service supervisor start
-
-EXPOSE 8000
-
 # Frontend and Nodejs
 WORKDIR /home/app/webapp/dashboard
 RUN apt-get update && apt-get install -y ca-certificates curl gnupg
@@ -40,9 +33,15 @@ RUN apt-get update && apt-get install nodejs -y
 RUN npm install
 EXPOSE 4173
 RUN npm run build
-CMD npm run preview
+
+# Supervisor and uWSGI setup
+RUN cp /home/app/webapp/config/supervisor.conf /etc/supervisor/conf.d
+EXPOSE 8000
+RUN service supervisor stop
+CMD /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisor.conf
 
 # nginx
+#RUN apt install nginx
 #EXPOSE 80
 #RUN cp /home/app/webapp/config/localhost /etc/nginx/sites-enabled
 #RUN service nginx stop
