@@ -1,7 +1,6 @@
 import { AdminType } from "@/types/admin";
 import { QuickLinkBar } from "./dashboard/QuickLinkBar";
 import Sidebar from "./dashboard/Sidebar";
-import AdminsList from "./dashboard/admins/AdminsList";
 import LoginBox from "./login/LoginBox";
 import React, { Dispatch, SetStateAction } from "react";
 import Admins from "./dashboard/admins/Admins";
@@ -44,8 +43,10 @@ export default function Home() {
 			</div>
 		</AdminContext.Provider>
 	) : (
-		<div className="container max-w-5xl px-4 mx-auto py-6">
-			<LoginBox setAdmin={setAdmin} />
+		<div>
+			<div className="container max-w-5xl px-4 mx-auto py-6">
+				<LoginBox setAdmin={setAdmin} />
+			</div>
 		</div>
 	);
 }

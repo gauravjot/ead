@@ -10,6 +10,7 @@ import { ErrorType } from "@/types/api";
 import { getUser } from "@/services/user/get_user";
 import { UserType } from "@/types/user";
 import { updateUser } from "@/services/user/update_user";
+import Spinner from "@/components/ui/Spinner";
 
 export default function UserDetailPanel({ userID }: { userID: string }) {
 	const adminContext = useContext(AdminContext);
@@ -60,7 +61,7 @@ export default function UserDetailPanel({ userID }: { userID: string }) {
 		},
 	});
 
-	return user ? (
+	return userQuery.isSuccess && user ? (
 		<>
 			<div className="border-b">
 				<div className="flex gap-6 px-8 my-8">
@@ -198,6 +199,10 @@ export default function UserDetailPanel({ userID }: { userID: string }) {
 				</div>
 			</div>
 		</>
+	) : userQuery.isLoading ? (
+		<div className="h-full flex place-items-center justify-center">
+			<Spinner color="accent" size="xl" />
+		</div>
 	) : (
 		<></>
 	);

@@ -110,3 +110,34 @@
 .aria-hidable[aria-hidden="false"] {
 	@apply block;
 }
+
+.moving-bg {
+	position: absolute;
+	inset: -250px;
+	background: conic-gradient(
+		from 180deg at 50% 50%,
+		#12001b -97.5deg,
+		#ab8900 14.05deg,
+		#025c5c 74.01deg,
+		#000000 110.5deg,
+		#000596 240.42deg,
+		#5001a0 260.62deg,
+		#60047a 280.62deg,
+		#0e0000 300.05deg
+	);
+	filter: blur(60px) brightness(1.5);
+	opacity: 0.75;
+	z-index: -1;
+	animation: moving-bg-spin 70s linear infinite;
+}
+.moving-bg:after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.4);
+}
+@keyframes moving-bg-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}

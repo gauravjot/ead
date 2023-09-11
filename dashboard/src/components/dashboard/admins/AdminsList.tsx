@@ -22,11 +22,11 @@ export default function AdminsList({
 	return (
 		<>
 			<div className="flex">
-				<div className="relative flex-1">
+				<div className="relative flex-1" title="Filter with name and title">
 					<input
 						type="text"
 						className="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm focus-visible:bg-white"
-						placeholder="Search"
+						placeholder="Filter"
 						onChange={(e) => {
 							setKeyword(e.target.value);
 						}}
@@ -51,7 +51,7 @@ export default function AdminsList({
 						onClick={() => {
 							admins.refetch();
 						}}
-						className="h-8 w-8 hover:bg-gray-300 rounded flex place-items-center justify-center"
+						className="h-9 w-9 hover:bg-gray-300 rounded flex place-items-center justify-center"
 					>
 						{admins.isFetching ? (
 							<Spinner size="sm" color="black" />
@@ -78,20 +78,26 @@ export default function AdminsList({
 										"text-left rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
 										(activeItem &&
 										activeItem.username === admin.username
-											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-lg"
-											: " shadow-md") +
+											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-md"
+											: " shadow") +
 										(admin.active === false
-											? " opacity-70 shadow-none"
+											? " opacity-70 shadow-sm border border-gray-500 border-dashed"
 											: " bg-white")
 									}
 									onClick={() => {
 										setActiveItem(admin);
 									}}
 								>
-									<div className="text-bb font-medium">
+									<div
+										title={admin.full_name}
+										className="text-bb font-medium truncate"
+									>
 										{admin.full_name}
 									</div>
-									<div className="mt-1 text-sm text-gray-600">
+									<div
+										title={admin.title}
+										className="mt-1 text-sm text-gray-600 truncate"
+									>
 										{admin.title}
 									</div>
 								</button>

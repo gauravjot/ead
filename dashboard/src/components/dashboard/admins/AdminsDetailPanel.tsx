@@ -12,6 +12,7 @@ import { changeProfile } from "@/services/admins/change_profile";
 import { getAdmin } from "@/services/admins/info_admin";
 import { disableAdmin } from "@/services/admins/disable_admin";
 import { enableAdmin } from "@/services/admins/enable_admin";
+import Spinner from "@/components/ui/Spinner";
 
 export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 	const adminContext = useContext(AdminContext);
@@ -124,7 +125,7 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 		},
 	});
 
-	return admin ? (
+	return admin && adminQuery.isSuccess ? (
 		<>
 			<div className="border-b">
 				<div className="flex gap-6 px-8 my-8">
@@ -409,6 +410,10 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 				</div>
 			</div>
 		</>
+	) : adminQuery.isLoading ? (
+		<div className="h-full flex place-items-center justify-center">
+			<Spinner color="accent" size="xl" />
+		</div>
 	) : (
 		<></>
 	);

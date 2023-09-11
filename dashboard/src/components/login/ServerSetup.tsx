@@ -41,7 +41,7 @@ export default function ServerSetup({
 				<h1 className="text-3xl font-bold tracking-tighter">Welcome</h1>
 				<div className="text-gray-700 leading-6 mt-7">
 					<span>Few things to note</span>
-					<ul className="ml-4 block mt-3 list-disc">
+					<ul className="ml-4 block mt-3 list-disc text-bb">
 						<li>
 							The username for administrative account is{" "}
 							<span className="italic">root</span> and cannot be changed.

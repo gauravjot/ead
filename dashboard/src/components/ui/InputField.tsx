@@ -62,7 +62,11 @@ export default function InputField({
 		<div className="my-2 mx-px">
 			<label className="block text-gray-600 text-sm py-1.5" htmlFor={id}>
 				{label}{" "}
-				{validation.required && <span className="text-red-500 font-bold">*</span>}
+				{validation.required && (
+					<span className="text-red-500 font-bold" title="Required">
+						*
+					</span>
+				)}
 			</label>
 			<input
 				aria-invalid={errors && errors[id] ? "true" : "false"}

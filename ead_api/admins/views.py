@@ -199,6 +199,7 @@ def disable(request):
         otherAdmin = Admin.objects.get(username=str(request.data['username']))
         otherAdmin.active = False
         otherAdmin.updated_at = datetime.now(pytz.utc)
+        otherAdmin.updated_by = str(adminID.username)
         otherAdmin.save()
 
         # Disable all active sessions
@@ -224,6 +225,7 @@ def enable(request):
         otherAdmin = Admin.objects.get(username=str(request.data['username']))
         otherAdmin.active = True
         otherAdmin.updated_at = datetime.now(pytz.utc)
+        otherAdmin.updated_by = str(adminID.username)
         otherAdmin.save()
 
         # Disable all active sessions

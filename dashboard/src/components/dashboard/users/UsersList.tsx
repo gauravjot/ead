@@ -20,11 +20,14 @@ export default function UsersList({
 	return (
 		<>
 			<div className="flex">
-				<div className="relative flex-1">
+				<div
+					className="relative flex-1"
+					title="Filter with name, email and title"
+				>
 					<input
 						type="text"
 						className="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm focus-visible:bg-white"
-						placeholder="Search"
+						placeholder="Filter"
 						onChange={(e) => {
 							setKeyword(e.target.value);
 						}}
@@ -49,7 +52,7 @@ export default function UsersList({
 						onClick={() => {
 							users.refetch();
 						}}
-						className="h-8 w-8 hover:bg-gray-300 rounded flex place-items-center justify-center"
+						className="h-9 w-9 hover:bg-gray-300 rounded flex place-items-center justify-center"
 					>
 						{users.isFetching ? (
 							<Spinner size="sm" color="black" />
@@ -63,7 +66,10 @@ export default function UsersList({
 				{users.isSuccess ? (
 					users.data.data.map((user: UserType) => {
 						return (
-							(user.title.toLowerCase().includes(keyword.toLowerCase()) ||
+							(user.email.toLowerCase().includes(keyword.toLowerCase()) ||
+								user.title
+									.toLowerCase()
+									.includes(keyword.toLowerCase()) ||
 								user.name
 									.toLowerCase()
 									.includes(keyword.toLowerCase())) && (
@@ -72,20 +78,31 @@ export default function UsersList({
 									className={
 										"text-left bg-white rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
 										(activeItem && activeItem.id === user.id
-											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-lg"
-											: " shadow-md")
+											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-md"
+											: " shadow")
 									}
 									onClick={() => {
 										setActiveItem(user);
 									}}
 								>
-									<div className="text-bb font-medium">{user.name}</div>
+									<div
+										title={user.name}
+										className="text-bb font-medium"
+									>
+										{user.name}
+									</div>
 									{user.email.length > 0 && (
-										<div className="mt-1 text-sm text-gray-600">
+										<div
+											title={user.email}
+											className="mt-1 text-sm text-gray-600 truncate"
+										>
 											{user.email}
 										</div>
 									)}
-									<div className="mt-1 text-sm text-gray-600">
+									<div
+										title={user.title}
+										className="mt-1 text-sm text-gray-600 truncate"
+									>
 										{user.title}
 									</div>
 								</button>
