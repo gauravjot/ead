@@ -20,7 +20,7 @@
 # Python
 **/.venv
 **/__pycache__/
-**/migrations/
+**/migrations/0*.py
 **/media
 
 # misc

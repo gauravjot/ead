@@ -1,8 +1,7 @@
 # pull official base image
 FROM python:3.11.5-slim-bookworm
 
-RUN apt-get update && apt install -y build-essential python3-dev supervisor
-RUN apt install -y --fix-missing && apt install -y curl
+RUN apt-get update && apt install -y python3-dev supervisor gcc
 RUN pip install uwsgi
 
 # set work directory
@@ -20,6 +19,7 @@ RUN pip install -r /home/app/webapp/ead_api/requirements.txt
 
 # setup and start django server
 WORKDIR /home/app/webapp/ead_api
+RUN python manage.py migrate
 RUN python manage.py makemigrations
 RUN python manage.py migrate
 
@@ -39,10 +39,3 @@ RUN cp /home/app/webapp/config/supervisor.conf /etc/supervisor/conf.d
 EXPOSE 8000
 RUN service supervisor stop
 CMD /usr/bin/supervisord -n -c /etc/supervisor/conf.d/supervisor.conf
-
-# nginx
-#RUN apt install nginx
-#EXPOSE 80
-#RUN cp /home/app/webapp/config/localhost /etc/nginx/sites-enabled
-#RUN service nginx stop
-#RUN service nginx start
