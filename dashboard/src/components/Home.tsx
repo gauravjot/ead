@@ -19,6 +19,7 @@ export const AdminContext = React.createContext<{
 export default function Home() {
 	const [admin, setAdmin] = React.useState<AdminType | null>(null);
 	const [isSearchActive, setIsSearchActive] = React.useState<boolean>(false);
+	console.log(isSearchActive);
 
 	// sidebar
 	const [activeMenu, setActiveMenu] = React.useState<"admins" | "users" | "items">(
