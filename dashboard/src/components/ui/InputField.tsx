@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, useState } from "react";
 import { FieldErrors, FieldValues, UseFormRegister, UseFormWatch } from "react-hook-form";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -34,6 +34,7 @@ export default function InputField({
 	width,
 	...rest
 }: InputProps) {
+  const [showPassword, setShowPassword] = useState(false);
 	const validation: ValidationType = {};
 	if (isRequired) {
 		validation["required"] = "This field is required.";
@@ -68,22 +69,30 @@ export default function InputField({
 					</span>
 				)}
 			</label>
-			<input
+			<div className={"relative" +
+					(width && width === "full" ? " w-full" : " w-full max-w-[20rem]")}>
+        <input
 				aria-invalid={errors && errors[id] ? "true" : "false"}
 				className={
-					"block border px-3 py-1.5 rounded-md focus-visible:outline-3" +
-					" focus-visible:outline-dodger-200 focus-visible:outline focus-visible:border-dodger-500" +
-					" transition:all disabled:bg-blue-50 disabled:text-gray-500" +
+					"block w-full border px-3 py-1.5 rounded-md focus-visible:outline" +
+					" outline-dodger-200 outline-[3px] focus-visible:border-dodger-500" +
+					" hover:outline transition:all disabled:bg-blue-50 disabled:text-gray-500" +
 					(errors && errors[id]
 						? " border-red-700 bg-red-50"
-						: " border-gray-300 bg-white") +
-					(width && width === "full" ? " w-full" : " w-full max-w-[20rem]")
+						: " border-gray-300 bg-white")
 				}
-				type={inputType}
+				type={(showPassword) ? "text" : inputType}
 				id={id}
 				{...register(id, validation)}
 				{...rest}
-			/>
+			/>{inputType==="password" && 
+          <button title={showPassword ? "Hide" : "Show"} className="absolute right-0 top-0 bottom-0 p-2.5 z-10" onClick={(e)=>{
+            e.preventDefault()
+            setShowPassword(val => !val)
+          }}>
+            <span className={"ic" + (showPassword ? " ic-visibility ic-gray-75" : " ic-visibility-off ic-gray-50")}></span>
+          </button>}
+      </div>
 			{errors && errors[id] && (
 				<p className="text-red-700 text-bb my-1">
 					{errors[id]?.message?.toString()}
