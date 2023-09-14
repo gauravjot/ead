@@ -1,9 +1,9 @@
 from django.urls import path
-#from .views import register, login, logout, verifyEmail
+from .views import addItemType, getAllItemTypes
 
 urlpatterns = [
-#    path('api/user/register/', register),
-#    path('api/user/login/', login),
+    path('api/item/type/add/', addItemType),
+    path('api/item/type/all/', getAllItemTypes),
 #    path('api/user/logout/', logout),
 #    path('api/user/verifyemail/<emailtoken>/', verifyEmail),
 ]

@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, useState } from "react";
+import { InputHTMLAttributes, useRef, useState } from "react";
 import { FieldErrors, FieldValues, UseFormRegister, UseFormWatch } from "react-hook-form";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -35,6 +35,7 @@ export default function InputField({
 	...rest
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 	const validation: ValidationType = {};
 	if (isRequired) {
 		validation["required"] = "This field is required.";
@@ -72,6 +73,7 @@ export default function InputField({
 			<div className={"relative" +
 					(width && width === "full" ? " w-full" : " w-full max-w-[20rem]")}>
         <input
+          ref={inputRef}
 				aria-invalid={errors && errors[id] ? "true" : "false"}
 				className={
 					"block w-full border px-3 py-1.5 rounded-md focus-visible:outline" +
@@ -90,7 +92,7 @@ export default function InputField({
             e.preventDefault()
             setShowPassword(val => !val)
           }}>
-            <span className={"ic" + (showPassword ? " ic-visibility ic-gray-75" : " ic-visibility-off ic-gray-50")}></span>
+            <span className={"ic" + (showPassword ? " ic-visibility-off ic-gray-75" : " ic-visibility ic-gray-50")}></span>
           </button>}
       </div>
 			{errors && errors[id] && (

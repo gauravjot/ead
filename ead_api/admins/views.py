@@ -162,7 +162,7 @@ def update(request):
         return Response(data=errorResponse("Invalid session.", "A0098"), status=status.HTTP_400_BAD_REQUEST)
 
 
-# Update Current Admin Info function, requires token
+# Update given Admin Info function, requires token, username
 # -----------------------------------------------
 @api_view(['PUT'])
 def updateAdmin(request):
@@ -174,6 +174,7 @@ def updateAdmin(request):
         admin.full_name = str(request.data['full_name'])
         admin.title = str(request.data['title'])
         admin.updated_at = datetime.now(pytz.utc)
+        admin.updated_by = str(adminID.username)
         admin.save()
 
         return Response(data=successResponse(AdminSerializer(admin).data), status=status.HTTP_200_OK)
@@ -247,6 +248,7 @@ def changeMyPassword(request):
         admin = Admin.objects.get(username=adminID)
         admin.password = hashPwd(str(request.data['password']))
         admin.updated_at = datetime.now(pytz.utc)
+        admin.updated_by = str(adminID.username)
         admin.save()
 
         return Response(data=successResponse(), status=status.HTTP_200_OK)
@@ -268,6 +270,7 @@ def changePassword(request):
         admin = Admin.objects.get(username=str(request.data['username']))
         admin.password = hashPwd(str(request.data['password']))
         admin.updated_at = datetime.now(pytz.utc)
+        admin.updated_by = str(adminID.username)
         admin.save()
 
         return Response(data=successResponse(), status=status.HTTP_200_OK)

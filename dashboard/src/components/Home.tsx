@@ -5,6 +5,7 @@ import LoginBox from "./login/LoginBox";
 import React, { Dispatch, SetStateAction } from "react";
 import Admins from "./dashboard/admins/Admins";
 import Users from "./dashboard/users/Users";
+import Items from "./dashboard/items/Items";
 
 export const AdminContext = React.createContext<{
 	admin: AdminType | null;
@@ -40,6 +41,7 @@ export default function Home() {
 					<QuickLinkBar />
 					{activeMenu === "admins" ? <Admins /> : <></>}
 					{activeMenu === "users" ? <Users /> : <></>}
+					{activeMenu === "items" ? <Items /> : <></>}
 				</div>
 			</div>
 		</AdminContext.Provider>
