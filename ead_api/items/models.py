@@ -5,9 +5,9 @@ from users.models import User
 
 class ItemType(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=24)
+    name = models.CharField(max_length=48)
     description = models.TextField()   
-    template = models.JSONField()
+    template = models.JSONField(null=True, blank=True)
     created_by = models.ForeignKey(Admin, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField()
 

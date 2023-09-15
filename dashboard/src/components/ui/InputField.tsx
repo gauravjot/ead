@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, useRef, useState } from "react";
+import { InputHTMLAttributes, useState } from "react";
 import { FieldErrors, FieldValues, UseFormRegister, UseFormWatch } from "react-hook-form";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -8,6 +8,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	register: UseFormRegister<FieldValues>;
 	isRequired?: boolean;
   isPassword?: boolean;
+  isTextarea?: boolean;
 	minLength?: number;
 	maxLength?: number;
 	errors?: FieldErrors<FieldValues>;
@@ -27,6 +28,7 @@ export default function InputField({
 	inputType,
 	label,
   isPassword,
+  isTextarea,
 	register,
 	minLength,
 	isRequired,
@@ -37,22 +39,21 @@ export default function InputField({
 	...rest
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const validation: ValidationType = {};
 	if (isRequired) {
-		validation["required"] = "This field is required.";
+		validation["required"] = "This field is required";
 	}
 	if (minLength) {
 		validation["minLength"] = {
 			value: minLength,
-			message: "Value should be atleast of length " + minLength + ".",
+			message: "Value should have atleast " + minLength + " characters",
 		};
 	}
 	if (maxLength) {
 		validation["maxLength"] = {
 			value: maxLength,
-			message: "Maximum value length should be " + maxLength + ".",
+			message: "Value cannot be longer than " + maxLength + " characters",
 		};
 	}
 	if (watch && watchField) {
@@ -72,6 +73,14 @@ export default function InputField({
     }
   }
 
+  const styling = "block w-full border px-3 py-1.5 rounded-md focus-visible:outline" +
+					" outline-dodger-200 outline-[3px] focus-visible:border-dodger-500" +
+					" hover:outline transition:all disabled:bg-blue-50 disabled:text-gray-500" +
+					(errors && errors[id]
+						? " border-red-700 bg-red-50/30 focus-visible:bg-white"
+						: " border-gray-300 bg-white");
+ 
+
 	return (
 		<div className="my-2 mx-px">
 			<label className="block text-gray-600 text-sm py-1.5" htmlFor={id}>
@@ -84,26 +93,20 @@ export default function InputField({
 			</label>
 			<div className={"relative" +
 					(width && width === "full" ? " w-full" : " w-full max-w-[20rem]")}>
-        <input
+        {isTextarea ? <textarea className={styling} aria-invalid={errors && errors[id] ? "true" : "false"} id={id} {...register(id,validation)} {...rest} /> : <input
 				aria-invalid={errors && errors[id] ? "true" : "false"}
-				className={
-					"block w-full border px-3 py-1.5 rounded-md focus-visible:outline" +
-					" outline-dodger-200 outline-[3px] focus-visible:border-dodger-500" +
-					" hover:outline transition:all disabled:bg-blue-50 disabled:text-gray-500" +
-					(errors && errors[id]
-						? " border-red-700 bg-red-50/50"
-						: " border-gray-300 bg-white")
-				}
+				className={styling}
 				type={(showPassword) ? "text" : inputType}
 				id={id}
         {...register(id,validation)}
 				{...rest}
-			/>{inputType==="password" && 
+			/>}
+        {inputType==="password" && 
           <button title={showPassword ? "Hide" : "Show"} className="absolute right-0 top-0 bottom-0 p-2.5 z-10" onClick={(e)=>{
             e.preventDefault()
             setShowPassword(val => !val)
           }}>
-            <span className={"ic" + (showPassword ? " ic-visibility-off ic-gray-75" : " ic-visibility ic-gray-50")}></span>
+            <span className={"ic" + (showPassword ? " ic-visibility-off ic-gray-75" : " ic-visibility ic-gray-25")}></span>
           </button>}
       </div>
 			{errors && errors[id] && (

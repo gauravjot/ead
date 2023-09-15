@@ -34,7 +34,10 @@ export default function AddNewUser() {
 			if (error.response) {
 				const res = error.response.data as ErrorType;
 				setReqError(res.message.toString());
-			}
+			} else {
+        setReqError("Server Error");
+      }
+      console.log("errrrrr")
 		},
 	});
 
@@ -81,6 +84,9 @@ export default function AddNewUser() {
 									width="full"
 									maxLength={48}
 								/>
+							</div>
+							<div>
+											
 
 								<InputField
 									id="description"
@@ -88,13 +94,11 @@ export default function AddNewUser() {
 									register={register}
 									label="Descritpion"
 									isRequired={true}
+                  isTextarea={true}
 									errors={errors}
 									width="full"
-									maxLength={1000}
-								/>
-							</div>
-							<div>
-															</div>
+									maxLength={25000}
+								/>				</div>
 						</div>
 
 						<div className="mt-6 flex gap-6 justify-center">
@@ -119,7 +123,7 @@ export default function AddNewUser() {
 								}
 								styleType="black"
 								size="base"
-								children="Add user"
+								children="Add item"
 								type="submit"
 							/>
 						</div>

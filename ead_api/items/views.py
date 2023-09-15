@@ -30,7 +30,7 @@ def addItemType(request):
     itemTypeSerializer = ItemTypeSerializer(data=dict(
         name = request.data['name'],
         description = request.data['description'],
-        template = json.loads(request.data['template']),
+        template = None,
         created_by = str(adminID.username),
         created_at = datetime.now(pytz.utc)
     ))
@@ -51,4 +51,22 @@ def getAllItemTypes(request):
     if type(admin) is Response:
         return admin
     return Response(data=successResponse(ItemTypeSerializer(ItemType.objects.all().order_by('name'), many=True).data), status=status.HTTP_200_OK)
+
+
+# Get Item Type
+# -------------------------------
+@api_view(['GET'])
+def getItemType(request, id):
+    # Get requesting admin ID
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    # Get item type
+    try:
+        item_type = ItemType.objects.get(id=id)
+        return Response(data=successResponse(ItemTypeSerializer(item_type).data), status=status.HTTP_200_OK)
+    except ItemType.DoesNotExist:
+        return Response(data=errorResponse("Item does not exist.", "I0001"), status=status.HTTP_404_NOT_FOUND)
+
+
 

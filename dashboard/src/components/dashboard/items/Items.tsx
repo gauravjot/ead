@@ -43,7 +43,7 @@ export default function Items() {
 				</div>
 				<div className="overflow-y-auto bg-white w-full">
 					{activeItem?.id && (
-						<ItemsListDetailPanel key={activeItem.id} />
+						<ItemsListDetailPanel key={activeItem.id} id={activeItem.id} />
 					)}
 				</div>
 			</div>
