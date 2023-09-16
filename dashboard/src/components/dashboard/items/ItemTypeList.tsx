@@ -15,7 +15,9 @@ export default function ItemTypeList({
 }) {
 	const [keyword, setKeyword] = useState<string>("");
 	const adminContext = useContext(AdminContext);
-	const item_types = useQuery(["item_type_list"], () => getAllItemTypes(adminContext.admin?.token));
+	const item_types = useQuery(["item_type_list"], () =>
+		getAllItemTypes(adminContext.admin?.token)
+	);
 
 	return (
 		<>
@@ -64,7 +66,7 @@ export default function ItemTypeList({
 			</div>
 			<div className="flex flex-col gap-4 my-4">
 				{item_types.isSuccess ? (
-          item_types.data.data.map((item: ItemTypeType) => {
+					item_types.data.data.map((item: ItemTypeType) => {
 						return (
 							item.name.toLowerCase().includes(keyword.toLowerCase()) && (
 								<button

@@ -113,7 +113,7 @@ export default function AddNewAdmin() {
 									minLength={8}
 									maxLength={96}
 									isRequired={true}
-                  isPassword={true}
+									isPassword={true}
 									errors={errors}
 									width="full"
 								/>

@@ -13,7 +13,7 @@ export default function AddNewUser() {
 	const adminContext = useContext(AdminContext);
 	const [reqError, setReqError] = useState<string | null>(null);
 	const [reqResponse, setReqResponse] = useState<ItemTypeType | null>(null);
-  
+
 	const {
 		register,
 		handleSubmit,
@@ -35,9 +35,8 @@ export default function AddNewUser() {
 				const res = error.response.data as ErrorType;
 				setReqError(res.message.toString());
 			} else {
-        setReqError("Server Error");
-      }
-      console.log("errrrrr")
+				setReqError("Server Error");
+			}
 		},
 	});
 
@@ -86,19 +85,18 @@ export default function AddNewUser() {
 								/>
 							</div>
 							<div>
-											
-
 								<InputField
 									id="description"
 									inputType="text"
 									register={register}
 									label="Descritpion"
 									isRequired={true}
-                  isTextarea={true}
+									isTextarea={true}
 									errors={errors}
 									width="full"
 									maxLength={25000}
-								/>				</div>
+								/>{" "}
+							</div>
 						</div>
 
 						<div className="mt-6 flex gap-6 justify-center">

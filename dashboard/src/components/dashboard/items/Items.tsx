@@ -28,10 +28,7 @@ export default function Items() {
 								onClick={() => {
 									setShowAddItemTypeUI(true);
 									window.setTimeout(
-										() =>
-											document
-												?.getElementById("name")
-												?.focus(),
+										() => document?.getElementById("name")?.focus(),
 										0
 									);
 								}}
@@ -47,7 +44,10 @@ export default function Items() {
 					)}
 				</div>
 			</div>
-			<div aria-hidden={!showAddItemTypeUI} className="aria-hidable absolute inset-0">
+			<div
+				aria-hidden={!showAddItemTypeUI}
+				className="aria-hidable absolute inset-0"
+			>
 				{/* clicking empty space closes the box */}
 				<div
 					className="absolute inset-0 bg-black/10"
