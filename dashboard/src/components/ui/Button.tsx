@@ -2,7 +2,7 @@ import React from "react";
 import Spinner from "@/components/ui/Spinner";
 
 interface Props {
-	children?: React.ReactNode;
+	children: React.ReactNode;
 	onClick?: () => void;
 	styleType: "primary" | "black" | "danger" | "white_opaque";
 	state: "default" | "loading" | "done";
