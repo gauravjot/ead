@@ -74,7 +74,7 @@ export default function Items() {
 						</div>
 					</div>
 					<div className="container mx-auto">
-						<AddNewItemType />
+						<AddNewItemType setShowDialog={setShowAddItemTypeUI}/>
 					</div>
 				</div>
 			</div>

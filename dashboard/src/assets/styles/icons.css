@@ -29,8 +29,7 @@
 }
 
 .ic-accent {
-	filter: invert(37%) sepia(85%) saturate(4585%) hue-rotate(212deg) brightness(106%)
-		contrast(92%);
+  filter: invert(27%) sepia(96%) saturate(3092%) hue-rotate(216deg) brightness(88%) contrast(102%);
 }
 
 .ic-md {
@@ -68,7 +67,7 @@
 }
 
 .ic-delete {
-	background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHdpZHRoPSI0OCI+PHBhdGggZD0iTTEyLjY1IDQzLjI1cS0yIDAtMy4zNzUtMS4zNVQ3LjkgMzguNTVWMTAuOUg1VjYuMmgxMS41NVYzLjhIMzEuNHYyLjRINDN2NC43aC0yLjl2MjcuNjVxMCAxLjk1LTEuNCAzLjMyNS0xLjQgMS4zNzUtMy4zNSAxLjM3NVptMjIuNy0zMi4zNWgtMjIuN3YyNy42NWgyMi43Wk0xNy43IDM0LjY1aDMuODVWMTQuN0gxNy43Wm04Ljc1IDBoMy45VjE0LjdoLTMuOVpNMTIuNjUgMTAuOXYyNy42NVoiLz48L3N2Zz4=);
+	background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iNDgiPjxwYXRoIGQ9Ik0yNTktMTA0cS0zMC43NSAwLTUxLjg3NS0yMS4xMjVUMTg2LTE3N3YtNTc1aC00MXYtNzNoMjAydi0zNGgyNjd2MzRoMjAydjczaC00MXY1NzVxMCAyOC43MjUtMjIuMTM4IDUwLjg2M1E3MzAuNzI1LTEwNCA3MDItMTA0SDI1OVptNDQzLTY0OEgyNTl2NTc1aDQ0M3YtNTc1Wk0zNTctMjY0aDczdi00MDNoLTczdjQwM1ptMTc1IDBoNzN2LTQwM2gtNzN2NDAzWk0yNTktNzUydjU3NS01NzVaIi8+PC9zdmc+);
 	background-size: contain;
 }
 
@@ -78,7 +77,7 @@
 }
 
 .ic-add {
-	background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iMjAiIHdpZHRoPSIyMCI+PHBhdGggZD0iTTguNzcxIDE1LjQ3OXYtNC4yNWgtNC4yNVY4Ljc3MWg0LjI1di00LjI1aDIuNDU4djQuMjVoNC4yNXYyLjQ1OGgtNC4yNXY0LjI1WiIvPjwvc3ZnPg==);
+	background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgLTk2MCA5NjAgOTYwIiB3aWR0aD0iNDgiPjxwYXRoIGQ9Ik00NDQtNDQ0SDE4NHYtNzNoMjYwdi0yNjBoNzN2MjYwaDI1OXY3M0g1MTd2MjU5aC03M3YtMjU5WiIvPjwvc3ZnPg==);
 	background-size: contain;
 }
 

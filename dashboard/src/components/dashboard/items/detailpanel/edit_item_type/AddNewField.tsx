@@ -17,6 +17,7 @@ export default function AddNewField({ id }: { id: number | string }) {
 		handleSubmit,
 		reset,
 		formState: { errors },
+    clearErrors,
 	} = useForm();
 
 	const [reqError, setReqError] = useState<string | null>(null);
@@ -27,8 +28,8 @@ export default function AddNewField({ id }: { id: number | string }) {
 				: Promise.reject();
 		},
 		onSuccess: () => {
+      queryClient.resetQueries(["item_type_" + id]);
 			setReqError(null);
-			queryClient.resetQueries(["item_type_" + id]);
 			setShowNewField(false);
 			reset();
 		},
@@ -42,17 +43,19 @@ export default function AddNewField({ id }: { id: number | string }) {
 
 	return (
 		<div className="my-3">
-			<button
+      {!showNewField && <button
 				aria-expanded={showNewField}
 				onClick={() => {
+          clearErrors();
 					setShowNewField((val) => !val);
 				}}
-				className="flex place-items-center gap-2 text-dodger-700 font-normal py-1.5 px-2 hover:bg-dodger-100"
+				className="flex place-items-center gap-1.5 text-gray-700 font-normal py-1.5 px-2 hover:outline outline-2 rounded outline-dodger-500 text-bb"
 			>
-				<span className="ic ic-add ic-accent"></span>
-				{" New Field"}
-			</button>
-			<div aria-hidden={!showNewField} className="aria-hidable my-2 rounded-lg p-4">
+        <span className="ic ic-add ic-black"></span>
+        <span>Create new field</span>
+			</button>}
+			<div aria-hidden={!showNewField} className="aria-hidable my-2 rounded-lg">
+        <h4 className="font-medium mt-10 my-4 text-md">Create new field</h4>
 				<form
 					onSubmit={handleSubmit((d) => {
 						console.log(d);
@@ -128,7 +131,7 @@ export default function AddNewField({ id }: { id: number | string }) {
 									minLength={2}
 									maxLength={24}
 								/>
-								<div className="mt-6">
+								<div className="mt-6 flex gap-3">
 									<Button
 										state={mutation.isLoading ? "loading" : "default"}
 										styleType="black"
@@ -136,6 +139,18 @@ export default function AddNewField({ id }: { id: number | string }) {
 										children="Add field"
 										type="submit"
 									/>
+                  <Button
+                    state="default"
+                    outline={true}
+                    styleType="black"
+                    size="base"
+                    children="Cancel"
+                    type="button"
+                    onClick={() => {
+                      setShowNewField(false);
+                      reset();
+                    }}
+                  />
 								</div>
 							</>
 						}
