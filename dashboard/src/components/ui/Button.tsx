@@ -11,6 +11,7 @@ interface Props {
 	outline?: boolean;
 	disabled?: boolean;
 	width?: "auto" | "full";
+	icon?: string;
 }
 
 const buttonBaseStyle =
@@ -49,7 +50,20 @@ export default function Button(props: Props) {
 			disabled={props.disabled}
 		>
 			{props.state === "default" ? (
-				<span className="inline-block py-[0.36rem]">{props.children}</span>
+				<span className="inline-block py-[0.36rem]">
+					{props.icon && (
+						<>
+							<span
+								className={`ic ic-${props.icon} ${
+									props.styleType === "primary" &&
+									props.outline &&
+									"ic-accent"
+								} align-bottom`}
+							></span>{" "}
+						</>
+					)}
+					{props.children}
+				</span>
 			) : props.state === "loading" ? (
 				<Spinner size="sm" color={props.outline ? "black" : "white"} />
 			) : (
