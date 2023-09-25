@@ -28,6 +28,7 @@ export default function EditItemType({ id }: { id: number | string }) {
 					</thead>
 					<tbody>
 						{itemTypeQuery.isSuccess &&
+							itemTypeQuery.data.data.template &&
 							itemTypeQuery.data.data.template.map(
 								(field: { n: string; t: string }) => (
 									<tr
