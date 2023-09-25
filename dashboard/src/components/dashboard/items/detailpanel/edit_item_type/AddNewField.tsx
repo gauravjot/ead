@@ -55,8 +55,13 @@ export default function AddNewField({ id }: { id: number | string }) {
         <span>Create new field</span>
 			</button>}
 			<div aria-hidden={!showNewField} className="aria-hidable my-2 rounded-lg">
-        <h4 className="font-medium mt-10 my-4 text-md">Create new field</h4>
-				<form
+        <h4 className="font-medium mt-10 mb-4 text-md">Create new field</h4>
+				{reqError && (
+					<p className="text-red-700 text-bb my-1.5 leading-5">
+						{reqError}
+					</p>
+				)}
+        <form
 					onSubmit={handleSubmit((d) => {
 						console.log(d);
 						console.log(errors);
