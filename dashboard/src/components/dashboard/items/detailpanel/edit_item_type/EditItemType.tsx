@@ -10,6 +10,7 @@ import { AxiosError } from "axios";
 import { ErrorType } from "@/types/api";
 import Button from "@/components/ui/Button";
 import { editItemType } from "@/services/item/edit_item_type";
+import { deleteItemType } from "@/services/item/delete_item_type";
 
 export default function EditItemType({ id }: { id: number | string }) {
 	const adminContext = useContext(AdminContext);
@@ -50,10 +51,35 @@ export default function EditItemType({ id }: { id: number | string }) {
 		},
 	});
 
+  const [deleteCheckbox, setDeleteCheckbox] = useState<boolean>(false);
+  const [deleteItemTypeReqError, setDeleteItemTypeReqError] = useState<string | null>(null);
+	const deleteItemTypeMutation = useMutation({
+		mutationFn: () => {
+			return adminContext.admin
+				? deleteItemType(
+						adminContext.admin?.token,
+						id,
+						// eslint-disable-next-line no-mixed-spaces-and-tabs
+				  )
+				: Promise.reject();
+		},
+		onSuccess: () => {
+			queryClient.resetQueries(["item_type_" + id, "item_type_list"]);
+			setDeleteItemTypeReqError(null);
+			reset();
+		},
+		onError: (error: AxiosError) => {
+			if (error.response) {
+				const res = error.response.data as ErrorType;
+				setDeleteItemTypeReqError(res.message);
+			}
+		},
+	});
+
 	return itemTypeQuery.isSuccess ? (
 		<>
 			{/* edit name and descrition */}
-			<div className="grid grid-cols-2 gap-6 mb-8 mt-4 border-b pb-8">
+			<div className="grid grid-cols-2 gap-6 mb-6 mt-4 border-b pb-8">
 				<div>
 					<h3 className="text-md font-medium text-gray-800 my-4">
 						Name and Description
@@ -123,21 +149,21 @@ export default function EditItemType({ id }: { id: number | string }) {
 			</div>
 
 			<h3 className="text-md font-medium text-gray-800 mb-6">Fields</h3>
-			<div className="border border-gray-300 rounded-lg pb-2 bg-gray-100">
+			<div className="border border-gray-300 rounded-lg pb-2">
 				<table className="w-full">
 					<thead>
-						<tr className="text-left border-b border-gray-200 text-gray-500">
-							<th className="w-1/3 py-2.5 text-bb font-normal pl-4">
+						<tr className="text-left border-b border-gray-300 text-gray-500 uppercase">
+							<th className="w-1/3 py-2.5 text-bb font-medium pl-4">
 								Name
 							</th>
-							<th className="w-full py-2.5 text-bb font-normal pl-4">
+							<th className="w-full py-2.5 text-bb font-medium pl-4">
 								Type
 							</th>
 						</tr>
 					</thead>
 					<tbody>
 						{itemTypeQuery.isSuccess &&
-							itemTypeQuery.data.data.template &&
+              itemTypeQuery.data.data.template?.length > 0 ?
 							itemTypeQuery.data.data.template.map(
 								(field: { n: string; t: string }) => (
 									<tr
@@ -168,11 +194,64 @@ export default function EditItemType({ id }: { id: number | string }) {
 										</td>
 									</tr>
 								)
-							)}
+							) : itemTypeQuery.isSuccess && (!itemTypeQuery.data.data.template || itemTypeQuery.data.data.template?.length < 1) ?
+              <tr>
+                <td colSpan={3} className="text-center bg-white border-b border-gray-200 py-2 text-gray-600 text-bb">
+                No fields available.
+                </td>
+                </tr>
+              : <></>
+            }
 					</tbody>
 				</table>
 			</div>
 			<AddNewField id={id} />
+      {/* ### delete ### */}
+			<div className="border-t grid grid-cols-2 gap-6 my-8 pt-2">
+					<div>
+						<h3 className="text-md font-medium text-gray-800 my-4">
+							Delete
+						</h3>
+						<p className="text-bb text-gray-500">
+							This action cannot be undone. It will also delete all the items within this item type. Are you sure you want to delete this item type?
+						</p>
+						{deleteItemTypeMutation.isError && (
+							<p className="text-bb text-red-700 my-4">
+								{deleteItemTypeReqError || "Unable to reach server."}
+							</p>
+						)}
+				</div>
+				<div className="mt-14">
+					<p className="text-gray-700 text-bb mb-4 flex gap-2">
+						<input
+              type="checkbox"
+              id="continue-delete"
+              onChange={(e) => {
+                setDeleteCheckbox(e.target.checked);
+              }}
+            />
+            <label htmlFor="continue-delete">Yes, I am sure.</label>
+					</p>
+								<Button
+									state={
+										deleteItemTypeMutation.isLoading
+											? "loading"
+											: deleteItemTypeMutation.isSuccess
+											? "done"
+											: "default"
+									}
+									styleType="danger"
+									size="base"
+									outline={true}
+									type="button"
+									children="DELETE"
+									onClick={() => {
+										deleteItemTypeMutation.mutate();
+									}}
+									disabled={deleteItemTypeMutation.isLoading || !deleteCheckbox}
+								/>
+					</div>
+				</div>
 		</>
 	) : itemTypeQuery.isLoading ? (
 		<div className="my-24 flex place-items-center justify-center">

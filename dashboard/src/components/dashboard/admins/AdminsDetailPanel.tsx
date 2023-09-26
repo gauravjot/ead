@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 import { AdminContext } from "@/components/Home";
 import { useForm } from "react-hook-form";
 import InputField from "@/components/ui/InputField";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { AxiosError } from "axios";
 import { ErrorType } from "@/types/api";
 import { changePassword } from "@/services/admins/change_password";
@@ -19,6 +19,7 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 	const adminQuery = useQuery(["admin_" + adminID], () =>
 		getAdmin(adminContext.admin?.token, adminID)
 	);
+  const queryClient = useQueryClient();
 	const admin = adminQuery.isSuccess ? adminQuery.data.data : null;
 
 	// change password form and mutation
@@ -74,6 +75,7 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 			setChangeProfileReqError(null);
 			reset2();
 			adminQuery.refetch();
+      queryClient.resetQueries(['admin_list']);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {
@@ -95,6 +97,7 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 			disableAdminMutation.reset();
 			setDisableAdminReqError(null);
 			adminQuery.refetch();
+      queryClient.resetQueries(['admin_list']);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {
@@ -116,6 +119,7 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 			enableAdminMutation.reset();
 			setEnableAdminReqError(null);
 			adminQuery.refetch();
+      queryClient.resetQueries(['admin_list']);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {

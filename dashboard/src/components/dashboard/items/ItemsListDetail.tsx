@@ -4,6 +4,7 @@ import { ItemTypeType } from "@/types/item";
 import { useContext, useState } from "react";
 import { useQuery } from "react-query";
 import EditItemType from "./detailpanel/edit_item_type/EditItemType";
+import ViewItems from "./detailpanel/ViewItems";
 
 export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 	const adminContext = useContext(AdminContext);
@@ -54,12 +55,13 @@ export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 							" border-b-2 p-2 active:bg-dodger-50"
 						}
 					>
-						Edit
+						Manage
 					</button>
 				</div>
 			</div>
 			<div className="mx-8 max-w-[1400px]">
 				{activeTab === "edit" && <EditItemType id={id} />}
+        {activeTab === "list" && <ViewItems id={id} template={itemtype?.template || null}/>}
 			</div>
 		</>
 	);

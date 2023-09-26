@@ -1,5 +1,4 @@
 export function timeSince(timestamp: string) {
-	console.log(timestamp);
 	const diff = Date.now() - Date.parse(timestamp);
 
 	const seconds = diff / 1000;
