@@ -3,7 +3,7 @@ import { getItemType } from "@/services/item/get_item_type";
 import { ItemTypeType } from "@/types/item";
 import { useContext, useState } from "react";
 import { useQuery } from "react-query";
-import EditItemType from "./detailpanel/EditItemType";
+import EditItemType from "./detailpanel/edit_item_type/EditItemType";
 
 export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 	const adminContext = useContext(AdminContext);
