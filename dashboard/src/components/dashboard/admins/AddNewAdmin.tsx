@@ -5,12 +5,17 @@ import { AddAdminType, addAdmin } from "@/services/admins/add_admin";
 import { AdminEntryType } from "@/types/admin";
 import { ErrorType } from "@/types/api";
 import { AxiosError } from "axios";
-import { useContext, useState } from "react";
+import { useContext, useState, Dispatch, SetStateAction } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 
-export default function AddNewAdmin() {
+export default function AddNewAdmin({
+	setShowDialog,
+}: {
+	setShowDialog: Dispatch<SetStateAction<boolean>>;
+}) {
 	const adminContext = useContext(AdminContext);
+	const queryClient = useQueryClient();
 	const [reqError, setReqError] = useState<string | null>(null);
 	const [reqResponse, setReqResponse] = useState<AdminEntryType | null>(null);
 	const {
@@ -29,6 +34,7 @@ export default function AddNewAdmin() {
 			setReqError(null);
 			reset();
 			setReqResponse(data.data.admin);
+			queryClient.resetQueries(["admin_list"]);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {
@@ -46,7 +52,7 @@ export default function AddNewAdmin() {
 					<p className="text-gray-600">
 						Admin is added successfully. You can close this window now.
 					</p>
-					<div className="mt-10">
+					<div className="mt-10 flex gap-4">
 						<Button
 							state="default"
 							styleType="black"
@@ -55,6 +61,18 @@ export default function AddNewAdmin() {
 							onClick={() => {
 								setReqResponse(null);
 								mutation.reset();
+							}}
+						/>
+						<Button
+							state="default"
+							styleType="black"
+							type="button"
+							children="Close"
+							outline={true}
+							onClick={() => {
+								setShowDialog(false);
+								mutation.reset();
+								setReqResponse(null);
 							}}
 						/>
 					</div>

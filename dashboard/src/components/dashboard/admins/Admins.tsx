@@ -77,7 +77,7 @@ export default function Admins() {
 						</div>
 					</div>
 					<div className="container mx-auto">
-						<AddNewAdmin />
+						<AddNewAdmin setShowDialog={setShowAddUserUI} />
 					</div>
 				</div>
 			</div>

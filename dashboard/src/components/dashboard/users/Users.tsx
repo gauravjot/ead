@@ -74,7 +74,7 @@ export default function Users() {
 						</div>
 					</div>
 					<div className="container mx-auto">
-						<AddNewUser />
+						<AddNewUser setShowDialog={setShowAddUserUI} />
 					</div>
 				</div>
 			</div>

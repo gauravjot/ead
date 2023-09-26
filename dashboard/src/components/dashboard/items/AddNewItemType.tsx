@@ -10,9 +10,13 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { Dispatch, SetStateAction } from "react";
 
-export default function AddNewUser({setShowDialog}: {setShowDialog: Dispatch<SetStateAction<boolean>>}) {
+export default function AddNewUser({
+	setShowDialog,
+}: {
+	setShowDialog: Dispatch<SetStateAction<boolean>>;
+}) {
 	const adminContext = useContext(AdminContext);
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 	const [reqError, setReqError] = useState<string | null>(null);
 	const [reqResponse, setReqResponse] = useState<ItemTypeType | null>(null);
 
@@ -31,7 +35,7 @@ export default function AddNewUser({setShowDialog}: {setShowDialog: Dispatch<Set
 			setReqError(null);
 			reset();
 			setReqResponse(data.data);
-      queryClient.resetQueries(["item_type_list"]);
+			queryClient.resetQueries(["item_type_list"]);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {
@@ -62,18 +66,18 @@ export default function AddNewUser({setShowDialog}: {setShowDialog: Dispatch<Set
 								mutation.reset();
 							}}
 						/>
-            <Button
-              state="default"
-              styleType="black"
-              type="button"
-              children="Close"
-              outline={true}
-              onClick={() => {
-                setShowDialog(false);
-                mutation.reset();
-                setReqResponse(null);
-              }}
-            />
+						<Button
+							state="default"
+							styleType="black"
+							type="button"
+							children="Close"
+							outline={true}
+							onClick={() => {
+								setShowDialog(false);
+								mutation.reset();
+								setReqResponse(null);
+							}}
+						/>
 					</div>
 				</div>
 			)}

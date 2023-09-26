@@ -147,21 +147,21 @@ export default function EditItemType({ id }: { id: number | string }) {
 										<td className="w-1/3 border-b border-gray-200 py-2 text-bb pl-4">
 											{field.n}
 										</td>
-										<td className="relative w-full border-b border-gray-200 py-2 text-sm pl-4 text-gray-600">
+										<td className="relative w-full border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
 											{field.t}
-											<div className="absolute right-0 top-0 mt-1.5 flex gap-1.5 mx-2">
+											<div className="absolute right-0 top-0 mt-1.5 flex gap-1.5 mx-2 font-medium">
 												<button
-													className="px-2 py-1 gap-1.5 place-items-center justify-center opacity-50 hover:opacity-80 focus:opacity-80 focus:outline focus:outline-2 outline-dodger-600 rounded hidden group-hover:flex text-gray-700"
+													className="px-2 py-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-dodger-600 rounded hidden group-hover:flex text-gray-900"
 													title="Rename field"
 												>
 													<span className="ic ic-edit"></span>
 													<span>Rename</span>
 												</button>
 												<button
-													className="px-2 p-1 gap-1.5 place-items-center justify-center opacity-50 hover:opacity-80 focus:opacity-80 focus:outline focus:outline-2 outline-dodger-600 rounded hidden group-hover:flex text-gray-700 hover:text-red-600"
+													className="px-2 p-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-red-600 rounded hidden group-hover:flex text-red-600"
 													title="Delete field"
 												>
-													<span className="ic ic-delete"></span>
+													<span className="ic ic-delete ic-red"></span>
 													<span>Remove</span>
 												</button>
 											</div>

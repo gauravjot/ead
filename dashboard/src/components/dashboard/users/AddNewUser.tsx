@@ -5,13 +5,18 @@ import { AddUserType, addUser } from "@/services/user/add_user";
 import { AdminEntryType } from "@/types/admin";
 import { ErrorType } from "@/types/api";
 import { AxiosError } from "axios";
-import { useContext, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 
-export default function AddNewUser() {
+export default function AddNewUser({
+	setShowDialog,
+}: {
+	setShowDialog: Dispatch<SetStateAction<boolean>>;
+}) {
 	const adminContext = useContext(AdminContext);
 	const [reqError, setReqError] = useState<string | null>(null);
+	const queryClient = useQueryClient();
 	const [reqResponse, setReqResponse] = useState<AdminEntryType | null>(null);
 	const {
 		register,
@@ -28,6 +33,7 @@ export default function AddNewUser() {
 			setReqError(null);
 			reset();
 			setReqResponse(data.data.user);
+			queryClient.resetQueries(["user_list"]);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {
@@ -45,7 +51,7 @@ export default function AddNewUser() {
 					<p className="text-gray-600">
 						User is added successfully. You can close this window now.
 					</p>
-					<div className="mt-10">
+					<div className="mt-10 flex gap-4">
 						<Button
 							state="default"
 							styleType="black"
@@ -54,6 +60,18 @@ export default function AddNewUser() {
 							onClick={() => {
 								setReqResponse(null);
 								mutation.reset();
+							}}
+						/>
+						<Button
+							state="default"
+							styleType="black"
+							type="button"
+							children="Close"
+							outline={true}
+							onClick={() => {
+								setShowDialog(false);
+								mutation.reset();
+								setReqResponse(null);
 							}}
 						/>
 					</div>
