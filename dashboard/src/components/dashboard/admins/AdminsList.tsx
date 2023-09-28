@@ -61,7 +61,7 @@ export default function AdminsList({
 					</button>
 				</div>
 			</div>
-			<div className="flex flex-col gap-4 my-4">
+			<div className="flex flex-col gap-3 my-4">
 				{admins.isSuccess ? (
 					admins.data.data.admins.map((admin: AdminEntryType) => {
 						return (

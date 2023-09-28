@@ -1,6 +1,6 @@
 import { AdminContext } from "@/components/Home";
 import Spinner from "@/components/ui/Spinner";
-import { getAllItemTypes } from "@/services/item/get_all_item_types";
+import { getAllItemTypes } from "@/services/item/item_type/get_all_item_types";
 import { ErrorType } from "@/types/api";
 import { ItemTypeType } from "@/types/item";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
@@ -64,7 +64,7 @@ export default function ItemTypeList({
 					</button>
 				</div>
 			</div>
-			<div className="flex flex-col gap-4 my-4">
+			<div className="flex flex-col gap-3 my-4">
 				{item_types.isSuccess ? (
 					item_types.data.data.map((item: ItemTypeType) => {
 						return (

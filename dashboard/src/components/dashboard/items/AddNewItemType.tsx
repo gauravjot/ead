@@ -1,7 +1,7 @@
 import { AdminContext } from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
-import { AddItemTypeType, addItemType } from "@/services/item/add_item_type";
+import { AddItemTypeType, addItemType } from "@/services/item/item_type/add_item_type";
 import { ErrorType } from "@/types/api";
 import { ItemTypeType } from "@/types/item";
 import { AxiosError } from "axios";

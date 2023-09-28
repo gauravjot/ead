@@ -62,7 +62,7 @@ export default function UsersList({
 					</button>
 				</div>
 			</div>
-			<div className="flex flex-col gap-4 my-4">
+			<div className="flex flex-col gap-3 my-4">
 				{users.isSuccess ? (
 					users.data.data.map((user: UserType) => {
 						return (

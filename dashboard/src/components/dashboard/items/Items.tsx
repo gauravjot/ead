@@ -3,7 +3,7 @@ import Button from "@/components/ui/Button";
 import { ItemTypeType } from "@/types/item";
 import AddNewItemType from "@/components/dashboard/items/AddNewItemType";
 import ItemTypeList from "./ItemTypeList";
-import ItemsListDetailPanel from "./ItemsListDetail";
+import ItemsListDetailPanel from "./detailpanel/ItemsListDetail";
 
 export default function Items() {
 	const [activeItem, setActiveItem] = useState<ItemTypeType>();

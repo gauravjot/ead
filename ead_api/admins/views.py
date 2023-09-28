@@ -289,7 +289,7 @@ def getAllAdmins(request):
         return adminID
     try:
         admins = AdminSerializer(
-            Admin.objects.all().order_by('full_name'), many=True)
+            Admin.objects.all().order_by('-active', 'full_name'), many=True)
         return Response(data=successResponse({"admins": admins.data}), status=status.HTTP_200_OK)
     except Admin.DoesNotExist:
         return Response(data=errorResponse("No admins.", "A0093"), status=status.HTTP_404_NOT_FOUND)

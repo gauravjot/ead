@@ -1,10 +1,10 @@
 import { AdminContext } from "@/components/Home";
-import { getItemType } from "@/services/item/get_item_type";
+import { getItemType } from "@/services/item/item_type/get_item_type";
 import { ItemTypeType } from "@/types/item";
 import { useContext, useState } from "react";
 import { useQuery } from "react-query";
-import EditItemType from "./detailpanel/edit_item_type/EditItemType";
-import ViewItems from "./detailpanel/ViewItems";
+import EditItemType from "./edit_item_type/EditItemType";
+import ViewItems from "./ViewItems";
 
 export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 	const adminContext = useContext(AdminContext);
@@ -61,7 +61,9 @@ export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 			</div>
 			<div className="mx-8 max-w-[1400px]">
 				{activeTab === "edit" && <EditItemType id={id} />}
-        {activeTab === "list" && <ViewItems id={id} template={itemtype?.template || null}/>}
+				{activeTab === "list" && (
+					<ViewItems id={id} template={itemtype?.template || null} />
+				)}
 			</div>
 		</>
 	);

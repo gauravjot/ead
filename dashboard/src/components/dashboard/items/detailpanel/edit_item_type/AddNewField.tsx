@@ -1,7 +1,7 @@
 import { AdminContext } from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
-import { addItemTypeFields } from "@/services/item/add_item_type_field";
+import { addItemTypeFields } from "@/services/item/item_type/add_item_type_field";
 import { ErrorType } from "@/types/api";
 import { AxiosError } from "axios";
 import { useContext, useState } from "react";
