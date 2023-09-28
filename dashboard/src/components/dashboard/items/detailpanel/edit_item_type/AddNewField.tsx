@@ -65,8 +65,6 @@ export default function AddNewField({ id }: { id: number | string }) {
 				)}
 				<form
 					onSubmit={handleSubmit((d) => {
-						console.log(d);
-						console.log(errors);
 						mutation.mutate(JSON.stringify([d]));
 					})}
 				>

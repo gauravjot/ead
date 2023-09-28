@@ -109,3 +109,55 @@ def deleteItemTypeField(request, id):
         item_type = ItemType.objects.get(id=id)
     except ItemType.DoesNotExist:
         return Response(data=errorResponse("Item does not exist.", "I0002"), status=status.HTTP_404_NOT_FOUND)
+
+
+"""
+--------------------------------------------
+ Item methods
+--------------------------------------------
+"""
+
+
+# Get all Items
+# -----------------------------------------------
+@api_view(['GET'])
+def getAllItems(request, id):
+    # Get requesting admin ID
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    l = list()
+    for item in Item.objects.filter(item_type=id).order_by('name'):
+        l.append({
+            'name':item.name,
+            'description':item.description,
+            'active':item.active,
+            'id':item.id,
+            **{i.get("n")+"_c": i.get("v") for i in item.value}
+        })
+    res = successResponse(l)
+    return Response(data=res, status=status.HTTP_200_OK)
+
+
+# Add new Item Type
+# -----------------------------------------------
+@api_view(['POST'])
+def addItem(request):
+    adminID = getAdminID(request)
+    if type(adminID) is Response:
+        return adminID
+    # create serializer
+    itemSerializer = ItemSerializer(data=dict(
+        name=request.data['name'],
+        description=request.data['description'],
+        value=request.data['value'],
+        item_type=request.data['item_type'],
+        active=True
+    ))
+    # if valid then add
+    if itemSerializer.is_valid():
+        itemSerializer.save()
+        return Response(data=successResponse(itemSerializer.data), status=status.HTTP_201_CREATED)
+    else:
+        return Response(data=errorResponse(itemSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
+

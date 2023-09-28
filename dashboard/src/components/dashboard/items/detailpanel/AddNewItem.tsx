@@ -26,7 +26,8 @@ export default function AddNewItem({setShowAddItemBox, itemType} : {setShowAddIt
 		onSuccess: () => {
 			setReqError(null);
 			reset();
-			queryClient.resetQueries(["item_type_" + itemType.id]);
+      setShowAddItemBox(false);
+			queryClient.resetQueries(["items_" + itemType.id]);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response?.data["message"]) {
@@ -67,10 +68,11 @@ export default function AddNewItem({setShowAddItemBox, itemType} : {setShowAddIt
             f.push({n: key as string, v: value as string})
           }
           r["value"] = f;
+          r["item_type"] = itemType.id;
           mutation.mutate(r);
 					})}>
           <fieldset>
-            {reqError && <p className="text-red-700 my-4">{reqError}</p>}
+            {reqError && <p className="text-red-700 my-4">{reqError.toString()}</p>}
             <div className="grid grid-cols-2 gap-6 mt-6">
               <div>
                 <h2 className="text-md font-medium text-gray-800">General Information</h2>
@@ -88,9 +90,9 @@ export default function AddNewItem({setShowAddItemBox, itemType} : {setShowAddIt
                   inputType="text"
                   id="description"
                   label="Description"
+                  isRequired={true}
                   register={register}
                   errors={errors}
-                  isRequired={true}
                   isTextarea={true}
                   textareaSize={6}
                   width="full"

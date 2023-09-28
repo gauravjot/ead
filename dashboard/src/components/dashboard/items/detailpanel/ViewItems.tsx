@@ -1,14 +1,8 @@
 import { AdminContext } from "@/components/Home";
 import { getItems } from "@/services/item/get_items";
+import { ItemType } from "@/types/item";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useQuery } from "react-query";
-
-import {
-	ColumnDef,
-	flexRender,
-	getCoreRowModel,
-	useReactTable,
-} from "@tanstack/react-table";
 
 export default function ViewItems({
 	id,
@@ -20,14 +14,6 @@ export default function ViewItems({
   setShowAddItemBox: Dispatch<SetStateAction<boolean>>;
 }) {
 	const [keyword, setKeyword] = useState<string>("");
-	const columns: ColumnDef<any>[] = [];
-	if (template) {
-		for (let i = 0; i < template.length; i++) {
-			columns.push({
-				header: template[i].n,
-			});
-		}
-	}
 
 	const adminContext = useContext(AdminContext);
 	const items = useQuery(["items_" + id.toString()], () =>
@@ -40,12 +26,6 @@ export default function ViewItems({
 			data.push(items.data.data[i].value);
 		}
 	}
-
-	const table = useReactTable({
-		data,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-	});
 
 	return (
 		<div className="my-4">
@@ -86,41 +66,59 @@ export default function ViewItems({
 				</div>
 			</div>
 			<div className="border border-gray-300 rounded-lg pb-2 my-3">
-				<table className="w-full">
+				<table className="w-full table-fixed">
 					<thead>
-						{table.getHeaderGroups().map((headerGroup) => (
 							<tr
 								className="text-left border-b border-gray-300 text-gray-500 uppercase"
-								key={headerGroup.id}
 							>
-								{headerGroup.headers.map((header) => (
+                <th
+									className="w-1/3 py-2.5 text-bb font-medium px-3 border-r"
+								>
+                  Name
+								</th> 
+                <th
+									className="w-1/3 py-2.5 text-bb font-medium px-3 border-r"
+								>
+                  Description
+								</th> 
+                <th
+									className="w-1/3 py-2.5 text-bb font-medium px-3 border-r"
+								>
+                  Active
+								</th> 
+								{template?.map((header) => (
 									<th
-										className="w-1/3 py-2.5 text-bb font-medium px-3"
-										key={header.id}
+                  className="w-1/3 py-2.5 text-bb font-medium px-3 border-r last:border-0"
+										key={header.n}
 									>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef.header,
-													header.getContext()
-													// eslint-disable-next-line no-mixed-spaces-and-tabs
-											  )}
+                  {header.n}
 									</th>
 								))}
 							</tr>
-						))}
 					</thead>
 					<tbody>
-						{items.isSuccess &&
-							table.getRowModel().rows.map((row) => (
-								<tr key={row.id}>
-									{row.getVisibleCells().map((cell) => (
-										<td key={cell.id}>
-											<span className="truncate">
-												{flexRender(
-													cell.column.columnDef.cell,
-													cell.getContext()
-												)}
+						{items.isSuccess && items.data.data.length > 0 &&
+              items.data.data.map((row) => (
+                <tr key={row.id} className="border-b hover:bg-gray-100">
+                  <td className="w-1/3 py-2.5 text-bb font-medium px-3 border-r truncate" title={row.name}>
+										<span>
+                      {row.name} 
+										</span>
+									</td>
+                  <td className="w-1/3 py-2.5 text-bb font-medium px-3 border-r truncate" title={row.description}>
+										<span>
+                      {row.description}
+										</span>
+									</td>
+                  <td className="w-1/3 py-2.5 text-bb font-medium px-3 border-r truncate">
+										<span>
+                      {row.active ? "Y" : "N"}
+										</span>
+									</td>
+                  {template?.map((cell) => (
+                    <td key={cell["n"]} className="w-1/3 py-2.5 text-bb font-medium px-3 border-r last:border-0 truncate" title={row[cell["n"]+"_c"]}>
+											<span>
+                        {row[cell["n"]+"_c"]}
 											</span>
 										</td>
 									))}
