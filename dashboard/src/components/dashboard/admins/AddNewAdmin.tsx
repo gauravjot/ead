@@ -37,10 +37,13 @@ export default function AddNewAdmin({
 			queryClient.resetQueries(["admin_list"]);
 		},
 		onError: (error: AxiosError) => {
-			if (error.response) {
+			if (error.response?.data["message"]) {
 				const res = error.response.data as ErrorType;
 				setReqError(res.message);
-			}
+			} else {
+        setReqError(error.message);
+      }
+
 		},
 	});
 
@@ -173,7 +176,7 @@ export default function AddNewAdmin({
 								}
 								styleType="black"
 								size="base"
-								children="Add user"
+								children="Add admin"
 								type="submit"
 							/>
 						</div>

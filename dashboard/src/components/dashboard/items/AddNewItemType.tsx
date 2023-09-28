@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { Dispatch, SetStateAction } from "react";
 
-export default function AddNewUser({
+export default function AddNewItemType({
 	setShowDialog,
 }: {
 	setShowDialog: Dispatch<SetStateAction<boolean>>;

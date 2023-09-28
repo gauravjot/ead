@@ -34,10 +34,12 @@ export default function AddNewField({ id }: { id: number | string }) {
 			reset();
 		},
 		onError: (error: AxiosError) => {
-			if (error.response) {
+			if (error.response?.data["message"]) {
 				const res = error.response.data as ErrorType;
 				setReqError(res.message);
-			}
+			} else {
+        setReqError(error.message);
+      }
 		},
 	});
 

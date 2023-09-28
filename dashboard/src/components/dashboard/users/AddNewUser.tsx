@@ -36,10 +36,12 @@ export default function AddNewUser({
 			queryClient.resetQueries(["user_list"]);
 		},
 		onError: (error: AxiosError) => {
-			if (error.response) {
+			if (error.response?.data["message"]) {
 				const res = error.response.data as ErrorType;
-				setReqError(res.message.toString());
-			}
+				setReqError(res.message);
+			} else {
+        setReqError(error.message);
+      }
 		},
 	});
 

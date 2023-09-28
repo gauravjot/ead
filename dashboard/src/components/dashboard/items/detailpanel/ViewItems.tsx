@@ -1,6 +1,6 @@
 import { AdminContext } from "@/components/Home";
 import { getItems } from "@/services/item/get_items";
-import { useContext, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useQuery } from "react-query";
 
 import {
@@ -13,9 +13,11 @@ import {
 export default function ViewItems({
 	id,
 	template,
+  setShowAddItemBox
 }: {
 	id: number | string;
 	template: { n: string; t: string }[] | null;
+  setShowAddItemBox: Dispatch<SetStateAction<boolean>>;
 }) {
 	const [keyword, setKeyword] = useState<string>("");
 	const columns: ColumnDef<any>[] = [];
@@ -50,7 +52,7 @@ export default function ViewItems({
 			<div className="flex place-items-center">
 				<button
 					onClick={() => {
-						console.log("add");
+						setShowAddItemBox(true);
 					}}
 					className="flex place-items-center gap-1.5 text-gray-700 font-normal py-1.5 px-2 hover:bg-gray-100 focus:outline outline-2 rounded outline-dodger-500 text-bb"
 				>

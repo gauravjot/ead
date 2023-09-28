@@ -5,10 +5,12 @@ import { useContext, useState } from "react";
 import { useQuery } from "react-query";
 import EditItemType from "./edit_item_type/EditItemType";
 import ViewItems from "./ViewItems";
+import AddNewItem from "./AddNewItem";
 
 export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 	const adminContext = useContext(AdminContext);
 	const [activeTab, setActiveTab] = useState<"list" | "edit">("list");
+  const [showAddItemBox, setShowAddItemBox] = useState<boolean>(false);
 	const itemTypeQuery = useQuery(["item_type_" + id], () =>
 		getItemType(adminContext.admin?.token, id)
 	);
@@ -17,9 +19,9 @@ export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 		: null;
 
 	return (
-		<>
+		<div className="relative z-10 min-h-[100%]">
 			<div className="border-b">
-				<div className="flex gap-6 px-8 my-8">
+				<div className="flex gap-6 px-8 py-8">
 					<div className="h-16 w-16 bg-gray-200 rounded-full flex place-items-center justify-center capitalize text-4xl text-gray-400">
 						{itemtype?.name[0]}
 					</div>
@@ -62,9 +64,12 @@ export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 			<div className="mx-8 max-w-[1400px]">
 				{activeTab === "edit" && <EditItemType id={id} />}
 				{activeTab === "list" && (
-					<ViewItems id={id} template={itemtype?.template || null} />
-				)}
+          <>
+            {itemtype && showAddItemBox && <AddNewItem setShowAddItemBox={setShowAddItemBox} itemType={itemtype}/>}
+					  <ViewItems id={id} template={itemtype?.template || null} setShowAddItemBox={setShowAddItemBox}/>
+				  </>
+        )}
 			</div>
-		</>
+		</div>
 	);
 }

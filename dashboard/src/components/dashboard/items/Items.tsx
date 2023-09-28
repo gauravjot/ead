@@ -50,7 +50,7 @@ export default function Items() {
 			>
 				{/* clicking empty space closes the box */}
 				<div
-					className="absolute inset-0 bg-black/10"
+					className="absolute inset-0 bg-black/10 z-10"
 					onClick={() => {
 						setShowAddItemTypeUI(false);
 					}}

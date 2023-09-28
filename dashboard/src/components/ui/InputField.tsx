@@ -9,6 +9,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	isRequired?: boolean;
 	isPassword?: boolean;
 	isTextarea?: boolean;
+  textareaSize?: number;
 	minLength?: number;
 	maxLength?: number;
 	errors?: FieldErrors<FieldValues>;
@@ -31,6 +32,7 @@ export default function InputField({
 	isTextarea,
 	register,
 	minLength,
+  textareaSize,
 	isRequired,
 	maxLength,
 	watch,
@@ -108,7 +110,9 @@ export default function InputField({
 						className={styling}
 						aria-invalid={errors && errors[id] ? "true" : "false"}
 						id={id}
+            rows={textareaSize || 2}            
 						{...register(id, validation)}
+            defaultValue={rest["defaultValue"]}
 					/>
 				) : (
 					<input

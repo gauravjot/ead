@@ -54,11 +54,12 @@ export default function UserDetailPanel({ userID }: { userID: string }) {
 			userQuery.refetch();
 		},
 		onError: (error: AxiosError) => {
-			if (error.response) {
+			if (error.response?.data["message"]) {
 				const res = error.response.data as ErrorType;
 				setChangeProfileReqError(res.message);
-			}
-		},
+			} else {
+        setChangeProfileReqError(error.message);
+      }		},
 	});
 
 	return userQuery.isSuccess && user ? (

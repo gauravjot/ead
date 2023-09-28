@@ -44,11 +44,12 @@ export default function EditItemType({ id }: { id: number | string }) {
 			reset();
 		},
 		onError: (error: AxiosError) => {
-			if (error.response) {
+			if (error.response?.data["message"]) {
 				const res = error.response.data as ErrorType;
 				setReqError(res.message);
-			}
-		},
+			} else {
+        setReqError(error.message);
+      }		},
 	});
 
 	const [deleteCheckbox, setDeleteCheckbox] = useState<boolean>(false);
@@ -217,7 +218,7 @@ export default function EditItemType({ id }: { id: number | string }) {
 			</div>
 			<AddNewField id={id} />
 			{/* ### delete ### */}
-			<div className="border-t grid grid-cols-2 gap-6 my-8 pt-2">
+			<div className="border-t grid grid-cols-2 gap-6 mt-8 pb-8 pt-2">
 				<div>
 					<h3 className="text-md font-medium text-gray-800 my-4">Delete</h3>
 					<p className="text-bb text-gray-500">

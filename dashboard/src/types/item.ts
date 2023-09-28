@@ -21,7 +21,7 @@ export type ItemType = {
 	id: number;
 	name: string;
 	description: string;
-	value: { n: string; t: string; v: string }[] | null;
+	value: { n: string; v: string }[] | null;
 	active: boolean;
 	item_type?: ItemTypeType;
 };
