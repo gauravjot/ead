@@ -64,7 +64,7 @@ export default function UserDetailPanel({ userID }: { userID: string }) {
 
 	return userQuery.isSuccess && user ? (
 		<>
-			<div className="border-b sticky top-0">
+			<div className="border-b sticky top-0 z-[5]">
 				<div className="flex gap-6 px-8 py-6">
 					<div className="h-16 w-16 bg-gray-200 rounded-full flex place-items-center justify-center capitalize text-4xl text-gray-400">
 						{user.name[0]}

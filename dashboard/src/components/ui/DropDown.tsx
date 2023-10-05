@@ -62,7 +62,7 @@ export default function DropDown(props: Props) {
 			<div
 				ref={dropDownMenuRef}
 				aria-hidden={!dropDownActive}
-				className="aria-hidable absolute z-10 bg-white top-8 right-0 min-w-[12rem] flex flex-col rounded-md shadow-md px-1 py-0.5 border border-gray-200"
+				className="aria-hidable absolute z-50 bg-white top-8 right-0 min-w-[12rem] flex flex-col rounded-md shadow-md px-1 py-0.5 border border-gray-200"
 			>
 				{props.items.map((item) => {
 					return (

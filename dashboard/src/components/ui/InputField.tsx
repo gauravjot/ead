@@ -127,7 +127,7 @@ export default function InputField({
 				{inputType === "password" && (
 					<button
 						title={showPassword ? "Hide" : "Show"}
-						className="absolute right-0 top-0 bottom-0 p-2.5 z-10"
+						className="absolute right-0 top-0 bottom-0 p-2.5 z-[4]"
 						onClick={(e) => {
 							e.preventDefault();
 							setShowPassword((val) => !val);
