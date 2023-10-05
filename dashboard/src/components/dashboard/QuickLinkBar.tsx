@@ -25,7 +25,7 @@ export function QuickLinkBar() {
 	];
 
 	return (
-		<div className="w-full flex border-b px-6 place-items-center sticky">
+		<div className="w-full flex border-b px-6 place-items-center sticky z-50">
 			<div className="flex flex-1">
 				<button className={buttonStyle}>Quick Tour</button>
 				<button className={buttonStyle}>Statistics</button>

@@ -7,6 +7,8 @@ interface Props {
 	buttonIcon?: string;
 	buttonText?: string;
 	items: DropDownItemType[];
+  iconOnly?: boolean;
+  buttonStyle?: "default" | "icon_only";
 }
 
 export default function DropDown(props: Props) {
@@ -32,6 +34,11 @@ export default function DropDown(props: Props) {
 		window.removeEventListener("click", toggleEventHandler);
 	}
 
+  const buttonStyle = (props.buttonStyle === "icon_only") ? 
+    "rounded-md bg-white hover:bg-gray-100 h-8 w-8 flex place-items-center justify-center" 
+    : "bg-dodger-600/90 hover:bg-dodger-500 flex place-items-center"+
+      " text-sm text-white px-2 py-1 rounded-md shadow-md border border-dodger-600";
+
 	return (
 		<div className="relative">
 			<button
@@ -40,10 +47,10 @@ export default function DropDown(props: Props) {
 				onClick={() => {
 					setDropDownActive((val) => !val);
 				}}
-				className="bg-dodger-600/90 hover:bg-dodger-500 flex place-items-center text-sm text-white px-2 py-1 rounded-md shadow-md border border-dodger-600"
+				className={buttonStyle}
 			>
 				{props.buttonIcon && (
-					<span className={"ic-md ic-white " + props.buttonIcon}></span>
+					<span className={"ic-md " + props.buttonIcon + (props.iconOnly ? " ic-gray-50" : " ic-white")}></span>
 				)}
 				{props.buttonText && (
 					<span className="pl-2 pr-4">{props.buttonText}</span>
@@ -55,7 +62,7 @@ export default function DropDown(props: Props) {
 			<div
 				ref={dropDownMenuRef}
 				aria-hidden={!dropDownActive}
-				className="aria-hidable absolute bg-white top-8 right-0 min-w-[12rem] flex flex-col rounded-md shadow-md px-1 py-0.5 border border-gray-200"
+				className="aria-hidable absolute z-10 bg-white top-8 right-0 min-w-[12rem] flex flex-col rounded-md shadow-md px-1 py-0.5 border border-gray-200"
 			>
 				{props.items.map((item) => {
 					return (

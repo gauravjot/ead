@@ -4,7 +4,7 @@ import Spinner from "@/components/ui/Spinner";
 interface Props {
 	children: React.ReactNode;
 	onClick?: () => void;
-	styleType: "primary" | "black" | "danger" | "white_opaque";
+	styleType: "primary" | "black" | "danger" | "white_opaque" | "no_border_opaque";
 	state: "default" | "loading" | "done";
 	type: "button" | "submit" | "reset";
 	size?: "xsmall" | "base" | "small" | "large";
@@ -29,6 +29,7 @@ export default function Button(props: Props) {
 			? "border border-red-600 text-red-600 outline-red-200 focus:bg-red-50"
 			: "bg-red-600 text-white outline-red-200 focus:bg-red-700",
 		white_opaque: "bg-white/20 text-white outline-white/10 focus:bg-white/50",
+    no_border_opaque: "border border-transparent shadow-none outline-dodger-100 focus:border-dodger-400 focus:outline-dodger-200"
 	};
 	const buttonSizing =
 		(props.size === "base"
