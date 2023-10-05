@@ -1,13 +1,24 @@
+import { Dispatch, SetStateAction, useState } from "react";
 import Button from "../Button";
 import TableOptions from "./Options";
 
 export default function Table({columns, rows} : {columns: string[], rows: {}[]}) {
+  const [sortColumn, setSortColumn] = useState<string|null>(null);
+  const [sortOrder, setSortOrder] = useState<"ascending" | "descending">("ascending");
+
   return (
-    <table className="w-full table-fixed">
+    <div className="overflow-y-auto w-full relative">
+    <table className="w-full">
       <thead>
         <tr className="border-b border-gray-300">
           
-          <THeader columns={columns}/>
+          <THeader
+            columns={columns}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            sortColumn={sortColumn}
+            setSortColumn={setSortColumn}
+          />
           <TableOptions columns={columns} />
         </tr>
       </thead>
@@ -15,12 +26,32 @@ export default function Table({columns, rows} : {columns: string[], rows: {}[]})
         <TCell columns={columns} rows={rows} />
       </tbody>
     </table>
+    </div>
   )
 }
 
-function THeader({columns} : {columns: string[]}) {
+function THeader({columns, sortOrder, setSortOrder, sortColumn, setSortColumn} : {columns: string[], sortOrder: "ascending" | "descending", setSortOrder: Dispatch<SetStateAction<"ascending" | "descending">>, sortColumn: string | null, setSortColumn: Dispatch<SetStateAction<string | null>>}) {
+
   return columns.map((col) => {
-    return <td key={col} className="text-gray-600 font-medium text-bb uppercase px-2 py-2">{col.replaceAll("_c","")}</td>;
+    return (<td 
+      key={col} 
+      className="select-none min-w-[10rem] font-medium text-bb uppercase px-2 py-2 hover:bg-gray-100 cursor-pointer"
+      onClick={() => {
+        if (sortColumn === col) {
+          // just change sort sortOrder
+          setSortOrder((val) => (val === "ascending") ? "descending" : "ascending");
+        } else {
+          setSortColumn(col);
+          setSortOrder("ascending");
+        } 
+      }}>
+        <div className="flex place-items-center gap-1">
+          {sortColumn === col && <div className={"block ic " + (sortOrder === "ascending" ? "ic-up-arrow rotate-180" : "ic-up-arrow")}></div>}
+          <span className={sortColumn === col ? "text-gray-600 font-bold" : "text-gray-500"}>
+            {col.replaceAll("_c","")}
+          </span>
+        </div>
+    </td>);
   })
 }
 
@@ -48,8 +79,9 @@ function TCell({columns, rows} : {columns: string[], rows: {[key: string]: strin
                 {row[col]}
               </td>
           })}
-          <td>
-            <div className="hidden group-hover:flex place-items-center justify-end gap-2 px-2">
+          <td className="absolute right-0">
+            <div className="hidden group-hover:block">
+              <div className="flex place-items-center gap-2 bg-gradient-to-r from-gray-100/50 via-gray-100 to-gray-100 px-2">               
               <Button
                 state="default"
                 size="xsmall"
@@ -68,6 +100,7 @@ function TCell({columns, rows} : {columns: string[], rows: {[key: string]: strin
                 children={<></>}
                 icon="delete"
               />
+              </div>
             </div>
           </td>
         </tr>
