@@ -56,7 +56,7 @@ export default function Users() {
 					}}
 				></div>
 				{/* dialog box content */}
-				<div className="bg-white shadow-xl px-4 py-6 sm:px-8 sm:py-12 relative z-10">
+				<div className="bg-white shadow-xl px-4 py-6 sm:px-8 sm:py-12 relative z-20">
 					<div className="flex container mx-auto">
 						<h1 className="text-2xl flex-1 font-bold tracking-tight mb-3 xl:min-w-[45rem]">
 							Add new user

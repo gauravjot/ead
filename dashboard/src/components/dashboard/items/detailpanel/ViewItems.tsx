@@ -1,6 +1,6 @@
 import { AdminContext } from "@/components/Home";
+import Table from "@/components/ui/table/Table";
 import { getItems } from "@/services/item/get_items";
-import { ItemType } from "@/types/item";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { useQuery } from "react-query";
 
@@ -65,67 +65,12 @@ export default function ViewItems({
 					</div>
 				</div>
 			</div>
-			<div className="border border-gray-300 rounded-lg pb-2 my-3">
-				<table className="w-full table-fixed">
-					<thead>
-							<tr
-								className="text-left border-b border-gray-300 text-gray-500 uppercase"
-							>
-                <th
-									className="w-1/3 py-2.5 text-bb font-medium px-3 border-r"
-								>
-                  Name
-								</th> 
-                <th
-									className="w-1/3 py-2.5 text-bb font-medium px-3 border-r"
-								>
-                  Description
-								</th> 
-                <th
-									className="w-1/3 py-2.5 text-bb font-medium px-3 border-r"
-								>
-                  Active
-								</th> 
-								{template?.map((header) => (
-									<th
-                  className="w-1/3 py-2.5 text-bb font-medium px-3 border-r last:border-0"
-										key={header.n}
-									>
-                  {header.n}
-									</th>
-								))}
-							</tr>
-					</thead>
-					<tbody>
-						{items.isSuccess && items.data.data.length > 0 &&
-              items.data.data.map((row) => (
-                <tr key={row.id} className="border-b hover:bg-gray-100">
-                  <td className="w-1/3 py-2.5 text-bb font-medium px-3 border-r truncate" title={row.name}>
-										<span>
-                      {row.name} 
-										</span>
-									</td>
-                  <td className="w-1/3 py-2.5 text-bb font-medium px-3 border-r truncate" title={row.description}>
-										<span>
-                      {row.description}
-										</span>
-									</td>
-                  <td className="w-1/3 py-2.5 text-bb font-medium px-3 border-r truncate">
-										<span>
-                      {row.active ? "Y" : "N"}
-										</span>
-									</td>
-                  {template?.map((cell) => (
-                    <td key={cell["n"]} className="w-1/3 py-2.5 text-bb font-medium px-3 border-r last:border-0 truncate" title={row[cell["n"]+"_c"]}>
-											<span>
-                        {row[cell["n"]+"_c"]}
-											</span>
-										</td>
-									))}
-								</tr>
-							))}
-					</tbody>
-				</table>
+			<div className="my-4">
+          {items.isSuccess && items.data && template && 
+            <Table
+              columns={[ 'name', 'description', 'active', ...template.map((obj)=>obj.n+"_c")]} 
+              rows={items.data.data}              
+            />}
 			</div>
 		</div>
 	);

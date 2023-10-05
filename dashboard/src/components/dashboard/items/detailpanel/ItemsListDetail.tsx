@@ -20,8 +20,8 @@ export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 
 	return (
 		<div className="relative z-10 min-h-[100%]">
-			<div className="border-b">
-				<div className="flex gap-6 px-8 py-8">
+			<div className="border-b sticky top-0 bg-white z-10">
+				<div className="flex gap-6 px-8 py-6">
 					<div className="h-16 w-16 bg-gray-200 rounded-full flex place-items-center justify-center capitalize text-4xl text-gray-400">
 						{itemtype?.name[0]}
 					</div>

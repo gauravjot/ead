@@ -110,9 +110,9 @@ export default function AddNewItem({setShowAddItemBox, itemType} : {setShowAddIt
                     errors={errors}
                     isRequired={true}
                     width="full"
-                  /> : <label key={field.n} htmlFor={field.n.replace(" ","_")} className="flex place-items-center w-full block my-5 text-bb text-gray-600 group">
+                  /> : <label key={field.n} htmlFor={field.n.replace(" ","_")} className="flex place-items-center w-full block mt-6 mb-4 text-bb text-gray-600 group cursor-pointer">
                       <span className="flex-1">{field.n}</span>
-                      <input className="group-hover:outline outline-2 rounded-md outline-dodger-200 w-4 h-4" type="checkbox" id={field.n.replace(" ","_")}/>
+                      <input type="checkbox" id={field.n.replace(" ","_")} {...register(field.n.replace(" ","_"))}/>
                     </label>
                 })}
               </div>

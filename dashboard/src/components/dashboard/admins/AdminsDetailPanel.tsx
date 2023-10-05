@@ -131,14 +131,15 @@ export default function AdminsDetailPanel({ adminID }: { adminID: string }) {
 
 	return admin && adminQuery.isSuccess ? (
 		<>
-			<div className="border-b">
-				<div className="flex gap-6 px-8 my-8">
+			<div className="border-b sticky top-0 bg-white z-20">
+				<div className="flex gap-6 px-8 py-6">
 					<div className="h-16 w-16 bg-gray-200 rounded-full flex place-items-center justify-center capitalize text-4xl text-gray-400">
 						{admin.full_name[0]}
 					</div>
 					<div>
-						<h1 className="text-3xl tracking-tight">{admin.full_name} </h1>
+						<h1 className="text-3xl tracking-tight">{admin.full_name}{" "}
 						<span className="text-gray-600 text-bb">@{admin.username}</span>
+            </h1>
 						<div className="text-gray-500">{admin.title}</div>
 					</div>
 				</div>
