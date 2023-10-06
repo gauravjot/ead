@@ -41,7 +41,7 @@ export default function AddNewItem({setShowAddItemBox, itemType} : {setShowAddIt
 
   return (
 		<div className="fixed inset-0 bg-black/10 z-50 flex place-items-center justify-center">   
-      <div className="bg-white max-w-[60rem] w-full px-8 py-6 rounded-md shadow-md">
+      <div className="bg-white max-w-[60rem] w-full px-8 py-6 rounded-md shadow-md max-h-[80%] overflow-y-auto">
 			  <div className="flex flex-row">
           <h1 className="text-2xl flex-1 font-bold tracking-tight">Add new item</h1>
           <div>
