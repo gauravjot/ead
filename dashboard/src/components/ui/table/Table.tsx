@@ -25,7 +25,11 @@ export default function Table({columns, rows} : {columns: string[], rows: {}[]})
         </tr>
       </thead>
       <tbody>
-        <TCell columns={columns} rows={rows} />
+        <TCell
+            columns={columns} 
+            rows={rows} 
+            sortColumn={sortColumn} 
+            sortOrder={sortOrder} />
       </tbody>
     </table>
     </div>
@@ -46,7 +50,8 @@ function THeader({columns, sortOrder, setSortOrder, sortColumn, setSortColumn} :
           setSortColumn(col);
           setSortOrder("ascending");
         } 
-      }}>
+      }}
+      title={col.replaceAll("_c","")}>
         <div className="flex place-items-center gap-1">
           {sortColumn === col && <div className={"block ic " + (sortOrder === "ascending" ? "ic-up-arrow rotate-180" : "ic-up-arrow")}></div>}
           <span className={sortColumn === col ? "text-gray-600 font-bold" : "text-gray-500"}>
@@ -61,9 +66,19 @@ const cellStyle = "py-2 px-3 text-sm truncate first:font-medium" +
   " text-gray-700 first:underline first:underline-offset-2" +
   " first:hover:cursor-pointer first:sticky first:left-0 first:bg-gray-50 first:border-r first:mx-px first:border-separate min-w-[6rem] max-w-[14rem]";
 
-function TCell({columns, rows} : {columns: string[], rows: {[key: string]: string | boolean | number;}[]}) {
+function TCell({columns, rows, sortColumn, sortOrder} : {columns: string[], rows: {[key: string]: string | boolean | number}[], sortColumn: string | null, sortOrder: "ascending" | "descending"}) {
+  if (sortColumn) {
+    if(sortOrder == "ascending") {
+      rows.sort((a,b) => (a[sortColumn]||"").toString() > (b[sortColumn]||"").toString() ? 1 : -1);
+    } else {
+      rows.sort((a,b) => (a[sortColumn]||"").toString() < (b[sortColumn]||"").toString() ? 1 : -1);
+    }
+    console.log(rows)
+    console.log(sortColumn)
+  }
+  
   return <>
-    {rows.map((row) => {
+    {rows && rows.map((row) => {
       return (
         <tr className="group w-full border-b last:border-b-0 hover:bg-gray-100 relative">
           {columns.map((col) => {
