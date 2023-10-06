@@ -61,7 +61,7 @@ export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 					</button>
 				</div>
 			</div>
-			<div className="mx-8 max-w-[1400px]">        
+			<div className="mx-8">        
 				{activeTab === "edit" && <EditItemType id={id} />}
 				{activeTab === "list" && (
           <>

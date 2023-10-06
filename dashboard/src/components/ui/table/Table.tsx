@@ -19,7 +19,9 @@ export default function Table({columns, rows} : {columns: string[], rows: {}[]})
             sortColumn={sortColumn}
             setSortColumn={setSortColumn}
           />
-          <TableOptions columns={columns} />
+          <th className="sticky right-0 z-[4]">
+            <TableOptions columns={columns} />
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -35,7 +37,7 @@ function THeader({columns, sortOrder, setSortOrder, sortColumn, setSortColumn} :
   return columns.map((col) => {
     return (<td 
       key={col} 
-      className="select-none min-w-[10rem] font-medium text-bb uppercase px-2 py-2 hover:bg-gray-100 cursor-pointer"
+      className="select-none min-w-[6rem] max-w-[14rem] font-medium text-bb uppercase px-3 py-2 hover:bg-gray-100 cursor-pointer first:sticky first:left-0 first:bg-white first:border-r"
       onClick={() => {
         if (sortColumn === col) {
           // just change sort sortOrder
@@ -55,18 +57,18 @@ function THeader({columns, sortOrder, setSortOrder, sortColumn, setSortColumn} :
   })
 }
 
-const cellStyle = "py-2 px-2 text-sm truncate first:font-medium" +
+const cellStyle = "py-2 px-3 text-sm truncate first:font-medium" +
   " text-gray-700 first:underline first:underline-offset-2" +
-  " first:hover:cursor-pointer";
+  " first:hover:cursor-pointer first:sticky first:left-0 first:bg-gray-50 first:border-r first:mx-px first:border-separate min-w-[6rem] max-w-[14rem]";
 
 function TCell({columns, rows} : {columns: string[], rows: {[key: string]: string | boolean | number;}[]}) {
   return <>
     {rows.map((row) => {
       return (
-        <tr className="group w-full border-b last:border-b-0 hover:bg-gray-100">
+        <tr className="group w-full border-b last:border-b-0 hover:bg-gray-100 relative">
           {columns.map((col) => {
             return typeof(row[col]) === "boolean" ? 
-              <td className="text-center px-2">
+              <td className="text-center min-w-[6rem] max-w-[14rem] px-2">
                 {row[col] ?
                   <div className="bg-dodger-600 rounded-full w-3 h-3 flex place-items-center justify-center">
                     <span className="ic-sm ic-white ic-done"></span>
@@ -80,8 +82,8 @@ function TCell({columns, rows} : {columns: string[], rows: {[key: string]: strin
               </td>
           })}
           <td className="absolute right-0">
-            <div className="hidden group-hover:block">
-              <div className="flex place-items-center gap-2 bg-gradient-to-r from-gray-100/50 via-gray-100 to-gray-100 px-2">               
+            <div className="hidden group-hover:block w-full">
+              <div className="flex place-items-center gap-2 bg-gradient-to-r from-gray-100/80 via-gray-100 to-gray-100 pl-8 pr-2">               
               <Button
                 state="default"
                 size="xsmall"
