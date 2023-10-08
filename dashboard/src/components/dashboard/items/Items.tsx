@@ -19,12 +19,12 @@ export default function Items() {
 						</div>
 						<div>
 							<Button
-								state="default"
-								styleType="primary"
-								type="button"
-								children="Add"
-								size="xsmall"
-								outline={true}
+								elementState="default"
+								elementStyle="primary"
+								elementType="button"
+								elementChildren="Add"
+								elementSize="xsmall"
+								elementInvert={true}
 								onClick={() => {
 									setShowAddItemTypeUI(true);
 									window.setTimeout(

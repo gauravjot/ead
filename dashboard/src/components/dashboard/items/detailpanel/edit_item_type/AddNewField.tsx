@@ -1,14 +1,14 @@
-import { AdminContext } from "@/components/Home";
+import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
-import { addItemTypeFields } from "@/services/item/item_type/add_item_type_field";
-import { ErrorType } from "@/types/api";
-import { AxiosError } from "axios";
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
+import {handleAxiosError} from "@/components/utils/HandleAxiosError";
+import {addItemTypeFields} from "@/services/item/item_type/add_item_type_field";
+import {AxiosError} from "axios";
+import {useContext, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useMutation, useQueryClient} from "react-query";
 
-export default function AddNewField({ id }: { id: number | string }) {
+export default function AddNewField({id}: {id: number | string}) {
 	const adminContext = useContext(AdminContext);
 	const queryClient = useQueryClient();
 	const [showNewField, setShowNewField] = useState<boolean>(false);
@@ -16,7 +16,7 @@ export default function AddNewField({ id }: { id: number | string }) {
 		register,
 		handleSubmit,
 		reset,
-		formState: { errors },
+		formState: {errors},
 		clearErrors,
 	} = useForm();
 
@@ -34,12 +34,7 @@ export default function AddNewField({ id }: { id: number | string }) {
 			reset();
 		},
 		onError: (error: AxiosError) => {
-			if (error.response?.data["message"]) {
-				const res = error.response.data as ErrorType;
-				setReqError(res.message);
-			} else {
-        setReqError(error.message);
-      }
+			handleAxiosError(error, setReqError);
 		},
 	});
 
@@ -60,9 +55,7 @@ export default function AddNewField({ id }: { id: number | string }) {
 			)}
 			<div aria-hidden={!showNewField} className="aria-hidable my-2 rounded-lg">
 				<h4 className="font-medium mt-10 mb-4 text-md">Create new field</h4>
-				{reqError && (
-					<p className="text-red-700 text-bb my-1.5 leading-5">{reqError}</p>
-				)}
+				{reqError && <p className="text-red-700 text-bb my-1.5 leading-5">{reqError}</p>}
 				<form
 					onSubmit={handleSubmit((d) => {
 						mutation.mutate(JSON.stringify([d]));
@@ -79,42 +72,33 @@ export default function AddNewField({ id }: { id: number | string }) {
 							<div>
 								<input
 									type="radio"
-									id="text"
+									elementId="text"
 									value="text"
-									{...register("t", { required: "Choose field type" })}
+									{...register("t", {required: "Choose field type"})}
 								/>
-								<label
-									className="pl-2 cursor-pointer text-bb"
-									htmlFor="text"
-								>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="text">
 									Text
 								</label>
 							</div>
 							<div>
 								<input
 									type="radio"
-									id="number"
+									elementId="number"
 									value="number"
-									{...register("t", { required: "Choose field type" })}
+									{...register("t", {required: "Choose field type"})}
 								/>
-								<label
-									className="pl-2 cursor-pointer text-bb"
-									htmlFor="number"
-								>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="number">
 									Number
 								</label>
 							</div>
 							<div>
 								<input
 									type="radio"
-									id="boolean"
+									elementId="boolean"
 									value="boolean"
-									{...register("t", { required: "Choose field type" })}
+									{...register("t", {required: "Choose field type"})}
 								/>
-								<label
-									className="pl-2 cursor-pointer text-bb"
-									htmlFor="boolean"
-								>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="boolean">
 									Boolean
 								</label>
 							</div>
@@ -127,30 +111,30 @@ export default function AddNewField({ id }: { id: number | string }) {
 						{
 							<>
 								<InputField
-									inputType="text"
-									id="n"
-									label="Field name"
-									errors={errors}
-									register={register}
-									isRequired={true}
-									minLength={2}
-									maxLength={24}
+									elementInputType="text"
+									elementId="n"
+									elementLabel="Field name"
+									elementHookFormErrors={errors}
+									elementHookFormRegister={register}
+									elementIsRequired={true}
+									elementInputMinLength={2}
+									elementInputMaxLength={24}
 								/>
 								<div className="mt-6 flex gap-3">
 									<Button
-										state={mutation.isLoading ? "loading" : "default"}
-										styleType="black"
-										size="base"
-										children="Add field"
-										type="submit"
+										elementState={mutation.isLoading ? "loading" : "default"}
+										elementStyle="black"
+										elementSize="base"
+										elementChildren="Add field"
+										elementType="submit"
 									/>
 									<Button
-										state="default"
-										outline={true}
-										styleType="black"
-										size="base"
-										children="Cancel"
-										type="button"
+										elementState="default"
+										elementInvert={true}
+										elementStyle="black"
+										elementSize="base"
+										elementChildren="Cancel"
+										elementType="button"
 										onClick={() => {
 											setShowNewField(false);
 											reset();

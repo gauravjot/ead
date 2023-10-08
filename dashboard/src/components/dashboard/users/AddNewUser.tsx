@@ -1,13 +1,13 @@
-import { AdminContext } from "@/components/Home";
+import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
-import { AddUserType, addUser } from "@/services/user/add_user";
-import { AdminEntryType } from "@/types/admin";
-import { ErrorType } from "@/types/api";
-import { AxiosError } from "axios";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
+import {handleAxiosError} from "@/components/utils/HandleAxiosError";
+import {AddUserType, addUser} from "@/services/user/add_user";
+import {AdminEntryType} from "@/types/admin";
+import {AxiosError} from "axios";
+import {Dispatch, SetStateAction, useContext, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useMutation, useQueryClient} from "react-query";
 
 export default function AddNewUser({
 	setShowDialog,
@@ -22,7 +22,7 @@ export default function AddNewUser({
 		register,
 		handleSubmit,
 		reset,
-		formState: { errors },
+		formState: {errors},
 	} = useForm();
 
 	const mutation = useMutation({
@@ -36,12 +36,7 @@ export default function AddNewUser({
 			queryClient.resetQueries(["user_list"]);
 		},
 		onError: (error: AxiosError) => {
-			if (error.response?.data["message"]) {
-				const res = error.response.data as ErrorType;
-				setReqError(res.message);
-			} else {
-        setReqError(error.message);
-      }
+			handleAxiosError(error, setReqError);
 		},
 	});
 
@@ -55,21 +50,21 @@ export default function AddNewUser({
 					</p>
 					<div className="mt-10 flex gap-4">
 						<Button
-							state="default"
-							styleType="black"
-							type="button"
-							children="Add another"
+							elementState="default"
+							elementStyle="black"
+							elementType="button"
+							elementChildren="Add another"
 							onClick={() => {
 								setReqResponse(null);
 								mutation.reset();
 							}}
 						/>
 						<Button
-							state="default"
-							styleType="black"
-							type="button"
-							children="Close"
-							outline={true}
+							elementState="default"
+							elementStyle="black"
+							elementType="button"
+							elementChildren="Close"
+							elementInvert={true}
 							onClick={() => {
 								setShowDialog(false);
 								mutation.reset();
@@ -90,76 +85,72 @@ export default function AddNewUser({
 						<div className="grid sm:grid-cols-2 grid-cols-1 gap-12">
 							<div>
 								<InputField
-									id="name"
-									isRequired={true}
-									minLength={2}
-									errors={errors}
-									inputType="text"
-									register={register}
-									label="Name"
-									width="full"
-									maxLength={48}
+									elementId="name"
+									elementIsRequired={true}
+									elementInputMinLength={2}
+									elementHookFormErrors={errors}
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Name"
+									elementWidth="full"
+									elementInputMaxLength={48}
 								/>
 
 								<InputField
-									id="title"
-									inputType="text"
-									register={register}
-									label="Job Title"
-									isRequired={true}
-									errors={errors}
-									width="full"
-									maxLength={48}
+									elementId="title"
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Job Title"
+									elementIsRequired={true}
+									elementHookFormErrors={errors}
+									elementWidth="full"
+									elementInputMaxLength={48}
 								/>
 							</div>
 							<div>
 								<InputField
-									id="email"
-									minLength={0}
-									maxLength={64}
-									inputType="text"
-									register={register}
-									label="Email"
-									errors={errors}
-									width="full"
+									elementId="email"
+									elementInputMinLength={0}
+									elementInputMaxLength={64}
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Email"
+									elementHookFormErrors={errors}
+									elementWidth="full"
 								/>
 								<InputField
-									id="phone"
-									inputType="text"
-									register={register}
-									label="Phone"
-									minLength={0}
-									maxLength={20}
-									errors={errors}
-									width="full"
+									elementId="phone"
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Phone"
+									elementInputMinLength={0}
+									elementInputMaxLength={20}
+									elementHookFormErrors={errors}
+									elementWidth="full"
 								/>
 							</div>
 						</div>
 
 						<div className="mt-6 flex gap-6 justify-center">
 							<Button
-								state="default"
-								styleType="black"
-								outline={true}
-								size="base"
-								children="Reset"
-								type="reset"
+								elementState="default"
+								elementStyle="black"
+								elementInvert={true}
+								elementSize="base"
+								elementChildren="Reset"
+								elementType="reset"
 								onClick={() => {
 									reset();
 								}}
 							/>
 							<Button
-								state={
-									mutation.isLoading
-										? "loading"
-										: mutation.isSuccess
-										? "done"
-										: "default"
+								elementState={
+									mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
 								}
-								styleType="black"
-								size="base"
-								children="Add user"
-								type="submit"
+								elementStyle="black"
+								elementSize="base"
+								elementChildren="Add user"
+								elementType="submit"
 							/>
 						</div>
 					</fieldset>

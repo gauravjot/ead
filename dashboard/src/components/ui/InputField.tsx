@@ -1,43 +1,43 @@
-import { InputHTMLAttributes, useState } from "react";
-import { FieldErrors, FieldValues, UseFormRegister, UseFormWatch } from "react-hook-form";
+import {InputHTMLAttributes, useState} from "react";
+import {FieldErrors, FieldValues, UseFormRegister, UseFormWatch} from "react-hook-form";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-	id: string;
-	label: string;
-	inputType: "text" | "number" | "password" | "email";
-	register: UseFormRegister<FieldValues>;
-	isRequired?: boolean;
-	isPassword?: boolean;
-	isTextarea?: boolean;
-  textareaSize?: number;
-	minLength?: number;
-	maxLength?: number;
-	errors?: FieldErrors<FieldValues>;
-	watch?: UseFormWatch<FieldValues>;
-	watchField?: string;
-	width?: "auto" | "full";
+	elementId: string;
+	elementLabel: string;
+	elementInputType: "text" | "number" | "password" | "email";
+	elementHookFormRegister: UseFormRegister<FieldValues>;
+	elementHookFormErrors?: FieldErrors<FieldValues>;
+	elementHookFormWatch?: UseFormWatch<FieldValues>;
+	elementHookFormWatchField?: string;
+	elementIsRequired?: boolean;
+	elementInputMinLength?: number;
+	elementInputMaxLength?: number;
+	elementIsPassword?: boolean;
+	elementIsTextarea?: boolean;
+	elementTextareaRows?: number;
+	elementWidth?: "auto" | "full";
 }
 type ValidationType = {
 	required?: string;
-	minLength?: { value: number; message: string };
-	maxLength?: { value: number; message: string };
-	validate?: { [key: string]: (val: string) => string | undefined };
+	minLength?: {value: number; message: string};
+	maxLength?: {value: number; message: string};
+	validate?: {[key: string]: (val: string) => string | undefined};
 };
 export default function InputField({
-	errors,
-	id,
-	inputType,
-	label,
-	isPassword,
-	isTextarea,
-	register,
-	minLength,
-  textareaSize,
-	isRequired,
-	maxLength,
-	watch,
-	watchField,
-	width,
+	elementHookFormErrors: errors,
+	elementId: id,
+	elementWidth: width,
+	elementInputType: inputType,
+	elementLabel: label,
+	elementIsPassword: isPassword,
+	elementIsTextarea: isTextarea,
+	elementTextareaRows: textareaSize,
+	elementHookFormRegister: register,
+	elementInputMinLength: minLength,
+	elementIsRequired: isRequired,
+	elementInputMaxLength: maxLength,
+	elementHookFormWatch: watch,
+	elementHookFormWatchField: watchField,
 	...rest
 }: InputProps) {
 	const [showPassword, setShowPassword] = useState(false);
@@ -83,7 +83,7 @@ export default function InputField({
 
 	const styling =
 		"block w-full border px-3 py-1.5 rounded-md focus-visible:outline" +
-		" outline-dodger-200 outline-[3px] focus-visible:border-dodger-500" +
+		" outline-primary-200 outline-[3px] focus-visible:border-primary-500" +
 		" hover:outline transition:all disabled:bg-blue-50 disabled:text-gray-500" +
 		(errors && errors[id]
 			? " border-red-700 bg-red-50/30 focus-visible:bg-white"
@@ -101,25 +101,24 @@ export default function InputField({
 			</label>
 			<div
 				className={
-					"relative" +
-					(width && width === "full" ? " w-full" : " w-full max-w-[20rem]")
+					"relative" + (width && width === "full" ? " w-full" : " w-full max-w-[20rem]")
 				}
 			>
 				{isTextarea ? (
 					<textarea
 						className={styling}
 						aria-invalid={errors && errors[id] ? "true" : "false"}
-						id={id}
-            rows={textareaSize || 2}            
+						elementId={id}
+						rows={textareaSize || 2}
 						{...register(id, validation)}
-            defaultValue={rest["defaultValue"]}
+						defaultValue={rest["defaultValue"]}
 					/>
 				) : (
 					<input
 						aria-invalid={errors && errors[id] ? "true" : "false"}
 						className={styling}
 						type={showPassword ? "text" : inputType}
-						id={id}
+						elementId={id}
 						{...register(id, validation)}
 						{...rest}
 					/>

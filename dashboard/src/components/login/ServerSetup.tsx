@@ -1,10 +1,10 @@
-import { doServerSetup } from "@/services/auth/server_setup";
-import React, { Dispatch, SetStateAction } from "react";
-import { useMutation } from "react-query";
-import { AxiosError } from "axios";
-import { ErrorType } from "@/types/api";
+import {doServerSetup} from "@/services/auth/server_setup";
+import React, {Dispatch, SetStateAction} from "react";
+import {useMutation} from "react-query";
+import {AxiosError} from "axios";
+import {ErrorType} from "@/types/api";
 import Button from "../ui/Button";
-import { AdminType } from "@/types/admin";
+import {AdminType} from "@/types/admin";
 
 export default function ServerSetup({
 	setAdmin,
@@ -19,7 +19,7 @@ export default function ServerSetup({
 			return doServerSetup(password);
 		},
 		onSuccess: (data) => {
-			setAdmin({ ...data.data.admin, token: data.data.token });
+			setAdmin({...data.data.admin, token: data.data.token});
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {
@@ -46,9 +46,7 @@ export default function ServerSetup({
 							The username for administrative account is{" "}
 							<span className="italic">root</span> and cannot be changed.
 						</li>
-						<li className="my-2">
-							You can change password of root account later.
-						</li>
+						<li className="my-2">You can change password of root account later.</li>
 						<li>Root account cannot be disabled.</li>
 					</ul>
 				</div>
@@ -77,7 +75,7 @@ export default function ServerSetup({
 						<input
 							className="block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300 disabled:bg-blue-50 disabled:text-gray-500"
 							type="text"
-							id="username1"
+							elementId="username1"
 							name="username"
 							value="root"
 							disabled={true}
@@ -96,7 +94,7 @@ export default function ServerSetup({
 									: "")
 							}
 							type="password"
-							id="password1"
+							elementId="password1"
 							name="password"
 							value={password}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,18 +103,18 @@ export default function ServerSetup({
 						/>
 						<div className="mt-6">
 							<Button
-								state={
+								elementState={
 									mutation.isLoading
 										? "loading"
 										: mutation.isSuccess
 										? "done"
 										: "default"
 								}
-								styleType="black"
-								size="base"
-								width="full"
-								children="Continue"
-								type="submit"
+								elementStyle="black"
+								elementSize="base"
+								elementWidth="full"
+								elementChildren="Continue"
+								elementType="submit"
 							/>
 						</div>
 					</fieldset>

@@ -1,4 +1,5 @@
 import { AdminContext } from "@/components/Home";
+import Button from "@/components/ui/Button";
 import Table from "@/components/ui/table/Table";
 import { getItems } from "@/services/item/get_items";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
@@ -7,11 +8,11 @@ import { useQuery } from "react-query";
 export default function ViewItems({
 	id,
 	template,
-  setShowAddItemBox
+	setShowAddItemBox,
 }: {
 	id: number | string;
 	template: { n: string; t: string }[] | null;
-  setShowAddItemBox: Dispatch<SetStateAction<boolean>>;
+	setShowAddItemBox: Dispatch<SetStateAction<boolean>>;
 }) {
 	const [keyword, setKeyword] = useState<string>("");
 
@@ -30,15 +31,32 @@ export default function ViewItems({
 	return (
 		<div className="my-4">
 			<div className="flex place-items-center">
-				<button
-					onClick={() => {
-						setShowAddItemBox(true);
-					}}
-					className="flex place-items-center gap-1.5 text-gray-700 font-normal py-1.5 px-2 hover:bg-gray-100 focus:outline outline-2 rounded outline-dodger-500 text-bb"
-				>
-					<span className="ic ic-add ic-black"></span>
-					<span>Add item</span>
-				</button>
+				<div className="flex gap-1">
+					<Button
+						elementChildren="Add Item"
+						elementState="default"
+						elementStyle="no_border_opaque"
+						elementType="button"
+						elementIcon="add"
+						elementInvert={false}
+						elementSize="small"
+						onClick={() => {
+							setShowAddItemBox(true);
+						}}
+					/>
+					<Button
+						elementChildren="Export"
+						elementState="default"
+						elementStyle="no_border_opaque"
+						elementType="button"
+						elementIcon="export"
+						elementInvert={false}
+						elementSize="small"
+						onClick={() => {
+							console.log("x");
+						}}
+					/>
+				</div>
 				<div className="flex-1 flex justify-end">
 					<div className="relative w-64" title="Filter list">
 						<input
@@ -66,11 +84,17 @@ export default function ViewItems({
 				</div>
 			</div>
 			<div className="my-4">
-          {items.isSuccess && items.data && template && 
-            <Table
-              columns={[ 'name', 'description', 'active', ...template.map((obj)=>obj.n+"_c")]} 
-              rows={items.data.data}              
-            />}
+				{items.isSuccess && items.data && template && (
+					<Table
+						columns={[
+							"name",
+							"description",
+							"active",
+							...template.map((obj) => obj.n + "_c"),
+						]}
+						rows={items.data.data}
+					/>
+				)}
 			</div>
 		</div>
 	);

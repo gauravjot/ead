@@ -1,18 +1,18 @@
-import { AdminContext } from "@/components/Home";
-import { useContext, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { getItemType } from "@/services/item/item_type/get_item_type";
+import {AdminContext} from "@/components/Home";
+import {useContext, useState} from "react";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {getItemType} from "@/services/item/item_type/get_item_type";
 import AddNewField from "./AddNewField";
 import Spinner from "@/components/ui/Spinner";
 import InputField from "@/components/ui/InputField";
-import { useForm } from "react-hook-form";
-import { AxiosError } from "axios";
-import { ErrorType } from "@/types/api";
+import {useForm} from "react-hook-form";
+import {AxiosError} from "axios";
 import Button from "@/components/ui/Button";
-import { editItemType } from "@/services/item/item_type/edit_item_type";
-import { deleteItemType } from "@/services/item/item_type/delete_item_type";
+import {editItemType} from "@/services/item/item_type/edit_item_type";
+import {deleteItemType} from "@/services/item/item_type/delete_item_type";
+import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 
-export default function EditItemType({ id }: { id: number | string }) {
+export default function EditItemType({id}: {id: number | string}) {
 	const adminContext = useContext(AdminContext);
 	const itemTypeQuery = useQuery(["item_type_" + id], () =>
 		getItemType(adminContext.admin?.token, id)
@@ -22,20 +22,14 @@ export default function EditItemType({ id }: { id: number | string }) {
 		register,
 		handleSubmit,
 		reset,
-		formState: { errors },
+		formState: {errors},
 	} = useForm();
 
 	const [reqError, setReqError] = useState<string | null>(null);
 	const editNameDescMutation = useMutation({
-		mutationFn: (fields: { name: string; description: string }) => {
+		mutationFn: (fields: {name: string; description: string}) => {
 			return adminContext.admin
-				? editItemType(
-						adminContext.admin?.token,
-						id,
-						fields["name"],
-						fields["description"]
-						// eslint-disable-next-line no-mixed-spaces-and-tabs
-				  )
+				? editItemType(adminContext.admin?.token, id, fields["name"], fields["description"])
 				: Promise.reject();
 		},
 		onSuccess: () => {
@@ -44,27 +38,15 @@ export default function EditItemType({ id }: { id: number | string }) {
 			reset();
 		},
 		onError: (error: AxiosError) => {
-			if (error.response?.data["message"]) {
-				const res = error.response.data as ErrorType;
-				setReqError(res.message);
-			} else {
-        setReqError(error.message);
-      }		},
+			handleAxiosError(error, setReqError);
+		},
 	});
 
 	const [deleteCheckbox, setDeleteCheckbox] = useState<boolean>(false);
-	const [deleteItemTypeReqError, setDeleteItemTypeReqError] = useState<string | null>(
-		null
-	);
+	const [deleteItemTypeReqError, setDeleteItemTypeReqError] = useState<string | null>(null);
 	const deleteItemTypeMutation = useMutation({
 		mutationFn: () => {
-			return adminContext.admin
-				? deleteItemType(
-						adminContext.admin?.token,
-						id
-						// eslint-disable-next-line no-mixed-spaces-and-tabs
-				  )
-				: Promise.reject();
+			return adminContext.admin ? deleteItemType(adminContext.admin?.token, id) : Promise.reject();
 		},
 		onSuccess: () => {
 			queryClient.resetQueries(["item_type_" + id, "item_type_list"]);
@@ -72,10 +54,7 @@ export default function EditItemType({ id }: { id: number | string }) {
 			reset();
 		},
 		onError: (error: AxiosError) => {
-			if (error.response) {
-				const res = error.response.data as ErrorType;
-				setDeleteItemTypeReqError(res.message);
-			}
+			handleAxiosError(error, setDeleteItemTypeReqError);
 		},
 	});
 
@@ -84,21 +63,15 @@ export default function EditItemType({ id }: { id: number | string }) {
 			{/* edit name and descrition */}
 			<div className="grid grid-cols-2 gap-6 mb-6 mt-4 border-b pb-8">
 				<div>
-					<h3 className="text-md font-medium text-gray-800 my-4">
-						Name and Description
-					</h3>
+					<h3 className="text-md font-medium text-gray-800 my-4">Name and Description</h3>
 					<p className="text-bb text-gray-500">
 						Make changes to name and description of the item type.
 					</p>
 					{editNameDescMutation.isError && (
-						<p className="text-bb text-red-700 my-4">
-							{reqError || "Unable to reach server."}
-						</p>
+						<p className="text-bb text-red-700 my-4">{reqError || "Unable to reach server."}</p>
 					)}
 					{editNameDescMutation.isSuccess && (
-						<p className="text-bb text-green-700 my-4">
-							Changes have been saved.
-						</p>
+						<p className="text-bb text-green-700 my-4">Changes have been saved.</p>
 					)}
 				</div>
 				<div className="mt-[2.75rem]">
@@ -111,39 +84,35 @@ export default function EditItemType({ id }: { id: number | string }) {
 						<fieldset disabled={editNameDescMutation.isLoading}>
 							<div>
 								<InputField
-									id="name"
-									inputType="text"
-									register={register}
-									label="Name"
-									minLength={2}
-									maxLength={48}
-									isRequired={true}
-									errors={errors}
+									elementId="name"
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Name"
+									elementInputMinLength={2}
+									elementInputMaxLength={48}
+									elementIsRequired={true}
+									elementHookFormErrors={errors}
 									defaultValue={itemTypeQuery.data.data.name}
 								/>
 								<InputField
-									id="description"
-									inputType="text"
-									isTextarea={true}
-									register={register}
-									label="Description"
-									isRequired={true}
-									errors={errors}
+									elementId="description"
+									elementInputType="text"
+									elementIsTextarea={true}
+									elementHookFormRegister={register}
+									elementLabel="Description"
+									elementIsRequired={true}
+									elementHookFormErrors={errors}
 									defaultValue={itemTypeQuery.data.data.description}
 								/>
 							</div>
 
 							<div className="mt-6">
 								<Button
-									state={
-										editNameDescMutation.isLoading
-											? "loading"
-											: "default"
-									}
-									styleType="black"
-									size="base"
-									children="Submit"
-									type="submit"
+									elementState={editNameDescMutation.isLoading ? "loading" : "default"}
+									elementStyle="black"
+									elementSize="base"
+									elementChildren="Submit"
+									elementType="submit"
 								/>
 							</div>
 						</fieldset>
@@ -156,50 +125,40 @@ export default function EditItemType({ id }: { id: number | string }) {
 				<table className="w-full">
 					<thead>
 						<tr className="text-left border-b border-gray-300 text-gray-500 uppercase">
-							<th className="w-1/3 py-2.5 text-bb font-medium pl-4">
-								Name
-							</th>
-							<th className="w-full py-2.5 text-bb font-medium pl-4">
-								Type
-							</th>
+							<th className="w-1/3 py-2.5 text-bb font-medium pl-4">Name</th>
+							<th className="w-full py-2.5 text-bb font-medium pl-4">Type</th>
 						</tr>
 					</thead>
 					<tbody>
-						{itemTypeQuery.isSuccess &&
-						itemTypeQuery.data.data.template?.length > 0 ? (
-							itemTypeQuery.data.data.template.map(
-								(field: { n: string; t: string }) => (
-									<tr
-										key={field.n}
-										className="group border-b border-gray-200 hover:bg-gray-50 bg-white"
-									>
-										<td className="w-1/3 border-b border-gray-200 py-2 text-bb pl-4">
-											{field.n}
-										</td>
-										<td className="relative w-full border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
-											{field.t}
-											<div className="absolute right-0 top-0 mt-1.5 flex gap-1.5 mx-2 font-medium">
-												<button
-													className="px-2 py-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-dodger-600 rounded hidden group-hover:flex text-gray-900"
-													title="Rename field"
-												>
-													<span className="ic ic-edit"></span>
-													<span>Rename</span>
-												</button>
-												<button
-													className="px-2 p-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-red-600 rounded hidden group-hover:flex text-red-600"
-													title="Delete field"
-												>
-													<span className="ic ic-delete ic-red"></span>
-													<span>Remove</span>
-												</button>
-											</div>
-										</td>
-									</tr>
-								)
-							)
+						{itemTypeQuery.isSuccess && itemTypeQuery.data.data.template?.length > 0 ? (
+							itemTypeQuery.data.data.template.map((field: {n: string; t: string}) => (
+								<tr
+									key={field.n}
+									className="group border-b border-gray-200 hover:bg-gray-50 bg-white"
+								>
+									<td className="w-1/3 border-b border-gray-200 py-2 text-bb pl-4">{field.n}</td>
+									<td className="relative w-full border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
+										{field.t}
+										<div className="absolute right-0 top-0 mt-1.5 flex gap-1.5 mx-2 font-medium">
+											<button
+												className="px-2 py-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-dodger-600 rounded hidden group-hover:flex text-gray-900"
+												title="Rename field"
+											>
+												<span className="ic ic-edit"></span>
+												<span>Rename</span>
+											</button>
+											<button
+												className="px-2 p-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-red-600 rounded hidden group-hover:flex text-red-600"
+												title="Delete field"
+											>
+												<span className="ic ic-delete ic-red"></span>
+												<span>Remove</span>
+											</button>
+										</div>
+									</td>
+								</tr>
+							))
 						) : itemTypeQuery.isSuccess &&
-						  // eslint-disable-next-line no-mixed-spaces-and-tabs
 						  (!itemTypeQuery.data.data.template ||
 								itemTypeQuery.data.data.template?.length < 1) ? (
 							<tr>
@@ -222,9 +181,8 @@ export default function EditItemType({ id }: { id: number | string }) {
 				<div>
 					<h3 className="text-md font-medium text-gray-800 my-4">Delete</h3>
 					<p className="text-bb text-gray-500">
-						This action cannot be undone. It will also delete all the items
-						within this item type. Are you sure you want to delete this item
-						type?
+						This action cannot be undone. It will also delete all the items within this item type.
+						Are you sure you want to delete this item type?
 					</p>
 					{deleteItemTypeMutation.isError && (
 						<p className="text-bb text-red-700 my-4">
@@ -236,7 +194,7 @@ export default function EditItemType({ id }: { id: number | string }) {
 					<p className="text-gray-700 text-bb mb-4 flex gap-2">
 						<input
 							type="checkbox"
-							id="continue-delete"
+							elementId="continue-delete"
 							onChange={(e) => {
 								setDeleteCheckbox(e.target.checked);
 							}}
@@ -244,22 +202,22 @@ export default function EditItemType({ id }: { id: number | string }) {
 						<label htmlFor="continue-delete">Yes, I am sure.</label>
 					</p>
 					<Button
-						state={
+						elementState={
 							deleteItemTypeMutation.isLoading
 								? "loading"
 								: deleteItemTypeMutation.isSuccess
 								? "done"
 								: "default"
 						}
-						styleType="danger"
-						size="base"
-						outline={true}
-						type="button"
-						children="DELETE"
+						elementStyle="danger"
+						elementSize="base"
+						elementInvert={true}
+						elementType="button"
+						elementChildren="DELETE"
 						onClick={() => {
 							deleteItemTypeMutation.mutate();
 						}}
-						disabled={deleteItemTypeMutation.isLoading || !deleteCheckbox}
+						elementDisabled={deleteItemTypeMutation.isLoading || !deleteCheckbox}
 					/>
 				</div>
 			</div>

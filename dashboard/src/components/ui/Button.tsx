@@ -2,16 +2,22 @@ import React from "react";
 import Spinner from "@/components/ui/Spinner";
 
 interface Props {
-	children: React.ReactNode;
 	onClick?: () => void;
-	styleType: "primary" | "black" | "danger" | "white_opaque" | "no_border_opaque";
-	state: "default" | "loading" | "done";
-	type: "button" | "submit" | "reset";
-	size?: "xsmall" | "base" | "small" | "large";
-	outline?: boolean;
-	disabled?: boolean;
-	width?: "auto" | "full";
-	icon?: string;
+	elementChildren: React.ReactNode;
+	elementStyle:
+		| "primary"
+		| "black"
+		| "danger"
+		| "white_opaque"
+		| "no_border_opaque"
+		| "border_opaque";
+	elementState: "default" | "loading" | "done";
+	elementType: "button" | "submit" | "reset";
+	elementSize?: "xsmall" | "small" | "base" | "large";
+	elementInvert?: boolean;
+	elementDisabled?: boolean;
+	elementWidth?: "auto" | "full";
+	elementIcon?: string;
 }
 
 const buttonBaseStyle =
@@ -19,60 +25,73 @@ const buttonBaseStyle =
 
 export default function Button(props: Props) {
 	const style = {
-		primary: props.outline
-			? "border border-dodger-600 text-dodger-600 outline-dodger-100 focus:bg-dodger-50"
-			: "bg-dodger-600 text-white outline-dodger-100 focus:bg-dodger-700/90",
-		black: props.outline
+		primary: props.elementInvert
+			? "border border-primary-600 text-primary-600 outline-primary-100 focus:bg-primary-50"
+			: "bg-primary-600 text-white outline-primary-100 focus:bg-primary-700/90",
+		black: props.elementInvert
 			? "border border-gray-600 text-gray-700 outline-gray-200 focus:bg-gray-50"
 			: "bg-gray-900 text-white outline-gray-300 focus:bg-gray-800",
-		danger: props.outline
+		danger: props.elementInvert
 			? "border border-red-600 text-red-600 outline-red-200 focus:bg-red-50"
 			: "bg-red-600 text-white outline-red-200 focus:bg-red-700",
 		white_opaque: "bg-white/20 text-white outline-white/10 focus:bg-white/50",
-    no_border_opaque: "border border-transparent shadow-none outline-dodger-100 focus:border-dodger-400 focus:outline-dodger-200"
+		no_border_opaque:
+			"border border-transparent shadow-none font-normal text-gray-700 outline-transparent hover:bg-gray-200 focus:bg-gray-200",
+		border_opaque:
+			"border border-gray-200 text-gray-700 hover:outline-gray-200 hover:border-gray-400 focus:outline-gray-200 focus:bg-gray-50",
 	};
 	const buttonSizing =
-		(props.size === "base"
+		props.elementSize === "base"
 			? "text-bb py-1.5 px-4"
-			: props.size === "xsmall"
+			: props.elementSize === "xsmall"
 			? "text-[0.8rem] py-px px-1.5"
-			: props.size === "small"
+			: props.elementSize === "small"
 			? "text-sm py-0.5 px-2"
-			: props.size === "large"
+			: props.elementSize === "large"
 			? "text-base py-2.5 px-6"
-			: "text-bb py-1.5 px-2") + (props.width === "full" ? " w-full" : "");
+			: "text-bb py-1.5 px-2";
+	const buttonWidth = props.elementWidth === "full" ? "w-full" : "";
+
+	const iconColor =
+		props.elementInvert && props.elementStyle === "primary"
+			? "accent"
+			: props.elementInvert && props.elementStyle === "black"
+			? "black"
+			: props.elementStyle === "border_opaque" || props.elementStyle === "no_border_opaque"
+			? "black"
+			: "white";
 
 	return (
 		<button
 			onClick={props.onClick}
 			className={
-				buttonBaseStyle + " " + style[props.styleType] + " " + buttonSizing
+				buttonBaseStyle +
+				" " +
+				style[props.elementStyle] +
+				" " +
+				buttonSizing +
+				" " +
+				buttonWidth
 			}
-			disabled={props.disabled}
+			disabled={props.elementDisabled}
 		>
-			{props.state === "default" ? (
-				<span className="inline-block py-[0.36rem]">
-					{props.icon && (
+			{props.elementState === "default" ? (
+				<span className="py-[0.36rem] flex gap-1.5 place-items-center justify-center">
+					{props.elementIcon && (
 						<>
 							<span
-								className={`ic ic-${props.icon} ${
-									props.styleType === "primary" &&
-									props.outline &&
-									"ic-accent"
+								className={`ic ic-${props.elementIcon.replace("ic-", "")} ${
+									"ic-" + iconColor
 								} align-bottom`}
-							></span>{" "}
+							></span>
 						</>
 					)}
-					{props.children}
+					{props.elementChildren}
 				</span>
-			) : props.state === "loading" ? (
-				<Spinner size="sm" color={props.outline ? "black" : "white"} />
+			) : props.elementState === "loading" ? (
+				<Spinner size="sm" color={iconColor} />
 			) : (
-				<span
-					className={
-						"ic-lg ic-done " + (props.outline ? "ic-black" : "ic-white")
-					}
-				></span>
+				<span className={"ic-lg ic-done " + "ic-" + iconColor}></span>
 			)}
 		</button>
 	);

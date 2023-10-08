@@ -1,51 +1,34 @@
-import { dateTimePretty, timeSince } from "../../../utils/datetime";
+import {dateTimePretty, timeSince} from "../../../utils/datetime";
 import Button from "@/components/ui/Button";
-import { useContext, useState } from "react";
-import { AdminContext } from "@/components/Home";
-import { useForm } from "react-hook-form";
+import {useContext, useState} from "react";
+import {AdminContext} from "@/components/Home";
+import {useForm} from "react-hook-form";
 import InputField from "@/components/ui/InputField";
-import { useMutation, useQuery } from "react-query";
-import { AxiosError } from "axios";
-import { ErrorType } from "@/types/api";
-import { getUser } from "@/services/user/get_user";
-import { UserType } from "@/types/user";
-import { updateUser } from "@/services/user/update_user";
+import {useMutation, useQuery} from "react-query";
+import {AxiosError} from "axios";
+import {getUser} from "@/services/user/get_user";
+import {UserType} from "@/types/user";
+import {updateUser} from "@/services/user/update_user";
 import Spinner from "@/components/ui/Spinner";
+import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 
-export default function UserDetailPanel({ userID }: { userID: string }) {
+export default function UserDetailPanel({userID}: {userID: string}) {
 	const adminContext = useContext(AdminContext);
-	const userQuery = useQuery(["user_" + userID], () =>
-		getUser(adminContext.admin?.token, userID)
-	);
+	const userQuery = useQuery(["user_" + userID], () => getUser(adminContext.admin?.token, userID));
 	const user: UserType | null = userQuery.isSuccess ? userQuery.data.data : null;
 
 	// update profile form and mutation
 	const {
 		register: register2,
-		formState: { errors: errors2 },
+		formState: {errors: errors2},
 		reset: reset2,
 		handleSubmit: handleSubmit2,
 	} = useForm();
-	const [changeProfileReqError, setChangeProfileReqError] = useState<string | null>(
-		null
-	);
+	const [changeProfileReqError, setChangeProfileReqError] = useState<string | null>(null);
 	const changeProfileMutation = useMutation({
-		mutationFn: (d: {
-			title: string;
-			name: string;
-			email: string;
-			phone: string;
-		}) => {
+		mutationFn: (d: {title: string; name: string; email: string; phone: string}) => {
 			return user
-				? updateUser(
-						adminContext.admin?.token,
-						user?.id,
-						d.name,
-						d.title,
-						d.email,
-						d.phone
-						// eslint-disable-next-line no-mixed-spaces-and-tabs
-				  )
+				? updateUser(adminContext.admin?.token, user?.id, d.name, d.title, d.email, d.phone)
 				: Promise.reject();
 		},
 		onSuccess: () => {
@@ -54,12 +37,8 @@ export default function UserDetailPanel({ userID }: { userID: string }) {
 			userQuery.refetch();
 		},
 		onError: (error: AxiosError) => {
-			if (error.response?.data["message"]) {
-				const res = error.response.data as ErrorType;
-				setChangeProfileReqError(res.message);
-			} else {
-        setChangeProfileReqError(error.message);
-      }		},
+			handleAxiosError(error, setChangeProfileReqError);
+		},
 	});
 
 	return userQuery.isSuccess && user ? (
@@ -76,16 +55,12 @@ export default function UserDetailPanel({ userID }: { userID: string }) {
 					</div>
 				</div>
 				<div className="text-bb px-8 flex gap-6">
-					<div className="text-dodger-700 border-b-2 border-dodger-600 p-2">
-						Administer
-					</div>
+					<div className="text-dodger-700 border-b-2 border-dodger-600 p-2">Administer</div>
 				</div>
 			</div>
 			<div className="mx-8 max-w-[1400px]">
 				{/* profile information */}
-				<h3 className="text-md font-medium text-gray-800 mb-4 mt-8">
-					User Information
-				</h3>
+				<h3 className="text-md font-medium text-gray-800 mb-4 mt-8">User Information</h3>
 				<table className="text-gray-600 text-bb">
 					<tbody>
 						<tr>
@@ -109,89 +84,77 @@ export default function UserDetailPanel({ userID }: { userID: string }) {
 				{/* ### update profile ### */}
 				<div className="border-t grid grid-cols-2 gap-6 my-8 pt-2">
 					<div>
-						<h3 className="text-md font-medium text-gray-800 my-4">
-							Update Profile
-						</h3>
-						<p className="text-bb text-gray-500">
-							Make changes to user profile.
-						</p>
+						<h3 className="text-md font-medium text-gray-800 my-4">Update Profile</h3>
+						<p className="text-bb text-gray-500">Make changes to user profile.</p>
 						{changeProfileMutation.isError && (
 							<p className="text-bb text-red-700 my-4">
 								{changeProfileReqError || "Unable to reach server."}
 							</p>
 						)}
 						{changeProfileMutation.isSuccess && (
-							<p className="text-bb text-green-700 my-4">
-								Changes have been saved.
-							</p>
+							<p className="text-bb text-green-700 my-4">Changes have been saved.</p>
 						)}
 					</div>
 					<div className="mt-[2.75rem]">
 						<form
 							key={user.id + 2}
 							onSubmit={handleSubmit2((d) => {
-								changeProfileMutation.mutate(
-									JSON.parse(JSON.stringify(d))
-								);
+								changeProfileMutation.mutate(JSON.parse(JSON.stringify(d)));
 							})}
 						>
 							<fieldset>
 								<div>
 									<InputField
-										id="name"
-										inputType="text"
-										register={register2}
-										label="Full name"
-										minLength={2}
-										maxLength={48}
-										isRequired={true}
-										errors={errors2}
+										elementId="name"
+										elementInputType="text"
+										elementHookFormRegister={register2}
+										elementLabel="Full name"
+										elementInputMinLength={2}
+										elementInputMaxLength={48}
+										elementIsRequired={true}
+										elementHookFormErrors={errors2}
 										defaultValue={user.name}
 									/>
 									<InputField
-										id="title"
-										inputType="text"
-										register={register2}
-										label="Title"
-										minLength={2}
-										maxLength={48}
-										isRequired={true}
-										errors={errors2}
+										elementId="title"
+										elementInputType="text"
+										elementHookFormRegister={register2}
+										elementLabel="Title"
+										elementInputMinLength={2}
+										elementInputMaxLength={48}
+										elementIsRequired={true}
+										elementHookFormErrors={errors2}
 										defaultValue={user.title}
 									/>
 									<InputField
-										id="email"
-										inputType="email"
-										register={register2}
-										label="Email"
-										minLength={0}
-										maxLength={64}
-										errors={errors2}
+										elementId="email"
+										elementInputType="email"
+										elementHookFormRegister={register2}
+										elementLabel="Email"
+										elementInputMinLength={0}
+										elementInputMaxLength={64}
+										elementHookFormErrors={errors2}
 										defaultValue={user.email}
 									/>
 									<InputField
-										id="phone"
-										inputType="text"
-										register={register2}
-										label="Phone"
-										minLength={0}
-										maxLength={20}
-										errors={errors2}
+										elementId="phone"
+										elementInputType="text"
+										elementHookFormRegister={register2}
+										elementLabel="Phone"
+										elementInputMinLength={0}
+										elementInputMaxLength={20}
+										elementHookFormErrors={errors2}
 										defaultValue={user.phone}
 									/>
 								</div>
 
 								<div className="mt-6">
 									<Button
-										state={
-											changeProfileMutation.isLoading
-												? "loading"
-												: "default"
-										}
-										styleType="black"
-										size="base"
-										children="Update"
-										type="submit"
+										elementState={changeProfileMutation.isLoading ? "loading" : "default"}
+										elementStyle="black"
+										elementSize="base"
+										elementChildren="Update"
+										elementType="submit"
 									/>
 								</div>
 							</fieldset>

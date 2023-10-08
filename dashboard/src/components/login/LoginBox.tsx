@@ -1,11 +1,11 @@
-import { doLogin } from "@/services/auth/login";
-import React, { Dispatch, SetStateAction } from "react";
-import { useMutation } from "react-query";
-import { AxiosError } from "axios";
-import { ErrorType } from "@/types/api";
+import {doLogin} from "@/services/auth/login";
+import React, {Dispatch, SetStateAction} from "react";
+import {useMutation} from "react-query";
+import {AxiosError} from "axios";
+import {ErrorType} from "@/types/api";
 import ServerSetup from "@/components/login/ServerSetup";
 import Button from "../ui/Button";
-import { AdminType } from "@/types/admin";
+import {AdminType} from "@/types/admin";
 
 export default function LoginBox({
 	setAdmin,
@@ -22,7 +22,7 @@ export default function LoginBox({
 			return doLogin(username, password);
 		},
 		onSuccess: (data) => {
-			setAdmin({ ...data.data.admin, token: data.data.token });
+			setAdmin({...data.data.admin, token: data.data.token});
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {
@@ -44,9 +44,7 @@ export default function LoginBox({
 				<div className="absolute inset-0 moving-bg z-20"></div>
 				<div className="grid sm:grid-cols-2">
 					<div>
-						<h1 className="text-3xl sm:text-5xl font-bold text-white sm:pt-4">
-							Login
-						</h1>
+						<h1 className="text-3xl sm:text-5xl font-bold text-white sm:pt-4">Login</h1>
 					</div>
 					<div>
 						{error.length > 0 && (
@@ -79,12 +77,10 @@ export default function LoginBox({
 											: "")
 									}
 									type="text"
-									id="username"
+									elementId="username"
 									name="username"
 									value={username}
-									onChange={(
-										e: React.ChangeEvent<HTMLInputElement>
-									) => {
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 										setUsername(e.target.value);
 									}}
 								/>
@@ -102,36 +98,33 @@ export default function LoginBox({
 											: "")
 									}
 									type="password"
-									id="password"
+									elementId="password"
 									name="password"
 									value={password}
-									onChange={(
-										e: React.ChangeEvent<HTMLInputElement>
-									) => {
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 										setPassword(e.target.value);
 									}}
 								/>
 								<div className="mt-6">
 									<Button
-										state={
+										elementState={
 											mutation.isLoading
 												? "loading"
 												: mutation.isSuccess
 												? "done"
 												: "default"
 										}
-										styleType="white_opaque"
-										size="base"
-										width="full"
-										children="Continue"
-										type="submit"
+										elementStyle="white_opaque"
+										elementSize="base"
+										elementWidth="full"
+										elementChildren="Continue"
+										elementType="submit"
 									/>
 								</div>
 							</fieldset>
 						</form>
 						<p className="mt-8 text-gray-200 text-[0.875rem]">
-							If you forgot your credentials, please contact your
-							administrator.
+							If you forgot your credentials, please contact your administrator.
 						</p>
 						<p className="mt-3">
 							<button

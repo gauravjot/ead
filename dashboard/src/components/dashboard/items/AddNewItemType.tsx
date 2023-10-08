@@ -1,14 +1,14 @@
-import { AdminContext } from "@/components/Home";
+import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
-import { AddItemTypeType, addItemType } from "@/services/item/item_type/add_item_type";
-import { ErrorType } from "@/types/api";
-import { ItemTypeType } from "@/types/item";
-import { AxiosError } from "axios";
-import { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
-import { Dispatch, SetStateAction } from "react";
+import {AddItemTypeType, addItemType} from "@/services/item/item_type/add_item_type";
+import {ItemTypeType} from "@/types/item";
+import {AxiosError} from "axios";
+import {useContext, useState} from "react";
+import {useForm} from "react-hook-form";
+import {useMutation, useQueryClient} from "react-query";
+import {Dispatch, SetStateAction} from "react";
+import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 
 export default function AddNewItemType({
 	setShowDialog,
@@ -24,7 +24,7 @@ export default function AddNewItemType({
 		register,
 		handleSubmit,
 		reset,
-		formState: { errors },
+		formState: {errors},
 	} = useForm();
 
 	const mutation = useMutation({
@@ -38,12 +38,7 @@ export default function AddNewItemType({
 			queryClient.resetQueries(["item_type_list"]);
 		},
 		onError: (error: AxiosError) => {
-			if (error.response) {
-				const res = error.response.data as ErrorType;
-				setReqError(res.message.toString());
-			} else {
-				setReqError("Server Error");
-			}
+			handleAxiosError(error, setReqError);
 		},
 	});
 
@@ -57,21 +52,21 @@ export default function AddNewItemType({
 					</p>
 					<div className="mt-10 flex gap-4">
 						<Button
-							state="default"
-							styleType="black"
-							type="button"
-							children="Add another"
+							elementState="default"
+							elementStyle="black"
+							elementType="button"
+							elementChildren="Add another"
 							onClick={() => {
 								setReqResponse(null);
 								mutation.reset();
 							}}
 						/>
 						<Button
-							state="default"
-							styleType="black"
-							type="button"
-							children="Close"
-							outline={true}
+							elementState="default"
+							elementStyle="black"
+							elementType="button"
+							elementChildren="Close"
+							elementInvert={true}
 							onClick={() => {
 								setShowDialog(false);
 								mutation.reset();
@@ -92,56 +87,52 @@ export default function AddNewItemType({
 						<div className="grid sm:grid-cols-2 grid-cols-1 gap-12">
 							<div>
 								<InputField
-									id="name"
-									isRequired={true}
-									minLength={2}
-									errors={errors}
-									inputType="text"
-									register={register}
-									label="Name"
-									width="full"
-									maxLength={48}
+									elementId="name"
+									elementIsRequired={true}
+									elementInputMinLength={2}
+									elementHookFormErrors={errors}
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Name"
+									elementWidth="full"
+									elementInputMaxLength={48}
 								/>
 							</div>
 							<div>
 								<InputField
-									id="description"
-									inputType="text"
-									register={register}
-									label="Descritpion"
-									isRequired={true}
-									isTextarea={true}
-									errors={errors}
-									width="full"
-									maxLength={25000}
+									elementId="description"
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Descritpion"
+									elementIsRequired={true}
+									elementIsTextarea={true}
+									elementHookFormErrors={errors}
+									elementWidth="full"
+									elementInputMaxLength={25000}
 								/>{" "}
 							</div>
 						</div>
 
 						<div className="mt-6 flex gap-6 justify-center">
 							<Button
-								state="default"
-								styleType="black"
-								outline={true}
-								size="base"
-								children="Reset"
-								type="reset"
+								elementState="default"
+								elementStyle="black"
+								elementInvert={true}
+								elementSize="base"
+								elementChildren="Reset"
+								elementType="reset"
 								onClick={() => {
 									reset();
 								}}
 							/>
 							<Button
-								state={
-									mutation.isLoading
-										? "loading"
-										: mutation.isSuccess
-										? "done"
-										: "default"
+								elementState={
+									mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
 								}
-								styleType="black"
-								size="base"
-								children="Add item"
-								type="submit"
+								elementStyle="black"
+								elementSize="base"
+								elementChildren="Add item"
+								elementType="submit"
 							/>
 						</div>
 					</fieldset>
