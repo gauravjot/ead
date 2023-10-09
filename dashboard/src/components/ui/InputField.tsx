@@ -71,10 +71,7 @@ export default function InputField({
 		validation["validate"] = {
 			...validation["validate"],
 			passwordComplexity: (val: string) => {
-				if (
-					isPassword &&
-					!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#%^~,&$*])/.test(val)
-				) {
+				if (isPassword && !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#%^~,&$*])/.test(val)) {
 					return "Your password needs to have atleast one lowercase, one uppercase, one number and one special character (~!@#$%^&*).";
 				}
 			},
@@ -100,15 +97,12 @@ export default function InputField({
 				)}
 			</label>
 			<div
-				className={
-					"relative" + (width && width === "full" ? " w-full" : " w-full max-w-[20rem]")
-				}
+				className={"relative" + (width && width === "full" ? " w-full" : " w-full max-w-[20rem]")}
 			>
 				{isTextarea ? (
 					<textarea
 						className={styling}
 						aria-invalid={errors && errors[id] ? "true" : "false"}
-						elementId={id}
 						rows={textareaSize || 2}
 						{...register(id, validation)}
 						defaultValue={rest["defaultValue"]}
@@ -118,7 +112,6 @@ export default function InputField({
 						aria-invalid={errors && errors[id] ? "true" : "false"}
 						className={styling}
 						type={showPassword ? "text" : inputType}
-						elementId={id}
 						{...register(id, validation)}
 						{...rest}
 					/>
@@ -135,18 +128,14 @@ export default function InputField({
 						<span
 							className={
 								"ic" +
-								(showPassword
-									? " ic-visibility-off ic-gray-75"
-									: " ic-visibility ic-gray-25")
+								(showPassword ? " ic-visibility-off ic-gray-75" : " ic-visibility ic-gray-25")
 							}
 						></span>
 					</button>
 				)}
 			</div>
 			{errors && errors[id] && (
-				<p className="text-red-700 text-bb my-1.5 leading-5">
-					{errors[id]?.message?.toString()}
-				</p>
+				<p className="text-red-700 text-bb my-1.5 leading-5">{errors[id]?.message?.toString()}</p>
 			)}
 		</div>
 	);
