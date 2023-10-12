@@ -176,7 +176,7 @@ export default function EditItemType({id}: {id: number | string}) {
 												<span className="ic ic-delete ic-red"></span>
 												<span>Remove</span>
 											</button>
-											{deleteItemFieldReqError && <div className="fixed inset-0 bg-black/10"><div className="bg-white"><p>Could not delete the field.</p><p>{deleteItemFieldReqError}</p><Button elementType="button" elementState="default" elementStyle="black" elementChildren="Okay" onClick={()=> {setDeleteItemFieldReqError(null)}}/></div></div>}
+											{deleteItemFieldReqError && <div className="fixed z-10 inset-0 bg-black/10 flex place-items-center justify-center"><div className="bg-white p-6 rounded-lg shadow leading-6 min-w-[300px]"><h1 className="text-lg font-bold mb-4">Could not delete the field</h1><p className="">{deleteItemFieldReqError}</p><br/><Button elementType="button" elementState="default" elementStyle="black" elementChildren="Okay" onClick={()=> {setDeleteItemFieldReqError(null)}}/></div></div>}
 										</div>
 									</td>
 								</tr>
