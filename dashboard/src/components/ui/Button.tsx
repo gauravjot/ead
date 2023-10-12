@@ -55,6 +55,8 @@ export default function Button(props: Props) {
 	const iconColor =
 		props.elementInvert && props.elementStyle === "primary"
 			? "accent"
+			: props.elementInvert && props.elementStyle === "danger"
+			? "danger"
 			: props.elementInvert && props.elementStyle === "black"
 			? "black"
 			: props.elementStyle === "border_opaque" || props.elementStyle === "no_border_opaque"

@@ -2,16 +2,20 @@ import axios from "axios";
 import { BACKEND_ENDPOINT } from "@/config";
 
 /**
- * API call to delete item type
+ * API call to delete item type fields
  * @param token
  * @param id
+ * @param fields
  * @returns Promise
  */
-export function deleteItemType(token: string | undefined | null, id: number | string) {
+export function deleteItem(
+	token: string | undefined | null,
+	id: string | number
+) {
 	return token
 		? axios
 				.delete(
-					BACKEND_ENDPOINT + `/api/item/type/${id}/delete/`,
+					BACKEND_ENDPOINT + `/api/item/${id}/delete/`,
 					{
 						headers: {
 							"Content-Type": "application/json",

@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button";
 import {editItemType} from "@/services/item/item_type/edit_item_type";
 import {deleteItemType} from "@/services/item/item_type/delete_item_type";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
+import { deleteItemTypeFields } from "@/services/item/item_type/delete_item_type_field";
 
 export default function EditItemType({id}: {id: number | string}) {
 	const adminContext = useContext(AdminContext);
@@ -49,12 +50,30 @@ export default function EditItemType({id}: {id: number | string}) {
 			return adminContext.admin ? deleteItemType(adminContext.admin?.token, id) : Promise.reject();
 		},
 		onSuccess: () => {
-			queryClient.resetQueries(["item_type_" + id, "item_type_list"]);
+			queryClient.resetQueries(["item_type_list"]);
+			queryClient.resetQueries(["item_type_"+ id]);
 			setDeleteItemTypeReqError(null);
 			reset();
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setDeleteItemTypeReqError);
+		},
+	});
+
+	const [deleteItemFieldReqError, setDeleteItemFieldReqError] = useState<string | null>(null);
+	const deleteItemFieldMutation = useMutation({
+		mutationFn: (fields: string) => {
+			return adminContext.admin
+				? deleteItemTypeFields(adminContext.admin?.token, id, fields)
+				: Promise.reject();
+		},
+		onSuccess: () => {
+			queryClient.resetQueries(["item_type_" + id]);
+			setDeleteItemFieldReqError(null);
+			reset();
+		},
+		onError: (error: AxiosError) => {
+			handleAxiosError(error, setDeleteItemFieldReqError);
 		},
 	});
 
@@ -140,20 +159,24 @@ export default function EditItemType({id}: {id: number | string}) {
 									<td className="relative w-full border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
 										{field.t}
 										<div className="absolute right-0 top-0 mt-1.5 flex gap-1.5 mx-2 font-medium">
-											<button
+											{/*<button
 												className="px-2 py-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-dodger-600 rounded hidden group-hover:flex text-gray-900"
 												title="Rename field"
 											>
 												<span className="ic ic-edit"></span>
 												<span>Rename</span>
-											</button>
+											</button>*/}
 											<button
 												className="px-2 p-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-red-600 rounded hidden group-hover:flex text-red-600"
 												title="Delete field"
+												onClick={()=>{
+													deleteItemFieldMutation.mutate(JSON.stringify(field));
+												}}
 											>
 												<span className="ic ic-delete ic-red"></span>
 												<span>Remove</span>
 											</button>
+											{deleteItemFieldReqError && <div className="fixed inset-0 bg-black/10"><div className="bg-white"><p>Could not delete the field.</p><p>{deleteItemFieldReqError}</p><Button elementType="button" elementState="default" elementStyle="black" elementChildren="Okay" onClick={()=> {setDeleteItemFieldReqError(null)}}/></div></div>}
 										</div>
 									</td>
 								</tr>
@@ -194,7 +217,7 @@ export default function EditItemType({id}: {id: number | string}) {
 					<p className="text-gray-700 text-bb mb-4 flex gap-2">
 						<input
 							type="checkbox"
-							elementId="continue-delete"
+							id="continue-delete"
 							onChange={(e) => {
 								setDeleteCheckbox(e.target.checked);
 							}}

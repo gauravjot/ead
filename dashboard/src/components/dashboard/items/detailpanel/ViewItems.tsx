@@ -93,6 +93,7 @@ export default function ViewItems({
 							...template.map((obj) => obj.n + "_c"),
 						]}
 						rows={items.data.data}
+						elementShowSelectMultiple={true}
 					/>
 				)}
 			</div>

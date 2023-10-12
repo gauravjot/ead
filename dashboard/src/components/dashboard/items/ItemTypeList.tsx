@@ -19,6 +19,13 @@ export default function ItemTypeList({
 		getAllItemTypes(adminContext.admin?.token)
 	);
 
+	if (item_types.isSuccess) {
+		// Remove active item if item does not exist.
+		if (!item_types.data.data.includes(activeItem)) {
+			setActiveItem(undefined);
+		}
+	}
+
 	return (
 		<>
 			<div className="flex">

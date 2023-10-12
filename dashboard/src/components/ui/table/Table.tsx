@@ -1,17 +1,32 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import Button from "../Button";
-import TableOptions from "./Options";
 
 export default function Table({
 	columns,
 	rows,
+	elementShowSelectMultiple
 }: {
 	columns: string[];
 	rows: { [key: string]: string | boolean | number }[];
+	elementShowSelectMultiple: boolean;
 }) {
 	const [sortColumn, setSortColumn] = useState<string | null>(null);
 	const [sortOrder, setSortOrder] = useState<"ascending" | "descending">("ascending");
 
+	if (sortColumn) {
+		if (sortOrder == "ascending") {
+			rows.sort((a, b) =>
+				(a[sortColumn] || "").toString() > (b[sortColumn] || "").toString()
+					? 1
+					: -1
+			);
+		} else {
+			rows.sort((a, b) =>
+				(a[sortColumn] || "").toString() < (b[sortColumn] || "").toString()
+					? 1
+					: -1
+			);
+		}
+	}
 	return (
 		<div className="overflow-y-auto w-full relative">
 			<table className="w-full">
@@ -23,19 +38,22 @@ export default function Table({
 							setSortOrder={setSortOrder}
 							sortColumn={sortColumn}
 							setSortColumn={setSortColumn}
+							elementShowSelectMultiple={elementShowSelectMultiple}
 						/>
-						<th className="sticky right-0 z-[4]">
-							<TableOptions columns={columns} />
-						</th>
 					</tr>
 				</thead>
 				<tbody>
-					<TCell
-						columns={columns}
-						rows={rows}
-						sortColumn={sortColumn}
-						sortOrder={sortOrder}
-					/>
+				{rows && rows.map((row) => {
+					return (
+						<tr className="group w-full border-b last:border-b-0 hover:bg-gray-100 relative">
+							<TCell
+								columns={columns}
+								row={row}
+									elementShowSelectMultiple={elementShowSelectMultiple}
+							/>
+						</tr>
+					);
+					})}
 				</tbody>
 			</table>
 		</div>
@@ -48,14 +66,16 @@ function THeader({
 	setSortOrder,
 	sortColumn,
 	setSortColumn,
+	elementShowSelectMultiple
 }: {
 	columns: string[];
 	sortOrder: "ascending" | "descending";
 	setSortOrder: Dispatch<SetStateAction<"ascending" | "descending">>;
 	sortColumn: string | null;
 	setSortColumn: Dispatch<SetStateAction<string | null>>;
+	elementShowSelectMultiple: boolean;
 }) {
-	return columns.map((col) => {
+	return columns.map((col, index) => {
 		return (
 			<td
 				key={col}
@@ -78,6 +98,7 @@ function THeader({
 				title={col.replaceAll("_c", "")}
 			>
 				<div className="flex place-items-center gap-1">
+					{index === 0 && elementShowSelectMultiple && <div className="inline-block w-8"></div>}
 					{sortColumn === col && (
 						<div
 							className={
@@ -112,40 +133,18 @@ const cellStyle =
 
 function TCell({
 	columns,
-	rows,
-	sortColumn,
-	sortOrder,
+	row,
+	elementShowSelectMultiple
 }: {
 	columns: string[];
-	rows: { [key: string]: string | boolean | number }[];
-	sortColumn: string | null;
-	sortOrder: "ascending" | "descending";
+	row: { [key: string]: string | boolean | number };
+		elementShowSelectMultiple: boolean;
 }) {
-	if (sortColumn) {
-		if (sortOrder == "ascending") {
-			rows.sort((a, b) =>
-				(a[sortColumn] || "").toString() > (b[sortColumn] || "").toString()
-					? 1
-					: -1
-			);
-		} else {
-			rows.sort((a, b) =>
-				(a[sortColumn] || "").toString() < (b[sortColumn] || "").toString()
-					? 1
-					: -1
-			);
-		}
-		console.log(rows);
-		console.log(sortColumn);
-	}
+
 
 	return (
 		<>
-			{rows &&
-				rows.map((row) => {
-					return (
-						<tr className="group w-full border-b last:border-b-0 hover:bg-gray-100 relative">
-							{columns.map((col) => {
+			{columns.map((col, index) => {
 								return typeof row[col] === "boolean" ? (
 									<td className="text-center min-w-[6rem] max-w-[14rem] px-2">
 										{row[col] ? (
@@ -163,37 +162,11 @@ function TCell({
 										className={cellStyle}
 										title={row[col]?.toString()}
 									>
+										{index == 0 && elementShowSelectMultiple && <div className="inline-block w-9 scale-[0.8]"><input type="checkbox" name={row.id.toString() as string}/></div>}
 										{row[col]}
 									</td>
 								);
 							})}
-							<td className="absolute right-0">
-								<div className="hidden group-hover:block w-full">
-									<div className="flex place-items-center gap-2 bg-gradient-to-r from-gray-100/80 via-gray-100 to-gray-100 pl-8 pr-2">
-										<Button
-											elementState="default"
-											elementSize="xsmall"
-											elementStyle="no_border_opaque"
-											elementInvert={true}
-											elementType="button"
-											elementChildren={<></>}
-											elementIcon="edit"
-										/>
-										<Button
-											elementState="default"
-											elementSize="xsmall"
-											elementStyle="no_border_opaque"
-											elementInvert={true}
-											elementType="button"
-											elementChildren={<></>}
-											elementIcon="delete"
-										/>
-									</div>
-								</div>
-							</td>
-						</tr>
-					);
-				})}
-		</>
+								</>
 	);
 }

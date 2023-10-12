@@ -98,7 +98,7 @@ def addItemTypeField(request, id):
 
 # Delete Item type field
 # -------------------------------
-@api_view(['DELETE'])
+@api_view(['PUT'])
 def deleteItemTypeField(request, id):
     # Get requesting admin ID
     admin = getAdminID(request)
@@ -107,8 +107,33 @@ def deleteItemTypeField(request, id):
     # Get item type
     try:
         item_type = ItemType.objects.get(id=id)
+        field = json.loads(request.data['fields'])
+        if item_type.template is None or len(item_type.template) < 1:
+            return Response(data=errorResponse("No field to delete.", "I011"), status=status.HTTP_400_BAD_REQUEST)
+        # check if field exists in item_type.fields array of key value pairs
+        if field['n'] not in [f['n'] for f in item_type.template]:
+            return Response(data=errorResponse("Field does not exist.", "I0010"), status=status.HTTP_400_BAD_REQUEST)
+        else:
+            for f in item_type.template:
+                if f['n'] == field['n']:
+                    item_type.template.remove(f)
+        item_type.save()
+        return Response(data=successResponse(ItemTypeSerializer(item_type).data), status=status.HTTP_200_OK)
+
     except ItemType.DoesNotExist:
         return Response(data=errorResponse("Item does not exist.", "I0002"), status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['DELETE'])
+def deleteItemType(request, id):
+    adminID = getAdminID(request)
+    if type(adminID) is Response:
+        return adminID
+    try:
+        ItemType.objects.get(id=id).delete()
+        return Response(data=successResponse(), status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(data=errorResponse("ItemType does not exist.", "I0014"), status=status.HTTP_404_NOT_FOUND)
 
 
 """
@@ -139,7 +164,7 @@ def getAllItems(request, id):
     return Response(data=res, status=status.HTTP_200_OK)
 
 
-# Add new Item Type
+# Add new Item
 # -----------------------------------------------
 @api_view(['POST'])
 def addItem(request):
@@ -161,3 +186,14 @@ def addItem(request):
     else:
         return Response(data=errorResponse(itemSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
+
+@api_view(['DELETE'])
+def deleteItem(request, id):
+    adminID = getAdminID(request)
+    if type(adminID) is Response:
+        return adminID
+    try:
+        Item.objects.get(id=id).delete()
+        return Response(data=successResponse(), status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(data=errorResponse("Item does not exist.", "I0404"), status=status.HTTP_404_NOT_FOUND)

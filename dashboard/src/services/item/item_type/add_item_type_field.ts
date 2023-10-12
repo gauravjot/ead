@@ -16,7 +16,7 @@ export function addItemTypeFields(
 	return token
 		? axios
 				.post(
-					BACKEND_ENDPOINT + `/api/item/type/${id}/add/`,
+					BACKEND_ENDPOINT + `/api/item/type/${id}/template_fields/add/`,
 					JSON.stringify({ fields: fields }),
 					{
 						headers: {

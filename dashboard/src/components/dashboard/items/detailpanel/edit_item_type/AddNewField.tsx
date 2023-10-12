@@ -72,7 +72,7 @@ export default function AddNewField({id}: {id: number | string}) {
 							<div>
 								<input
 									type="radio"
-									elementId="text"
+									id="text"
 									value="text"
 									{...register("t", {required: "Choose field type"})}
 								/>
@@ -83,7 +83,7 @@ export default function AddNewField({id}: {id: number | string}) {
 							<div>
 								<input
 									type="radio"
-									elementId="number"
+									id="number"
 									value="number"
 									{...register("t", {required: "Choose field type"})}
 								/>
@@ -94,7 +94,7 @@ export default function AddNewField({id}: {id: number | string}) {
 							<div>
 								<input
 									type="radio"
-									elementId="boolean"
+									id="boolean"
 									value="boolean"
 									{...register("t", {required: "Choose field type"})}
 								/>

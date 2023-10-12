@@ -46,15 +46,6 @@ export default function AddNewItem({
 				<div className="flex flex-row">
 					<h1 className="text-2xl flex-1 font-bold tracking-tight">Add new item</h1>
 					<div>
-						<button
-							className="ic-xl pt-1 border rounded-md hover:bg-gray-200 hover:border-gray-400 hover:border-transparent"
-							onClick={() => {
-								setShowAddItemBox(false);
-							}}
-							title="Close"
-						>
-							<span className="ic ic-close"></span>
-						</button>
 						<Button
 							elementChildren={""}
 							elementState="default"

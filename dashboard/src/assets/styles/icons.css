@@ -27,7 +27,7 @@
 		contrast(102%);
 }
 
-.ic-red {
+.ic-red, .ic-danger {
 	filter: invert(47%) sepia(99%) saturate(7170%) hue-rotate(351deg) brightness(85%)
 		contrast(119%);
 }

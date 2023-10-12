@@ -104,6 +104,7 @@ export default function InputField({
 						className={styling}
 						aria-invalid={errors && errors[id] ? "true" : "false"}
 						rows={textareaSize || 2}
+						id={id}
 						{...register(id, validation)}
 						defaultValue={rest["defaultValue"]}
 					/>
@@ -111,6 +112,7 @@ export default function InputField({
 					<input
 						aria-invalid={errors && errors[id] ? "true" : "false"}
 						className={styling}
+						id={id}
 						type={showPassword ? "text" : inputType}
 						{...register(id, validation)}
 						{...rest}
