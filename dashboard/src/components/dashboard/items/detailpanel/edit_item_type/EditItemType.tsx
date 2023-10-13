@@ -78,7 +78,7 @@ export default function EditItemType({id}: {id: number | string}) {
 	});
 
 	return itemTypeQuery.isSuccess ? (
-		<>
+		<div className="max-w-[1400px]">
 			{/* edit name and descrition */}
 			<div className="grid grid-cols-2 gap-6 mb-6 mt-4 border-b pb-8">
 				<div>
@@ -244,7 +244,7 @@ export default function EditItemType({id}: {id: number | string}) {
 					/>
 				</div>
 			</div>
-		</>
+		</div>
 	) : itemTypeQuery.isLoading ? (
 		<div className="my-24 flex place-items-center justify-center">
 			<Spinner color="gray" size="xl" />

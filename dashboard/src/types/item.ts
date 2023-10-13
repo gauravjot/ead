@@ -36,3 +36,5 @@ export type AllocationType = {
 	returned_at: string;
 	collected_by: string;
 };
+
+export type ItemFieldValueType = "text" | "email" | "password" | "number";

@@ -187,6 +187,17 @@ def addItem(request):
         return Response(data=errorResponse(itemSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+def getItem(request, id):
+    adminID = getAdminID(request)
+    if type(adminID) is Response:
+        return adminID
+    try: 
+        return Response(data=successResponse(ItemSerializer(Item.objects.get(id=id)).data), status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(data=errorResponse("Item does not exist.", "I0404"), status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['DELETE'])
 def deleteItem(request, id):
     adminID = getAdminID(request)

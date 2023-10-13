@@ -141,3 +141,7 @@
 		transform: rotate(360deg);
 	}
 }
+
+.table-highlight:has(input:checked) {
+	@apply bg-primary-100 border-primary-800/30;
+}

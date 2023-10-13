@@ -3,11 +3,13 @@ import { Dispatch, SetStateAction, useState } from "react";
 export default function Table({
 	columns,
 	rows,
-	elementShowSelectMultiple
+	elementShowSelectMultiple,
+	showItem
 }: {
 	columns: string[];
 	rows: { [key: string]: string | boolean | number }[];
 	elementShowSelectMultiple: boolean;
+	showItem: (id: number| string) => void;
 }) {
 	const [sortColumn, setSortColumn] = useState<string | null>(null);
 	const [sortOrder, setSortOrder] = useState<"ascending" | "descending">("ascending");
@@ -45,11 +47,12 @@ export default function Table({
 				<tbody>
 				{rows && rows.map((row) => {
 					return (
-						<tr className="group w-full border-b last:border-b-0 hover:bg-gray-100 relative">
+						<tr className="table-highlight group w-full border-b last:border-b1 hover:bg-gray-100 relative">
 							<TCell
 								columns={columns}
 								row={row}
-									elementShowSelectMultiple={elementShowSelectMultiple}
+								elementShowSelectMultiple={elementShowSelectMultiple}
+								showItem={showItem}
 							/>
 						</tr>
 					);
@@ -125,20 +128,21 @@ function THeader({
 }
 
 const cellStyle =
-	"py-2 px-3 text-sm truncate first:font-medium" +
-	" text-gray-700 first:underline first:underline-offset-2" +
-	" first:hover:cursor-pointer first:sticky first:z-[4] first:left-0" +
+	"table-highlight py-2 px-3 text-sm truncate first:font-medium" +
+	" text-gray-700 first:sticky first:z-[4] hover:bg-gray-100 first:left-0" +
 	" first:bg-gray-50 first:border-r first:mx-px first:border-separate" +
 	" min-w-[6rem] max-w-[14rem]";
 
 function TCell({
 	columns,
 	row,
-	elementShowSelectMultiple
+	elementShowSelectMultiple,
+	showItem
 }: {
 	columns: string[];
 	row: { [key: string]: string | boolean | number };
-		elementShowSelectMultiple: boolean;
+	elementShowSelectMultiple: boolean;
+	showItem: (id: number|string) => void;
 }) {
 
 
@@ -148,11 +152,11 @@ function TCell({
 								return typeof row[col] === "boolean" ? (
 									<td className="text-center min-w-[6rem] max-w-[14rem] px-2">
 										{row[col] ? (
-											<div className="bg-dodger-600 rounded-full w-3 h-3 flex place-items-center justify-center">
+											<div className="bg-dodger-600 rounded-full w-4 h-4 flex place-items-center justify-center">
 												<span className="ic-sm ic-white ic-done"></span>
 											</div>
 										) : (
-											<div className="bg-gray-400 rounded-full w-3 h-3 flex place-items-center justify-center">
+											<div className="bg-gray-400 rounded-full w-4 h-4 flex place-items-center justify-center">
 												<span className="ic-sm ic-white ic-close"></span>
 											</div>
 										)}
@@ -162,8 +166,15 @@ function TCell({
 										className={cellStyle}
 										title={row[col]?.toString()}
 									>
-										{index == 0 && elementShowSelectMultiple && <div className="inline-block w-9 scale-[0.8]"><input type="checkbox" name={row.id.toString() as string}/></div>}
-										{row[col]}
+										{index == 0 && elementShowSelectMultiple && <div className="inline-block w-9 scale-[0.8]"><label htmlFor={row.id.toString()} className="px-3 -mx-3 py-3 hover:cursor-pointer"><input id={row.id.toString()} type="checkbox" name={row.id.toString() as string}/></label></div>}
+										{index == 0 ?
+											<button
+												className="underline underline-offset-2"
+												onClick={()=>{showItem(row.id.toString())}}
+											>
+												{row[col]}
+											</button>
+											:row[col]}
 									</td>
 								);
 							})}

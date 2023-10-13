@@ -41,8 +41,10 @@ export default function AddNewItem({
 	});
 
 	return (
-		<div className="fixed inset-0 bg-black/10 z-50 flex place-items-center justify-center">
-			<div className="bg-white max-w-[60rem] w-full px-8 py-6 rounded-md shadow-md max-h-[80%] overflow-y-auto">
+		<div className="fixed inset-0 bg-black/10 z-50">
+			<div className="absolute inset-0 z-5" onClick={()=>{setShowAddItemBox(false)}}></div>
+			<div className="relative z-10 bg-white px-6 py-10 shadow max-h-screen w-full overflow-y-auto">
+				<div className="container mx-auto">
 				<div className="flex flex-row">
 					<h1 className="text-2xl flex-1 font-bold tracking-tight">Add new item</h1>
 					<div>
@@ -127,7 +129,7 @@ export default function AddNewItem({
 											<span className="flex-1">{field.n}</span>
 											<input
 												type="checkbox"
-												elementId={field.n.replace(" ", "_")}
+												id={field.n.replace(" ", "_")}
 												{...register(field.n.replace(" ", "_"))}
 											/>
 										</label>
@@ -159,6 +161,7 @@ export default function AddNewItem({
 						</div>
 					</fieldset>
 				</form>
+				</div>
 			</div>
 		</div>
 	);

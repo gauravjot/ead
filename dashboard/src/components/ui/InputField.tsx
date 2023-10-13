@@ -88,7 +88,7 @@ export default function InputField({
 
 	return (
 		<div className="my-2 mx-px">
-			<label className="block text-gray-600 text-sm py-1.5" htmlFor={id}>
+			<label className="block text-gray-600 text-sm py-1.5 max-w-[20rem]" htmlFor={id}>
 				{label}{" "}
 				{validation.required && (
 					<span className="text-red-500 font-bold" title="Required">
