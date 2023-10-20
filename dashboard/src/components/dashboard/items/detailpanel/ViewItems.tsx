@@ -122,6 +122,7 @@ export default function ViewItems({
 function ShowItem({token, id, setShowItemWithId, template} : {token: string, id: number|string, setShowItemWithId: Dispatch<SetStateAction<string | number | null>>, template: { n: string; t: string }[] | null;}) {
 	const item_query = useQuery(["item_info_"+id.toString()], () => getItem(token, id))
 	const {register, handleSubmit, formState: {errors}} = useForm();
+	const [isReadOnly, setIsReadOnly] = useState<boolean>(true);
 
 	return (
 		<div className="fixed inset-0 z-10">
@@ -154,15 +155,17 @@ function ShowItem({token, id, setShowItemWithId, template} : {token: string, id:
 						<span>Unable to fetch item data.</span>
 					</div>
 				: item_query.isSuccess && item_query.data ?
-					<div className="grid grid-cols-2 pt-8 gap-48">
+					<div className="grid grid-cols-2 pt-8 gap-24 xl:gap-48">
 						<form className="col-span-1">
+
 						<div className="">
-							<h2 className="font-medium">General Information</h2>
+							<h2 className="font-medium mb-3">General Information</h2>
 							<InputField
 								elementId="name"
 								elementLabel="Name"
 								elementInputType="text"
 								elementWidth="full"
+								elementIsReadOnly={isReadOnly}
 								elementHookFormRegister={register}
 								defaultValue={item_query.data.data.name}
 								/>
@@ -172,31 +175,40 @@ function ShowItem({token, id, setShowItemWithId, template} : {token: string, id:
 								elementInputType="text"
 								elementWidth="full"
 								elementHookFormRegister={register}
+								elementIsReadOnly={isReadOnly}
 								elementIsTextarea={true}
 								defaultValue={item_query.data.data.description}
 								/>
 						</div>
 						<div className="mt-10">
-							<h2 className="font-medium">Specific Information</h2>
+							<h2 className="font-medium mb-3">Specific Information</h2>
 								{template?.map((obj) => {
 											let val = item_query.data.data.value.filter((row: {n: string, v: string}) => row.n === obj.n);
-									return obj.t !== "boolean" ? <div key={obj.n+"_c"}><InputField
+									return obj.t !== "boolean" ? <InputField
+										key={obj.n+"_c"}
 										elementId={obj.n+"_c"}
 										elementLabel={obj.n}
 										elementWidth="full"
+										elementIsReadOnly={isReadOnly}
 										elementInputType={obj.t as ItemFieldValueType}
 										elementHookFormRegister={register}
 										defaultValue={val.length > 0 ? val[0].v : ""}
-									/></div> : <span key={obj.n+"_c"}>Boolean field</span>;
+									/> : <span key={obj.n+"_c"}>Boolean field</span>;
 								})}
 						</div>
 						<div className="mt-10">
-							<Button
+							{!isReadOnly && <Button
 								elementState="default"
 								elementChildren="Apply Changes"
 								elementType="submit"
 								elementStyle="black"
-							/>
+							/>}
+						</div>
+						<div className="flex gap-2 mt-6 text-gray-500">
+							<input type="checkbox" id="enable-edit" onChange={(e) => {
+								setIsReadOnly(!e.currentTarget.checked);
+							}} />
+							<label htmlFor="enable-edit">Enable editing</label>
 						</div>
 						</form>
 								{/* allocation current */}

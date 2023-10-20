@@ -14,6 +14,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	elementInputMaxLength?: number;
 	elementIsPassword?: boolean;
 	elementIsTextarea?: boolean;
+	elementIsReadOnly?: boolean;
 	elementTextareaRows?: number;
 	elementWidth?: "auto" | "full";
 }
@@ -37,6 +38,7 @@ export default function InputField({
 	elementIsRequired: isRequired,
 	elementInputMaxLength: maxLength,
 	elementHookFormWatch: watch,
+	elementIsReadOnly: isReadOnly,
 	elementHookFormWatchField: watchField,
 	...rest
 }: InputProps) {
@@ -87,8 +89,8 @@ export default function InputField({
 			: " border-gray-300 bg-white");
 
 	return (
-		<div className="my-2 mx-px">
-			<label className="block text-gray-600 text-sm py-1.5 max-w-[20rem]" htmlFor={id}>
+		<div className={(isReadOnly ? "grid grid-cols-2 border-b border-gray-200 last:border-none py-1 " : "") + "my-2 mx-px"}>
+			<label className={(isReadOnly ? "" : "py-1.5 ") + "block text-gray-600 text-sm max-w-[20rem]"} htmlFor={id}>
 				{label}{" "}
 				{validation.required && (
 					<span className="text-red-500 font-bold" title="Required">
@@ -97,9 +99,11 @@ export default function InputField({
 				)}
 			</label>
 			<div
-				className={"relative" + (width && width === "full" ? " w-full" : " w-full max-w-[20rem]")}
+				className={"relative " + (width && width === "full" ? " w-full" : " w-full max-w-[20rem]")}
 			>
-				{isTextarea ? (
+				{isReadOnly ? (
+					<p>{rest["defaultValue"]}</p>
+				) : isTextarea ? (
 					<textarea
 						className={styling}
 						aria-invalid={errors && errors[id] ? "true" : "false"}
