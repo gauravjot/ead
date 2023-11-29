@@ -15,6 +15,7 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	elementIsPassword?: boolean;
 	elementIsTextarea?: boolean;
 	elementIsReadOnly?: boolean;
+	elementIsTextareaExpandable?: boolean;
 	elementTextareaRows?: number;
 	elementWidth?: "auto" | "full";
 }
@@ -40,6 +41,7 @@ export default function InputField({
 	elementHookFormWatch: watch,
 	elementIsReadOnly: isReadOnly,
 	elementHookFormWatchField: watchField,
+	elementIsTextareaExpandable: isTextareaExpandable,
 	...rest
 }: InputProps) {
 	const [showPassword, setShowPassword] = useState(false);
@@ -88,9 +90,28 @@ export default function InputField({
 			? " border-red-700 bg-red-50/30 focus-visible:bg-white"
 			: " border-gray-300 bg-white");
 
+	// Resize Textarea
+	if (isTextarea && isTextareaExpandable && rest["defaultValue"]) {
+		setTimeout(() => {
+			const textarea = document.getElementById(id);
+			textarea?.style.setProperty("height", "");
+			textarea?.style.setProperty("height", textarea.scrollHeight + 5 + "px");
+			textarea?.style.setProperty("max-height", (window.innerHeight * 2) / 3 + "px");
+			textarea?.style.setProperty("overflow-y", "hidden");
+		}, 100);
+	}
+
 	return (
-		<div className={(isReadOnly ? "grid grid-cols-2 border-b border-gray-200 last:border-none py-1 " : "") + "my-2 mx-px"}>
-			<label className={(isReadOnly ? "" : "py-1.5 ") + "block text-gray-600 text-sm max-w-[20rem]"} htmlFor={id}>
+		<div
+			className={
+				(isReadOnly ? "grid grid-cols-2 border-b border-gray-200 last:border-none py-1 " : "") +
+				"my-2 mx-px"
+			}
+		>
+			<label
+				className={(isReadOnly ? "" : "py-1.5 ") + "block text-gray-600 text-sm max-w-[20rem]"}
+				htmlFor={id}
+			>
 				{label}{" "}
 				{validation.required && (
 					<span className="text-red-500 font-bold" title="Required">
@@ -111,6 +132,13 @@ export default function InputField({
 						id={id}
 						{...register(id, validation)}
 						defaultValue={rest["defaultValue"]}
+						onInput={(e) => {
+							if (isTextareaExpandable) {
+								e.currentTarget.style.height = "";
+								e.currentTarget.style.height = e.currentTarget.scrollHeight + 5 + "px";
+								e.currentTarget.style.maxHeight = (window.innerHeight * 2) / 3 + "px";
+							}
+						}}
 					/>
 				) : (
 					<input

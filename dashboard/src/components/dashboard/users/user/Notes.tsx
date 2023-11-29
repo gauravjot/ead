@@ -12,6 +12,7 @@ import {dateTimePretty} from "../../../../utils/datetime";
 import DropDown from "@/components/ui/DropDown";
 import {deleteUserNote} from "@/services/user/delete_note";
 import {updateUserNote} from "@/services/user/update_note";
+import DialogBox from "@/components/ui/Dialog";
 
 export interface IUserNotesProps {
 	user: UserType | null;
@@ -20,7 +21,9 @@ export interface IUserNotesProps {
 
 export default function UserNotes(props: IUserNotesProps) {
 	const [reqError, setReqError] = useState<string | null>(null);
+	const [deleteReqError, setDeleteReqError] = useState<string | null>(null);
 	const [editNote, setEditNote] = useState<NoteType | null>(null);
+	const [deleteDialog, setDeleteDialog] = useState<number | null>(null);
 	const queryClient = useQueryClient();
 
 	const {
@@ -51,17 +54,37 @@ export default function UserNotes(props: IUserNotesProps) {
 			return deleteUserNote(props.admin?.token, payload);
 		},
 		onSuccess: () => {
-			setReqError(null);
-			reset();
+			setDeleteReqError(null);
 			queryClient.resetQueries(["user_" + props.user?.id]);
+			setDeleteDialog(null);
 		},
 		onError: (error: AxiosError) => {
-			handleAxiosError(error, setReqError);
+			handleAxiosError(error, setDeleteReqError);
 		},
 	});
 
 	return props.user && props.admin ? (
 		<>
+			{/* Delete note dialog */}
+			{deleteDialog && (
+				<DialogBox
+					title="Delete note"
+					message="Are you sure to delete this note? This action cannot be undone."
+					onClose={() => setDeleteDialog(null)}
+					error={deleteReqError}
+					isDanger={true}
+					onConfirm={() => {
+						mutationDelete.mutate({
+							nid: deleteDialog,
+							uid: props.user?.id as string,
+						});
+					}}
+					state={
+						mutationDelete.isLoading ? "loading" : mutationDelete.isSuccess ? "done" : "default"
+					}
+				/>
+			)}
+
 			<div className="mx-8 my-4 max-w-[1400px]">
 				{reqError && <p className="text-red-700 my-2">{reqError}</p>}
 				<div className="my-8">
@@ -70,7 +93,7 @@ export default function UserNotes(props: IUserNotesProps) {
 						onSubmit={handleSubmit((d) => {
 							// Add new item
 							const values = JSON.parse(JSON.stringify(d).replaceAll("an_", ""));
-							if (props.user) mutation.mutate({content: values.content, uid: props.user.id});
+							if (props.user) mutation.mutate({content: values.content.trim(), uid: props.user.id});
 						})}
 					>
 						<fieldset disabled={mutation.isLoading}>
@@ -83,7 +106,8 @@ export default function UserNotes(props: IUserNotesProps) {
 								elementHookFormErrors={errors}
 								elementWidth="full"
 								elementIsRequired={true}
-								elementTextareaRows={5}
+								elementTextareaRows={3}
+								elementIsTextareaExpandable={true}
 							/>
 							<Button
 								elementChildren="Add note"
@@ -136,16 +160,7 @@ export default function UserNotes(props: IUserNotesProps) {
 																		note.author === props.admin?.username
 																	),
 																	onClick: () => {
-																		if (
-																			window.confirm(
-																				"Are you sure you want to delete this note?\nThis cannot be reversed.\n"
-																			)
-																		) {
-																			mutationDelete.mutate({
-																				nid: note.id,
-																				uid: props.user?.id as string,
-																			});
-																		}
+																		setDeleteDialog(note.id);
 																	},
 																},
 															]}
@@ -229,7 +244,7 @@ function EditNote({note, token, uid}: {note: NoteType | null; token: string; uid
 	const mutation = useMutation({
 		mutationFn: (payload: {content: string; nid: number}) => {
 			return updateUserNote(token, {
-				content: payload.content,
+				content: payload.content.trim(),
 				nid: payload.nid,
 				uid: uid,
 			});
@@ -268,28 +283,18 @@ function EditNote({note, token, uid}: {note: NoteType | null; token: string; uid
 						elementHookFormErrors={errors}
 						elementWidth="full"
 						elementIsRequired={true}
-						elementTextareaRows={6}
+						elementTextareaRows={3}
 						defaultValue={note?.content}
+						elementIsTextareaExpandable={true}
 					/>
 					<div className="mt-6 flex gap-6 justify-center">
-						<Button
-							elementState="default"
-							elementStyle="black"
-							elementInvert={true}
-							elementSize="base"
-							elementChildren="Reset"
-							elementType="reset"
-							onClick={() => {
-								reset();
-							}}
-						/>
 						<Button
 							elementState={
 								mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
 							}
 							elementStyle="black"
 							elementSize="base"
-							elementChildren="Update"
+							elementChildren="Update Note"
 							elementType="submit"
 						/>
 					</div>

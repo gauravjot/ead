@@ -33,7 +33,7 @@ export default function Button(props: Props) {
 			: "bg-gray-900 hover:bg-black text-white outline-gray-300 focus:bg-gray-800",
 		danger: props.elementInvert
 			? "border border-red-600 text-red-600 outline-red-200 focus:bg-red-50"
-			: "bg-red-600 text-white outline-red-200 focus:bg-red-700",
+			: "bg-red-600 disabled:opacity-50 text-white outline-red-200 focus:bg-red-700",
 		white_opaque: "bg-white/20 text-white outline-white/10 focus:bg-white/50",
 		no_border_opaque:
 			"border border-transparent shadow-none font-normal text-gray-700 outline-transparent hover:bg-gray-200 focus:bg-gray-200",
@@ -65,9 +65,23 @@ export default function Button(props: Props) {
 
 	return (
 		<button
-			onClick={props.onClick}
+			onClick={(e) => {
+				if (props.elementType !== "submit") {
+					e.preventDefault();
+				}
+				if (props.onClick) {
+					props.onClick();
+				}
+			}}
 			className={
-				buttonBaseStyle + " " + style[props.elementStyle] + " " + buttonSizing + " " + buttonWidth
+				buttonBaseStyle +
+				" " +
+				style[props.elementStyle] +
+				" " +
+				buttonSizing +
+				" " +
+				buttonWidth +
+				" disabled:pointer-events-none"
 			}
 			disabled={props.elementDisabled}
 		>
