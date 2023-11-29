@@ -48,9 +48,7 @@ export default function LoginBox({
 					</div>
 					<div>
 						{error.length > 0 && (
-							<p className="mt-5 text-red-100 bg-red-600/30 px-2 text-bb py-1 rounded">
-								{error}
-							</p>
+							<p className="mt-5 text-red-100 bg-red-600/30 px-2 text-bb py-1 rounded">{error}</p>
 						)}
 						<form
 							onSubmit={(e: React.FormEvent) => {
@@ -63,42 +61,32 @@ export default function LoginBox({
 							}}
 						>
 							<fieldset disabled={mutation.isLoading || mutation.isSuccess}>
-								<label
-									className="block text-white text-sm py-1.5 mt-4"
-									htmlFor="username"
-								>
+								<label className="block text-white text-sm py-1.5 mt-4" htmlFor="username">
 									Username
 								</label>
 								<input
 									className={
 										"block w-full bg-white/10 border border-white/30 text-white px-3 py-1.5 rounded focus-visible:outline-4 focus-visible:outline-white/20 focus-visible:outline focus-visible:border-gray-300" +
-										(error.length > 0 && username.length < 1
-											? " border-red-500/70"
-											: "")
+										(error.length > 0 && username.length < 1 ? " border-red-500/70" : "")
 									}
 									type="text"
-									elementId="username"
+									id="username"
 									name="username"
 									value={username}
 									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
 										setUsername(e.target.value);
 									}}
 								/>
-								<label
-									className="block text-white text-sm py-1.5 mt-2"
-									htmlFor="password"
-								>
+								<label className="block text-white text-sm py-1.5 mt-2" htmlFor="password">
 									Password
 								</label>
 								<input
 									className={
 										"block w-full bg-white/10 border border-white/30 text-white px-3 py-1.5 rounded focus-visible:outline-4 focus-visible:outline-white/20 focus-visible:outline focus-visible:border-gray-300" +
-										(error.length > 0 && password.length < 1
-											? " border-red-500/70"
-											: "")
+										(error.length > 0 && password.length < 1 ? " border-red-500/70" : "")
 									}
 									type="password"
-									elementId="password"
+									id="password"
 									name="password"
 									value={password}
 									onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -108,11 +96,7 @@ export default function LoginBox({
 								<div className="mt-6">
 									<Button
 										elementState={
-											mutation.isLoading
-												? "loading"
-												: mutation.isSuccess
-												? "done"
-												: "default"
+											mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
 										}
 										elementStyle="white_opaque"
 										elementSize="base"

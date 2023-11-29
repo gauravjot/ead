@@ -43,8 +43,8 @@ export default function ServerSetup({
 					<span>Few things to note</span>
 					<ul className="ml-4 block mt-3 list-disc text-bb">
 						<li>
-							The username for administrative account is{" "}
-							<span className="italic">root</span> and cannot be changed.
+							The username for administrative account is <span className="italic">root</span> and
+							cannot be changed.
 						</li>
 						<li className="my-2">You can change password of root account later.</li>
 						<li>Root account cannot be disabled.</li>
@@ -66,35 +66,27 @@ export default function ServerSetup({
 					}}
 				>
 					<fieldset disabled={mutation.isLoading || mutation.isSuccess}>
-						<label
-							className="block text-gray-600 text-sm py-1.5 mt-4"
-							htmlFor="username1"
-						>
+						<label className="block text-gray-600 text-sm py-1.5 mt-4" htmlFor="username1">
 							Username
 						</label>
 						<input
 							className="block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300 disabled:bg-blue-50 disabled:text-gray-500"
 							type="text"
-							elementId="username1"
+							id="username1"
 							name="username"
 							value="root"
 							disabled={true}
 						/>
-						<label
-							className="block text-gray-600 text-sm py-1.5 mt-2"
-							htmlFor="password1"
-						>
+						<label className="block text-gray-600 text-sm py-1.5 mt-2" htmlFor="password1">
 							Password
 						</label>
 						<input
 							className={
 								"block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300" +
-								(error.length > 0 && password.length < 1
-									? " border-red-500/70"
-									: "")
+								(error.length > 0 && password.length < 1 ? " border-red-500/70" : "")
 							}
 							type="password"
-							elementId="password1"
+							id="password1"
 							name="password"
 							value={password}
 							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,11 +96,7 @@ export default function ServerSetup({
 						<div className="mt-6">
 							<Button
 								elementState={
-									mutation.isLoading
-										? "loading"
-										: mutation.isSuccess
-										? "done"
-										: "default"
+									mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
 								}
 								elementStyle="black"
 								elementSize="base"
