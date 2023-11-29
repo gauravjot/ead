@@ -175,6 +175,7 @@ export default function AdminsDetailPanel({adminID}: {adminID: string}) {
 										elementLabel="New password"
 										elementInputMinLength={8}
 										elementInputMaxLength={96}
+										elementIsPassword={true}
 										elementIsRequired={true}
 										elementHookFormErrors={errors}
 									/>

@@ -75,8 +75,11 @@ export default function InputField({
 		validation["validate"] = {
 			...validation["validate"],
 			passwordComplexity: (val: string) => {
-				if (isPassword && !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#%^~,&$*])/.test(val)) {
-					return "Your password needs to have atleast one lowercase, one uppercase, one number and one special character (~!@#$%^&*).";
+				if (
+					isPassword &&
+					!/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)(?=.*[!@#%^~,&$*<>?])/.test(val)
+				) {
+					return "Your password needs to have atleast one lowercase, one uppercase, one number and one special character (~!@#$%^&*<>?).";
 				}
 			},
 		};
