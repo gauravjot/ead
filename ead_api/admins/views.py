@@ -263,9 +263,10 @@ def changePassword(request):
     adminID = getAdminID(request)
     if type(adminID) is Response:
         return adminID
-    # Block request to change root account
-    if str(request.data['username']) == "root":
-        return Response(data=errorResponse("Cannot change password of root account.", "A0087"), status=status.HTTP_400_BAD_REQUEST)
+    # Block request to change root account unless root is requesting
+    if adminID.username != "root":
+        if str(request.data['username']) == "root":
+            return Response(data=errorResponse("Cannot change password of root account.", "A0087"), status=status.HTTP_400_BAD_REQUEST)
     try:
         admin = Admin.objects.get(username=str(request.data['username']))
         admin.password = hashPwd(str(request.data['password']))
