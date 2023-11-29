@@ -8,6 +8,7 @@ class User(models.Model):
     title = models.CharField(max_length=48)
     email = models.EmailField(max_length=64, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
+    notes = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(
         Admin, related_name='user_created_by', on_delete=models.SET_NULL, blank=True, null=True)

@@ -77,7 +77,7 @@ export default function AddNewUser({
 			{!reqResponse && (
 				<form
 					onSubmit={handleSubmit((d) => {
-						mutation.mutate(JSON.parse(JSON.stringify(d)));
+						mutation.mutate(JSON.parse(JSON.stringify(d).replaceAll("aau_", "")));
 					})}
 				>
 					<fieldset disabled={mutation.isLoading}>
@@ -85,7 +85,7 @@ export default function AddNewUser({
 						<div className="grid sm:grid-cols-2 grid-cols-1 gap-12">
 							<div>
 								<InputField
-									elementId="name"
+									elementId="aau_name"
 									elementIsRequired={true}
 									elementInputMinLength={2}
 									elementHookFormErrors={errors}
@@ -97,7 +97,7 @@ export default function AddNewUser({
 								/>
 
 								<InputField
-									elementId="title"
+									elementId="aau_title"
 									elementInputType="text"
 									elementHookFormRegister={register}
 									elementLabel="Job Title"
@@ -109,17 +109,17 @@ export default function AddNewUser({
 							</div>
 							<div>
 								<InputField
-									elementId="email"
+									elementId="aau_email"
 									elementInputMinLength={0}
 									elementInputMaxLength={64}
-									elementInputType="text"
+									elementInputType="email"
 									elementHookFormRegister={register}
 									elementLabel="Email"
 									elementHookFormErrors={errors}
 									elementWidth="full"
 								/>
 								<InputField
-									elementId="phone"
+									elementId="aau_phone"
 									elementInputType="text"
 									elementHookFormRegister={register}
 									elementLabel="Phone"

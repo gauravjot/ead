@@ -29,8 +29,8 @@ export default function Button(props: Props) {
 			? "border border-primary-600 text-primary-600 outline-primary-100 focus:bg-primary-50"
 			: "bg-primary-600 text-white outline-primary-100 focus:bg-primary-700/90",
 		black: props.elementInvert
-			? "border border-gray-600 text-gray-700 outline-gray-200 focus:bg-gray-50"
-			: "bg-gray-900 text-white outline-gray-300 focus:bg-gray-800",
+			? "border border-gray-600 hover:bg-gray-100 text-gray-700 outline-gray-200 focus:bg-gray-50"
+			: "bg-gray-900 hover:bg-black text-white outline-gray-300 focus:bg-gray-800",
 		danger: props.elementInvert
 			? "border border-red-600 text-red-600 outline-red-200 focus:bg-red-50"
 			: "bg-red-600 text-white outline-red-200 focus:bg-red-700",
@@ -67,13 +67,7 @@ export default function Button(props: Props) {
 		<button
 			onClick={props.onClick}
 			className={
-				buttonBaseStyle +
-				" " +
-				style[props.elementStyle] +
-				" " +
-				buttonSizing +
-				" " +
-				buttonWidth
+				buttonBaseStyle + " " + style[props.elementStyle] + " " + buttonSizing + " " + buttonWidth
 			}
 			disabled={props.elementDisabled}
 		>

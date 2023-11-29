@@ -30,6 +30,7 @@ def addUser(request):
         email=str(request.data['email'])[0:64].lower(),
         phone=str(request.data['phone'])[0:20],
         title=str(request.data['title'])[0:48],
+        notes=None,
         created_at=dateStamp,
         updated_at=dateStamp,
         created_by=admin.username,
@@ -104,9 +105,91 @@ def updateUser(request):
         return Response(data=errorResponse("Unable to update user.", "U0002"), status=status.HTTP_400_BAD_REQUEST)
 
 
+# Post a note
+# -------------------------------
+@api_view(['POST'])
+def postNoteToUser(request):
+    # Get requesting admin ID
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    # Update
+    try:
+        user = User.objects.get(id=request.data['uid'])
+        notes = user.notes
+        if notes is None:
+            notes = []
+        note = dict(
+            date=str(datetime.now(pytz.utc)),
+            author=admin.username,
+            content=request.data['content'],
+            id=(notes[-1]['id'] + 1) if len(notes) > 0 else 0
+        )
+        notes.append(note)
+        user.notes = notes
+        user.save()
+
+        return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(data=errorResponse("Unable to add user note.", "U0004"), status=status.HTTP_400_BAD_REQUEST)
+
+
+# Delete a note
+# -------------------------------
+@api_view(['PUT'])
+def deleteNoteFromUser(request):
+    # Get requesting admin ID
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    # Update
+    try:
+        user = User.objects.get(id=request.data['uid'])
+        notes = user.notes
+        for note in notes:
+            # If author is not the same or root, return error
+            if note['author'] != admin.username and admin.username != 'root':
+                return Response(data=errorResponse("Unable to delete user note.", "U0007"), status=status.HTTP_400_BAD_REQUEST)
+            if note['id'] == request.data['nid']:
+                notes.remove(note)
+                break
+        user.notes = notes
+        user.save()
+
+        return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(data=errorResponse("Unable to delete user note.", "U0005"), status=status.HTTP_400_BAD_REQUEST)
+
+
+# Update note
+# -------------------------------
+@api_view(['PUT'])
+def updateNoteFromUser(request):
+    # Get requesting admin ID
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    # Update
+    try:
+        user = User.objects.get(id=request.data['uid'])
+        notes = user.notes
+        for note in notes:
+            if note['id'] == request.data['nid']:
+                # If author is not the same, return error
+                if note['author'] != admin.username:
+                    return Response(data=errorResponse("Unable to update user note.", "U0007"), status=status.HTTP_400_BAD_REQUEST)
+                note['content'] = request.data['content']
+                break
+        user.notes = notes
+        user.save()
+
+        return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(data=errorResponse("Unable to update user note.", "U0006"), status=status.HTTP_400_BAD_REQUEST)
+
+
 # Disable
 # -------------------------------
-
 @api_view(['DELETE'])
 def deleteUser(request):
     # Get requesting admin ID

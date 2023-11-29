@@ -78,7 +78,7 @@ export default function AddNewAdmin({
 			{!reqResponse && (
 				<form
 					onSubmit={handleSubmit((d) => {
-						mutation.mutate(JSON.parse(JSON.stringify(d)));
+						mutation.mutate(JSON.parse(JSON.stringify(d).replaceAll("ana_", "")));
 					})}
 				>
 					<fieldset disabled={mutation.isLoading}>
@@ -86,7 +86,7 @@ export default function AddNewAdmin({
 						<div className="grid sm:grid-cols-2 grid-cols-1 gap-12">
 							<div>
 								<InputField
-									elementId="full_name"
+									elementId="ana_full_name"
 									elementIsRequired={true}
 									elementInputMinLength={2}
 									elementHookFormErrors={errors}
@@ -98,7 +98,7 @@ export default function AddNewAdmin({
 								/>
 
 								<InputField
-									elementId="title"
+									elementId="ana_title"
 									elementInputType="text"
 									elementHookFormRegister={register}
 									elementLabel="Job Title"
@@ -110,7 +110,7 @@ export default function AddNewAdmin({
 							</div>
 							<div>
 								<InputField
-									elementId="username"
+									elementId="ana_username"
 									elementInputMinLength={2}
 									elementInputMaxLength={24}
 									elementInputType="text"
@@ -121,7 +121,7 @@ export default function AddNewAdmin({
 									elementWidth="full"
 								/>
 								<InputField
-									elementId="password"
+									elementId="ana_password"
 									elementInputType="password"
 									elementHookFormRegister={register}
 									elementLabel="Password"
@@ -133,16 +133,14 @@ export default function AddNewAdmin({
 									elementWidth="full"
 								/>
 								<InputField
-									elementId="confirm_password"
+									elementId="ana_confirm_password"
 									elementInputType="password"
 									elementHookFormRegister={register}
 									elementLabel="Confirm Password"
-									elementInputMinLength={8}
-									elementInputMaxLength={96}
 									elementIsRequired={true}
 									elementHookFormErrors={errors}
 									elementHookFormWatch={watch}
-									elementHookFormWatchField="password"
+									elementHookFormWatchField="ana_password"
 									elementWidth="full"
 								/>
 							</div>

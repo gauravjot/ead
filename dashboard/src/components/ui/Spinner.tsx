@@ -1,6 +1,6 @@
 interface Props {
 	size: "sm" | "md" | "lg" | "xl";
-	color: "white" | "black" | "gray" | "accent";
+	color: "white" | "black" | "gray" | "accent" | "danger";
 }
 
 export default function Spinner(props: Props) {

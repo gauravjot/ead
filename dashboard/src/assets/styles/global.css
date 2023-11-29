@@ -94,6 +94,9 @@
 .spinner-gray {
 	--loader-border-color: rgb(103, 103, 103);
 }
+.spinner-danger {
+	--loader-border-color: rgb(204, 50, 50);
+}
 
 @keyframes rotateX {
 	from {
