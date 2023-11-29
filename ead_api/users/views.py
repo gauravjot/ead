@@ -147,10 +147,11 @@ def deleteNoteFromUser(request):
         user = User.objects.get(id=request.data['uid'])
         notes = user.notes
         for note in notes:
-            # If author is not the same or root, return error
-            if note['author'] != admin.username and admin.username != 'root':
-                return Response(data=errorResponse("Unable to delete user note.", "U0007"), status=status.HTTP_400_BAD_REQUEST)
             if note['id'] == request.data['nid']:
+                # If author is not the same or root, return error
+                if admin.username != 'root':
+                    if note['author'] != admin.username:
+                        return Response(data=errorResponse("Unable to delete user note.", "U0007"), status=status.HTTP_400_BAD_REQUEST)
                 notes.remove(note)
                 break
         user.notes = notes
