@@ -5,22 +5,32 @@ from .models import Item, ItemType, Allocation
 class ItemTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemType
-        fields = ['id', 'name', 'description', 'template', 'created_by', 'created_at']
+        fields = ['id', 'name', 'description', 'template',
+                  'created_by', 'created_at', 'updated_by',
+                  'updated_at', 'mark_deleted', 'deleted_by',
+                  'deleted_at']
         extra_kwargs = {
             'name': {'required': True},
             'description': {'required': True},
+            'created_by': {'required': True},
+            'created_at': {'required': True},
         }
 
 
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ['id', 'item_type', 'description', 'name', 'value', 'active']
+        fields = ['id', 'item_type', 'description', 'name',
+                  'value', 'added_by', 'added_at', 'updated_by',
+                  'updated_at', 'mark_deleted', 'deleted_by',
+                  'deleted_at']
         extra_kwargs = {
             'name': {'required': True},
-            'description': {'required': True}, 
+            'description': {'required': True},
             'value': {'required': True},
             'item_type': {'required': True},
+            'added_by': {'required': True},
+            'added_at': {'required': True},
         }
 
 
@@ -35,4 +45,3 @@ class AllocationSerializer(serializers.ModelSerializer):
             'assigned_to': {'required': True},
             'assigned_at': {'required': True},
         }
-

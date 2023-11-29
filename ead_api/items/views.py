@@ -8,6 +8,7 @@ from rest_framework.decorators import api_view
 # Models & Serializers
 from .models import Item, ItemType, Allocation
 from .serializers import ItemTypeSerializer, ItemSerializer, AllocationSerializer
+from admins.serializers import AdminSerializer
 # Session
 from admins.sessions import getAdminID
 from admins.utils import errorResponse, successResponse
@@ -33,7 +34,9 @@ def addItemType(request):
         description=request.data['description'],
         template=None,
         created_by=str(adminID.username),
-        created_at=datetime.now(pytz.utc)
+        created_at=datetime.now(pytz.utc),
+        updated_at=datetime.now(pytz.utc),
+        updated_by=str(adminID.username)
     ))
     # if valid then add
     if itemTypeSerializer.is_valid():
@@ -132,7 +135,7 @@ def deleteItemType(request, id):
     try:
         ItemType.objects.get(id=id).delete()
         return Response(data=successResponse(), status=status.HTTP_200_OK)
-    except User.DoesNotExist:
+    except ItemType.DoesNotExist:
         return Response(data=errorResponse("ItemType does not exist.", "I0014"), status=status.HTTP_404_NOT_FOUND)
 
 
@@ -153,11 +156,19 @@ def getAllItems(request, id):
         return admin
     l = list()
     for item in Item.objects.filter(item_type=id).order_by('name'):
+        admin_detail = dict(AdminSerializer(item.added_by).data)
+        admin_detail = dict(
+            full_name=admin_detail['full_name'],
+            username=admin_detail['username']
+        )
         l.append({
-            'name':item.name,
-            'description':item.description,
-            'active':item.active,
-            'id':item.id,
+            'name': item.name,
+            'description': item.description,
+            'id': item.id,
+            'added_at': item.added_at,
+            'added_by': admin_detail,
+            'updated_at': item.updated_at,
+            'updated_by': admin_detail,
             **{i.get("n")+"_c": i.get("v") for i in item.value}
         })
     res = successResponse(l)
@@ -177,7 +188,11 @@ def addItem(request):
         description=request.data['description'],
         value=request.data['value'],
         item_type=request.data['item_type'],
-        active=True
+        added_by=str(adminID.username),
+        added_at=datetime.now(pytz.utc),
+        updated_at=datetime.now(pytz.utc),
+        updated_by=str(adminID.username)
+
     ))
     # if valid then add
     if itemSerializer.is_valid():
@@ -192,9 +207,9 @@ def getItem(request, id):
     adminID = getAdminID(request)
     if type(adminID) is Response:
         return adminID
-    try: 
+    try:
         return Response(data=successResponse(ItemSerializer(Item.objects.get(id=id)).data), status=status.HTTP_200_OK)
-    except User.DoesNotExist:
+    except Item.DoesNotExist:
         return Response(data=errorResponse("Item does not exist.", "I0404"), status=status.HTTP_404_NOT_FOUND)
 
 
@@ -206,5 +221,5 @@ def deleteItem(request, id):
     try:
         Item.objects.get(id=id).delete()
         return Response(data=successResponse(), status=status.HTTP_200_OK)
-    except User.DoesNotExist:
+    except Item.DoesNotExist:
         return Response(data=errorResponse("Item does not exist.", "I0404"), status=status.HTTP_404_NOT_FOUND)
