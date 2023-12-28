@@ -33,7 +33,7 @@ export default function AddNewItem({
 			setReqError(null);
 			reset();
 			setShowAddItemBox(false);
-			queryClient.resetQueries(["items_" + itemType.id]);
+			queryClient.invalidateQueries(["items_" + itemType.id]);
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setReqError);
@@ -67,9 +67,7 @@ export default function AddNewItem({
 						const v = JSON.parse(JSON.stringify(d));
 						const r = Object.create(null);
 						r["name"] = v["name"];
-						r["description"] = v["description"];
 						delete v["name"];
-						delete v["description"];
 						const f: {n: string; v: string}[] = [];
 						for (const [key, value] of Object.entries(v)) {
 							f.push({n: key as string, v: value as string});
@@ -81,61 +79,46 @@ export default function AddNewItem({
 				>
 					<fieldset>
 						{reqError && <p className="text-red-700 my-4">{reqError.toString()}</p>}
-						<div className="grid grid-cols-2 gap-6 mt-6">
-							<div>
-								<h2 className="text-md font-medium text-gray-800">General Information</h2>
-								<InputField
-									elementInputType="text"
-									elementId="name"
-									elementLabel="Name"
-									elementHookFormRegister={register}
-									elementHookFormErrors={errors}
-									elementIsRequired={true}
-									elementInputMaxLength={48}
-									elementWidth="full"
-								/>
-								<InputField
-									elementInputType="text"
-									elementId="description"
-									elementLabel="Description"
-									elementIsRequired={true}
-									elementHookFormRegister={register}
-									elementHookFormErrors={errors}
-									elementIsTextarea={true}
-									elementTextareaRows={6}
-									elementWidth="full"
-								/>
-							</div>
-							<div>
-								<h2 className="text-md font-medium text-gray-800">Fields</h2>
-								{itemType.template?.map((field) => {
-									return field.t !== "boolean" ? (
-										<InputField
-											key={field.n}
-											elementInputType={field.t as "number" | "text"}
-											elementId={field.n.replace(" ", "_")}
-											elementLabel={field.n}
-											elementHookFormRegister={register}
-											elementHookFormErrors={errors}
-											elementIsRequired={true}
-											elementWidth="full"
+						<div className="mt-6">
+							<h2 className="text-md font-medium text-gray-800">General Information</h2>
+							<InputField
+								elementInputType="text"
+								elementId="name"
+								elementLabel="Name"
+								elementHookFormRegister={register}
+								elementHookFormErrors={errors}
+								elementIsRequired={true}
+								elementInputMaxLength={48}
+								elementWidth="full"
+							/>
+							<h2 className="text-md mt-6 font-medium text-gray-800">Fields</h2>
+							{itemType.template?.map((field) => {
+								return field.t !== "boolean" ? (
+									<InputField
+										key={field.n}
+										elementInputType={field.t as "number" | "text"}
+										elementId={field.n.replace(" ", "_")}
+										elementLabel={field.n}
+										elementHookFormRegister={register}
+										elementHookFormErrors={errors}
+										elementIsRequired={true}
+										elementWidth="full"
+									/>
+								) : (
+									<label
+										key={field.n}
+										htmlFor={field.n.replace(" ", "_")}
+										className="flex place-items-center w-full mt-6 mb-4 text-bb text-gray-600 group cursor-pointer"
+									>
+										<span className="flex-1">{field.n}</span>
+										<input
+											type="checkbox"
+											id={field.n.replace(" ", "_")}
+											{...register(field.n.replace(" ", "_"))}
 										/>
-									) : (
-										<label
-											key={field.n}
-											htmlFor={field.n.replace(" ", "_")}
-											className="flex place-items-center w-full mt-6 mb-4 text-bb text-gray-600 group cursor-pointer"
-										>
-											<span className="flex-1">{field.n}</span>
-											<input
-												type="checkbox"
-												id={field.n.replace(" ", "_")}
-												{...register(field.n.replace(" ", "_"))}
-											/>
-										</label>
-									);
-								})}
-							</div>
+									</label>
+								);
+							})}
 						</div>
 						<div className="mt-6 flex gap-6 justify-center">
 							<Button

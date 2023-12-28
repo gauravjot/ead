@@ -2,7 +2,7 @@ import {AdminContext} from "@/components/Home";
 import {useContext, useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {getItemType} from "@/services/item/item_type/get_item_type";
-import AddNewField from "./AddNewField";
+import AddNewItemField from "../AddNewItemField";
 import Spinner from "@/components/ui/Spinner";
 import InputField from "@/components/ui/InputField";
 import {useForm} from "react-hook-form";
@@ -34,7 +34,7 @@ export default function EditItemType({id}: {id: number | string}) {
 				: Promise.reject();
 		},
 		onSuccess: () => {
-			queryClient.resetQueries(["item_type_" + id, "item_type_list"]);
+			queryClient.invalidateQueries(["item_type_" + id]);
 			setReqError(null);
 			reset();
 		},
@@ -50,8 +50,8 @@ export default function EditItemType({id}: {id: number | string}) {
 			return adminContext.admin ? deleteItemType(adminContext.admin?.token, id) : Promise.reject();
 		},
 		onSuccess: () => {
-			queryClient.resetQueries(["item_type_list"]);
-			queryClient.resetQueries(["item_type_"+ id]);
+			queryClient.invalidateQueries(["item_type_" + id]);
+			queryClient.invalidateQueries(["item_type_list"]);
 			setDeleteItemTypeReqError(null);
 			reset();
 		},
@@ -68,7 +68,7 @@ export default function EditItemType({id}: {id: number | string}) {
 				: Promise.reject();
 		},
 		onSuccess: () => {
-			queryClient.resetQueries(["item_type_" + id]);
+			queryClient.invalidateQueries(["item_type_" + id]);
 			setDeleteItemFieldReqError(null);
 			reset();
 		},
@@ -149,6 +149,12 @@ export default function EditItemType({id}: {id: number | string}) {
 						</tr>
 					</thead>
 					<tbody>
+						<tr className="group border-b border-gray-200 bg-gray-100">
+							<td className="w-1/3 border-b border-gray-200 py-2 text-bb pl-4">Name</td>
+							<td className="relative w-full border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
+								text
+							</td>
+						</tr>
 						{itemTypeQuery.isSuccess && itemTypeQuery.data.data.template?.length > 0 ? (
 							itemTypeQuery.data.data.template.map((field: {n: string; t: string}) => (
 								<tr
@@ -198,7 +204,7 @@ export default function EditItemType({id}: {id: number | string}) {
 					</tbody>
 				</table>
 			</div>
-			<AddNewField id={id} />
+			<AddNewItemField id={id} />
 			{/* ### delete ### */}
 			<div className="border-t grid grid-cols-2 gap-6 mt-8 pb-8 pt-2">
 				<div>

@@ -73,6 +73,26 @@ def getItemType(request, id):
         return Response(data=errorResponse("Item does not exist.", "I0001"), status=status.HTTP_404_NOT_FOUND)
 
 
+# Edit Item Type
+# -------------------------------
+@api_view(['PUT'])
+def editItemType(request, id):
+    # Get requesting admin ID
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    # Get item type
+    try:
+        item_type = ItemType.objects.get(id=id)
+        item_type.name = str(request.data['name'])
+        item_type.description = str(request.data['description'])
+        item_type.save()
+
+        return Response(data=successResponse(ItemTypeSerializer(item_type).data), status=status.HTTP_200_OK)
+    except ItemType.DoesNotExist:
+        return Response(data=errorResponse("Item does not exist.", "I0004"), status=status.HTTP_404_NOT_FOUND)
+
+
 # Add Item type field
 # -------------------------------
 @api_view(['POST'])
@@ -163,7 +183,6 @@ def getAllItems(request, id):
         )
         l.append({
             'name': item.name,
-            'description': item.description,
             'id': item.id,
             'added_at': item.added_at,
             'added_by': admin_detail,
@@ -185,7 +204,6 @@ def addItem(request):
     # create serializer
     itemSerializer = ItemSerializer(data=dict(
         name=request.data['name'],
-        description=request.data['description'],
         value=request.data['value'],
         item_type=request.data['item_type'],
         added_by=str(adminID.username),

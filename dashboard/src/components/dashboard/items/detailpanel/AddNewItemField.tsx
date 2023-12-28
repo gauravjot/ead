@@ -8,7 +8,7 @@ import {useContext, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "react-query";
 
-export default function AddNewField({id}: {id: number | string}) {
+export default function AddNewItemField({id}: {id: number | string}) {
 	const adminContext = useContext(AdminContext);
 	const queryClient = useQueryClient();
 	const [showNewField, setShowNewField] = useState<boolean>(false);
@@ -28,7 +28,7 @@ export default function AddNewField({id}: {id: number | string}) {
 				: Promise.reject();
 		},
 		onSuccess: () => {
-			queryClient.resetQueries(["item_type_" + id]);
+			queryClient.invalidateQueries(["item_type_" + id]);
 			setReqError(null);
 			setShowNewField(false);
 			reset();
@@ -68,7 +68,7 @@ export default function AddNewField({id}: {id: number | string}) {
 								*
 							</span>
 						</div>
-						<div className={"flex gap-4 my-1 mb-2.5"}>
+						<div className="flex gap-4 my-1 mb-2.5">
 							<div>
 								<input
 									type="radio"
@@ -100,6 +100,86 @@ export default function AddNewField({id}: {id: number | string}) {
 								/>
 								<label className="pl-2 cursor-pointer text-bb" htmlFor="boolean">
 									Boolean
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="paragraph"
+									value="paragraph"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="paragraph">
+									Paragraph
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="multiple"
+									value="multiple"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="multiple">
+									Multiple
+								</label>
+							</div>
+						</div>
+						<div className="flex gap-4 my-1 mb-2.5">
+							<div>
+								<input
+									type="radio"
+									id="date"
+									value="date"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="date">
+									Date
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="time"
+									value="time"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="time">
+									Time
+								</label>
+							</div>
+
+							<div>
+								<input
+									type="radio"
+									id="datetime"
+									value="datetime"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="datetime">
+									Date and Time
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="currency"
+									value="currency"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="currency">
+									Currency
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="url"
+									value="url"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="url">
+									URL
 								</label>
 							</div>
 						</div>

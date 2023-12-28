@@ -10,7 +10,8 @@ interface Props {
 		| "danger"
 		| "white_opaque"
 		| "no_border_opaque"
-		| "border_opaque";
+		| "border_opaque"
+		| "no_border_primary_opaque";
 	elementState: "default" | "loading" | "done";
 	elementType: "button" | "submit" | "reset";
 	elementSize?: "xsmall" | "small" | "base" | "large";
@@ -21,7 +22,7 @@ interface Props {
 }
 
 const buttonBaseStyle =
-	"leading-[1] shadow font-bold rounded-md pointer hover:outline focus:outline focus:outline-4 hover:outline-4 disabled:outline-0 disabled:opacity-50";
+	"leading-[1] shadow font-medium rounded-md pointer hover:outline focus:outline focus:outline-4 hover:outline-4 disabled:outline-0 disabled:opacity-50";
 
 export default function Button(props: Props) {
 	const style = {
@@ -36,9 +37,10 @@ export default function Button(props: Props) {
 			: "bg-red-600 disabled:opacity-50 text-white outline-red-200 focus:bg-red-700",
 		white_opaque: "bg-white/20 text-white outline-white/10 focus:bg-white/50",
 		no_border_opaque:
-			"border border-transparent shadow-none font-normal text-gray-700 outline-transparent hover:bg-gray-200 focus:bg-gray-200",
+			"border border-transparent shadow-none text-gray-700 outline-transparent hover:bg-gray-200 focus:bg-gray-200",
 		border_opaque:
 			"border border-gray-200 text-gray-700 hover:outline-gray-200 hover:border-gray-400 focus:outline-gray-200 focus:bg-gray-50",
+		no_border_primary_opaque: "border border-transparent shadow-none text-primary-700 outline-transparent hover:bg-primary-50 focus:bg-primary-50"
 	};
 	const buttonSizing =
 		props.elementSize === "base"
@@ -61,6 +63,8 @@ export default function Button(props: Props) {
 			? "black"
 			: props.elementStyle === "border_opaque" || props.elementStyle === "no_border_opaque"
 			? "black"
+			: props.elementStyle === "no_border_primary_opaque"
+			? "accent"
 			: "white";
 
 	return (

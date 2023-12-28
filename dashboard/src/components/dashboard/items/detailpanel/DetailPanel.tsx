@@ -4,13 +4,13 @@ import { ItemTypeType } from "@/types/item";
 import { useContext, useState } from "react";
 import { useQuery } from "react-query";
 import EditItemType from "./edit_item_type/EditItemType";
-import ViewItems from "./ViewItems";
+import ItemsList from "./ItemsList";
 import AddNewItem from "./AddNewItem";
 
-export default function ItemsListDetailPanel({ id }: { id: number | string }) {
+export default function DetailPanel({ id }: { id: number | string }) {
 	const adminContext = useContext(AdminContext);
 	const [activeTab, setActiveTab] = useState<"list" | "edit">("list");
-  const [showAddItemBox, setShowAddItemBox] = useState<boolean>(false);
+  const [showAddItemPrompt, setShowAddItemPrompt] = useState<boolean>(false);
 	const itemTypeQuery = useQuery(["item_type_" + id], () =>
 		getItemType(adminContext.admin?.token, id)
 	);
@@ -65,8 +65,8 @@ export default function ItemsListDetailPanel({ id }: { id: number | string }) {
 				{activeTab === "edit" && <EditItemType id={id} />}
 				{activeTab === "list" && (
           <>
-            {itemtype && showAddItemBox && <AddNewItem setShowAddItemBox={setShowAddItemBox} itemType={itemtype}/>}
-					  <ViewItems id={id} template={itemtype?.template || null} setShowAddItemBox={setShowAddItemBox}/>
+            {itemtype && showAddItemPrompt && <AddNewItem setShowAddItemBox={setShowAddItemPrompt} itemType={itemtype}/>}
+					  <ItemsList id={id} template={itemtype?.template || null} setShowAddItemBox={setShowAddItemPrompt}/>
 				  </>
         )}
 			</div>

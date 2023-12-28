@@ -3,7 +3,7 @@ import Button from "@/components/ui/Button";
 import { ItemTypeType } from "@/types/item";
 import AddNewItemType from "@/components/dashboard/items/AddNewItemType";
 import ItemTypeList from "./ItemTypeList";
-import ItemsListDetailPanel from "./detailpanel/ItemsListDetail";
+import DetailPanel from "./detailpanel/DetailPanel";
 
 export default function Items() {
 	const [activeItem, setActiveItem] = useState<ItemTypeType>();
@@ -40,7 +40,7 @@ export default function Items() {
 				</div>
 				<div className="overflow-y-auto bg-white w-full">
 					{activeItem?.id && (
-						<ItemsListDetailPanel key={activeItem.id} id={activeItem.id} />
+						<DetailPanel key={activeItem.id} id={activeItem.id} />
 					)}
 				</div>
 			</div>

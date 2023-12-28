@@ -18,7 +18,7 @@ export function editItemType(
 	return token
 		? axios
 				.put(
-					BACKEND_ENDPOINT + `/api/item/type/${id}/`,
+					BACKEND_ENDPOINT + `/api/item/type/${id}/edit/`,
 					JSON.stringify({
 						name: name,
 						description: description

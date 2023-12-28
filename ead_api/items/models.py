@@ -24,7 +24,6 @@ class Item(models.Model):
     id = models.AutoField(primary_key=True)
     item_type = models.ForeignKey(ItemType, on_delete=models.CASCADE)
     name = models.CharField(max_length=48)
-    description = models.TextField()
     value = models.JSONField()
     added_by = models.ForeignKey(
         Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_added_by')
