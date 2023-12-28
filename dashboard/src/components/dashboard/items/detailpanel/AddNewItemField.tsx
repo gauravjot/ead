@@ -135,6 +135,40 @@ export default function AddNewItemField({id}: {id: number | string}) {
 									Multiple
 								</label>
 							</div>
+							<div>
+								<input
+									type="radio"
+									id="item_type"
+									value="item_type"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="item_type">
+									Item Type
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="user"
+									value="user"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="user">
+									User
+								</label>
+							</div>
+
+							<div>
+								<input
+									type="radio"
+									id="admin"
+									value="admin"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="admin">
+									Admin
+								</label>
+							</div>
 						</div>
 						<div className="flex gap-4 my-1 mb-2.5">
 							<div>
