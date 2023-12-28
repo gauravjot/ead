@@ -77,7 +77,7 @@ export default function AddNewItemField({id}: {id: number | string}) {
 									{...register("t", {required: "Choose field type"})}
 								/>
 								<label className="pl-2 cursor-pointer text-bb" htmlFor="text">
-									Text
+									Short Text
 								</label>
 							</div>
 							<div>
@@ -89,6 +89,17 @@ export default function AddNewItemField({id}: {id: number | string}) {
 								/>
 								<label className="pl-2 cursor-pointer text-bb" htmlFor="number">
 									Number
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="decimal"
+									value="decimal"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="decimal">
+									Decimal
 								</label>
 							</div>
 							<div>
@@ -180,6 +191,28 @@ export default function AddNewItemField({id}: {id: number | string}) {
 								/>
 								<label className="pl-2 cursor-pointer text-bb" htmlFor="url">
 									URL
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="phone"
+									value="phone"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="phone">
+									Phone
+								</label>
+							</div>
+							<div>
+								<input
+									type="radio"
+									id="email"
+									value="email"
+									{...register("t", {required: "Choose field type"})}
+								/>
+								<label className="pl-2 cursor-pointer text-bb" htmlFor="email">
+									Email
 								</label>
 							</div>
 						</div>
