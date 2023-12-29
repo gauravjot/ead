@@ -7,10 +7,12 @@ export type ItemTypeType = {
 	id: number;
 	name: string;
 	description: string;
-	template: { n: string; t: string }[] | null;
+	template: CustomFieldType[] | null;
 	created_at: string;
 	created_by: string;
 };
+
+export type CustomFieldType = { n: string; t: string, dV?: string };
 
 /**
  * Max sizes -

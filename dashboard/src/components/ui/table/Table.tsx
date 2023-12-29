@@ -119,7 +119,7 @@ function THeader({
 								: "text-gray-500"
 						}
 					>
-						{col.replaceAll("_c", "")}
+						{col.replaceAll("_c", "").replaceAll("_"," ")}
 					</span>
 				</div>
 			</td>

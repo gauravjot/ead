@@ -78,9 +78,11 @@ export default function ViewItem({
 								<div className="mt-10">
 									<h2 className="font-medium mb-3">Field Information</h2>
 									{template?.map((obj) => {
+										console.log("Field", obj.n)
 										const val = item_query.data.data.value.filter(
-											(row: {n: string; v: string}) => row.n === obj.n
+											(row: {n: string; v: string}) => row.n === obj.n.replace(" ","_")
 										);
+										console.log("Field2", item_query.data.data.value)
 										return obj.t !== "boolean" ? (
 											<InputField
 												key={obj.n + "_c"}

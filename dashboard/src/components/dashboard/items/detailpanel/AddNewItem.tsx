@@ -1,12 +1,18 @@
 import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
+import SelectField from "@/components/ui/SelectField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
+import { getAllAdmins } from "@/services/admins/all_admins";
 import {AddItemType, addItem} from "@/services/item/add_item";
-import {ItemTypeType} from "@/types/item";
+import { getItems } from "@/services/item/get_items";
+import { getAllUsers } from "@/services/user/all_users";
+import { AdminEntryType } from "@/types/admin";
+import {ItemTypeType, CustomFieldType, ItemType} from "@/types/item";
+import { UserType } from "@/types/user";
 import {AxiosError} from "axios";
-import {Dispatch, SetStateAction, useContext, useState} from "react";
-import {useForm} from "react-hook-form";
+import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
+import {FieldErrors, FieldValues, UseFormRegister, useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "react-query";
 
 export default function AddNewItem({
@@ -93,31 +99,12 @@ export default function AddNewItem({
 							/>
 							<h2 className="text-md mt-6 font-medium text-gray-800">Fields</h2>
 							{itemType.template?.map((field) => {
-								return field.t !== "boolean" ? (
-									<InputField
-										key={field.n}
-										elementInputType={field.t as "number" | "text"}
-										elementId={field.n.replace(" ", "_")}
-										elementLabel={field.n}
-										elementHookFormRegister={register}
-										elementHookFormErrors={errors}
-										elementIsRequired={true}
-										elementWidth="full"
-									/>
-								) : (
-									<label
-										key={field.n}
-										htmlFor={field.n.replace(" ", "_")}
-										className="flex place-items-center w-full mt-6 mb-4 text-bb text-gray-600 group cursor-pointer"
-									>
-										<span className="flex-1">{field.n}</span>
-										<input
-											type="checkbox"
-											id={field.n.replace(" ", "_")}
-											{...register(field.n.replace(" ", "_"))}
+								return <CustomInputField 
+											hookFormRegister={register} 
+											hookFormErrors={errors} 
+											field={field}
+											token={adminContext.admin?.token}
 										/>
-									</label>
-								);
 							})}
 						</div>
 						<div className="mt-6 flex gap-6 justify-center">
@@ -148,4 +135,99 @@ export default function AddNewItem({
 			</div>
 		</div>
 	);
+}
+
+
+export function CustomInputField({field, hookFormRegister, hookFormErrors, token}: 
+	{field: CustomFieldType, 
+	hookFormRegister: UseFormRegister<FieldValues>, 
+	hookFormErrors: FieldErrors<FieldValues>,
+	token: string | undefined}) {
+	const [IField, setIField] = useState<JSX.Element>();
+
+	// Decide field type: input, textarea, select, checkbox
+	useEffect(()=> {
+		if (["email", "number", "text", "phone", "url", "longtext"].includes(field.t)) {
+			// Do a basic InputField
+			setIField(<InputField
+				elementHookFormRegister={hookFormRegister}
+				elementId={field.n.replace(" ", "_")}
+				elementInputType={
+					field.t === "email" ? "email"
+					: field.t === "number" || field.t === "phone" ? "number"
+					: field.t === "text" || field.t === "url" ? "text"
+					: "text"
+				}
+				elementLabel={field.n}
+				elementIsRequired={true}
+				elementHookFormErrors={hookFormErrors}
+				elementIsTextarea={field.t === "longtext"}
+				elementTextareaRows={3}
+				elementWidth="full"
+			/>);
+		} else if (["item_type", "user", "admin"].includes(field.t)) {
+			// We have to fetch the list
+			if (field.t === "admin") {
+				getAllAdmins(token).then((data)=> {
+					setIField(
+					<SelectField 
+						data={data.data.admins.map((admin: AdminEntryType)=>{return {n: admin.full_name, v: admin.username}})}
+						hookFormRegister={hookFormRegister}
+						label={field.n}
+						id={field.n.replace(" ", "_")}
+						elementWidth="full"
+					/>);
+				})
+			} else if (field.t === "user") {
+				getAllUsers(token).then((data)=> {
+					setIField(
+					<SelectField 
+						data={data.data.map((user: UserType)=>{return {n: user.name, v: user.id}})}
+						hookFormRegister={hookFormRegister}
+						label={field.n}
+						id={field.n.replace(" ", "_")}
+						elementWidth="full"
+					/>);
+				})
+			} else if (field.t === "item_type" && field.dV) {
+				getItems(token, field.dV).then((data)=> {
+					setIField(
+					<SelectField 
+						data={data.data.map((item: ItemType)=>{return {n: item.name, v: item.id}})}
+						hookFormRegister={hookFormRegister}
+						label={field.n}
+						id={field.n.replace(" ", "_")}
+						elementWidth="full"
+					/>);
+				})
+			}
+		} else if (field.t === "boolean") {
+			setIField(<label
+				key={field.n}
+				htmlFor={field.n.replace(" ", "_")}
+				className="flex place-items-center w-full mt-6 mb-4 text-bb text-gray-600 group cursor-pointer"
+			>
+				<span className="flex-1">{field.n}</span>
+				<input
+					type="checkbox"
+					id={field.n.replace(" ", "_")}
+					{...hookFormRegister(field.n.replace(" ", "_"))}
+				/>
+			</label>);
+		} else if (field.t === "currency") {
+			setIField(<InputField
+				elementHookFormRegister={hookFormRegister}
+				elementId={field.n.replace(" ", "_")}
+				elementInputType="number"
+				elementInputDecimal={true}
+				elementInputBoxLabel={field.dV || ""}
+				elementLabel={field.n}
+				elementIsRequired={true}
+				elementHookFormErrors={hookFormErrors}
+				elementWidth="full"
+			/>);
+		}
+	},[])
+
+	return IField
 }

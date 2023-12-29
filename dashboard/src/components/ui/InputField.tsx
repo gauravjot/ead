@@ -9,6 +9,8 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 	elementHookFormErrors?: FieldErrors<FieldValues>;
 	elementHookFormWatch?: UseFormWatch<FieldValues>;
 	elementHookFormWatchField?: string;
+	elementInputDecimal?: boolean;
+	elementInputBoxLabel?: string;
 	elementIsRequired?: boolean;
 	elementInputMinLength?: number;
 	elementInputMaxLength?: number;
@@ -33,6 +35,8 @@ export default function InputField({
 	elementLabel: label,
 	elementIsPassword: isPassword,
 	elementIsTextarea: isTextarea,
+	elementInputDecimal: isDecimal,
+	elementInputBoxLabel: inputBoxLabel,
 	elementTextareaRows: textareaSize,
 	elementHookFormRegister: register,
 	elementInputMinLength: minLength,
@@ -146,12 +150,20 @@ export default function InputField({
 				) : (
 					<input
 						aria-invalid={errors && errors[id] ? "true" : "false"}
-						className={styling}
+						className={styling + (inputBoxLabel && (inputBoxLabel.length > 6 ? " pl-28" : " pl-20"))}
 						id={id}
 						type={showPassword ? "text" : inputType}
+						step={isDecimal ? ".01" : "1"}
 						{...register(id, validation)}
 						{...rest}
 					/>
+				)}
+				{inputBoxLabel && (
+					<div
+						className="absolute pointer-events-none text-gray-700 bg-gray-100 left-px top-px bottom-px rounded-l-md py-1.5 px-2.5 z-[3]"
+					>
+						{inputBoxLabel}
+					</div>
 				)}
 				{inputType === "password" && (
 					<button

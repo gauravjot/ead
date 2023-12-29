@@ -112,7 +112,10 @@ def addItemTypeField(request, id):
             if field['n'] in [f['n'] for f in item_type.template]:
                 return Response(data=errorResponse("Field already exists.", "I0003"), status=status.HTTP_400_BAD_REQUEST)
             else:
-                item_type.template.append({"n": field["n"], "t": field["t"]})
+                if "dV" in field:
+                    item_type.template.append({"n": field["n"], "t": field["t"], "dV": field["dV"]})
+                else:
+                    item_type.template.append({"n": field["n"], "t": field["t"]})
         item_type.save()
         return Response(data=successResponse(ItemTypeSerializer(item_type).data), status=status.HTTP_200_OK)
     except ItemType.DoesNotExist:

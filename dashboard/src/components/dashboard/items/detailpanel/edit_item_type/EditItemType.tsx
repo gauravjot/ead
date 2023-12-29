@@ -144,27 +144,32 @@ export default function EditItemType({id}: {id: number | string}) {
 				<table className="w-full">
 					<thead>
 						<tr className="text-left border-b border-gray-300 text-gray-500 uppercase">
-							<th className="w-1/3 py-2.5 text-bb font-medium pl-4">Name</th>
-							<th className="w-full py-2.5 text-bb font-medium pl-4">Type</th>
+							<th className="w-[33%] py-2.5 text-bb font-medium pl-4">Name</th>
+							<th className="w-[25%] py-2.5 text-bb font-medium pl-4">Type</th>
+							<th className="w-[42%] py-2.5 text-bb font-medium pl-4">Default Value</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr className="group border-b border-gray-200 bg-gray-100">
-							<td className="w-1/3 border-b border-gray-200 py-2 text-bb pl-4">Name</td>
-							<td className="relative w-full border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
+							<td className="w-[33%] border-b border-gray-200 py-2 text-bb pl-4">Name</td>
+							<td className="w-[25%] border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
 								text
 							</td>
+							<td className="w-[42%]"></td>
 						</tr>
 						{itemTypeQuery.isSuccess && itemTypeQuery.data.data.template?.length > 0 ? (
-							itemTypeQuery.data.data.template.map((field: {n: string; t: string}) => (
+							itemTypeQuery.data.data.template.map((field: {n: string; t: string; dV?: string}) => (
 								<tr
 									key={field.n}
 									className="group border-b border-gray-200 hover:bg-gray-50 bg-white"
 								>
-									<td className="w-1/3 border-b border-gray-200 py-2 text-bb pl-4">{field.n}</td>
-									<td className="relative w-full border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
+									<td className="w-[33%] border-b border-gray-200 py-2 text-bb pl-4">{field.n}</td>
+									<td className="w-[25%] border-b border-gray-200 text-gray-600 py-2 text-sm pl-4">
 										{field.t}
-										<div className="absolute right-0 top-0 mt-1.5 flex gap-1.5 mx-2 font-medium">
+									</td>
+									<td className="relative w-[42%] border-b border-gray-200 text-gray-600 py-2 text-bb pl-4">
+										{field.dV}
+										<div className="bg-gray-50 absolute right-0 top-0 mt-1.5 flex gap-1.5 mx-2 font-medium">
 											{/*<button
 												className="px-2 py-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-dodger-600 rounded hidden group-hover:flex text-gray-900"
 												title="Rename field"
@@ -173,7 +178,7 @@ export default function EditItemType({id}: {id: number | string}) {
 												<span>Rename</span>
 											</button>*/}
 											<button
-												className="px-2 p-1 gap-1.5 place-items-center justify-center opacity-60 hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-red-600 rounded hidden group-hover:flex text-red-600"
+												className="px-2 p-1 gap-1.5 place-items-center justify-center opacity-80 hover:outline-red-400 hover:outline-1 hover:outline hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-red-600 rounded hidden group-hover:flex text-red-600"
 												title="Delete field"
 												onClick={()=>{
 													deleteItemFieldMutation.mutate(JSON.stringify(field));

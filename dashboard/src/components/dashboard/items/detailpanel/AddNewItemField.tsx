@@ -1,17 +1,99 @@
 import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
+import SelectField from "@/components/ui/SelectField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {addItemTypeFields} from "@/services/item/item_type/add_item_type_field";
+import { getAllItemTypes } from "@/services/item/item_type/get_all_item_types";
+import { ItemTypeType } from "@/types/item";
 import {AxiosError} from "axios";
-import {useContext, useState} from "react";
-import {useForm} from "react-hook-form";
+import {useContext, useEffect, useState} from "react";
+import {FieldValues, UseFormRegister, useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "react-query";
+
+export const FIELDS = [{
+	type: "admin",
+	name: "Admin",
+	inputMethod: "select"
+}, {
+	type: "boolean",
+	name: "Boolean",
+	inputMethod: "checkbox",
+}, {
+	type: "currency",
+	name: "Currency",
+	extra : {
+		type: "text",
+		name: "Symbol (USD$, CAD$ etc.)"
+	},
+	inputMethod: "decimal"
+}, {
+	type: "date",
+	name: "Date",
+	inputMethod: "date"
+}, {
+	type: "datetime",
+	name: "Date and Time",
+	inputMethod: "datetime"
+}, {
+	type: "decimal",
+	name: "Decimal",
+	inputMethod: "decimal"
+}, {
+	type: "email",
+	name: "Email",
+	inputMethod: "email"
+}, {
+	type: "item_type",
+	name: "Item Type",
+	inputMethod: "select",
+	extra: {
+		type: "select",
+		name: "Choose an item type"
+	}
+}, {
+	type: "multiple",
+	name: "Multiple",
+	extra: {
+		type: "text",
+		name: "List options separated by comma"
+	},
+	inputMethod: "select"
+}, {
+	type: "number",
+	name: "Number",
+	inputMethod: "number",
+}, {
+	type: "longtext",
+	name: "Paragraph",
+	inputMethod: "textarea"
+}, {
+	type: "phone",
+	name: "Phone",
+	inputMethod: "number"
+}, {
+	type: "text",
+	name: "Short Text",
+	inputMethod: "text"
+}, {
+	type: "time",
+	name: "Time",
+	inputMethod: "time"
+}, {
+	type: "url",
+	name: "URL",
+	inputMethod: "text"
+}, {
+	type: "user",
+	name: "User",
+	inputMethod: "select"
+}]
 
 export default function AddNewItemField({id}: {id: number | string}) {
 	const adminContext = useContext(AdminContext);
 	const queryClient = useQueryClient();
 	const [showNewField, setShowNewField] = useState<boolean>(false);
+	const [extraData, setExtraDate] = useState<{type: string, name: string} | null>(null);
 	const {
 		register,
 		handleSubmit,
@@ -68,188 +150,39 @@ export default function AddNewItemField({id}: {id: number | string}) {
 								*
 							</span>
 						</div>
-						<div className="flex gap-4 my-1 mb-2.5">
-							<div>
-								<input
-									type="radio"
-									id="text"
-									value="text"
-									{...register("t", {required: "Choose field type"})}
+						<select
+							className="bg-white border-gray-300 border rounded-md px-4 py-2"
+							{...register("t", {required: "Choose field type"})}>
+							{FIELDS.map((option) => {
+								return <option onClick={()=> {
+									if (option.extra) {
+										setExtraDate(option.extra);
+									} else if (extraData) {
+										setExtraDate(null);
+									}
+								}} 
+								value={option.type}>{option.name}</option>
+							})}
+						</select>
+						{extraData && <>
+							{extraData.type === "text" ? 
+								<InputField
+									elementHookFormRegister={register}
+									elementId="dV"
+									elementInputType="text"
+									elementLabel={extraData.name}
+									elementHookFormErrors={errors}
+									elementIsRequired={true}
 								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="text">
-									Short Text
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="number"
-									value="number"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="number">
-									Number
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="decimal"
-									value="decimal"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="decimal">
-									Decimal
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="boolean"
-									value="boolean"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="boolean">
-									Boolean
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="paragraph"
-									value="paragraph"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="paragraph">
-									Paragraph
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="multiple"
-									value="multiple"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="multiple">
-									Multiple
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="item_type"
-									value="item_type"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="item_type">
-									Item Type
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="user"
-									value="user"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="user">
-									User
-								</label>
-							</div>
-
-							<div>
-								<input
-									type="radio"
-									id="admin"
-									value="admin"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="admin">
-									Admin
-								</label>
-							</div>
-						</div>
-						<div className="flex gap-4 my-1 mb-2.5">
-							<div>
-								<input
-									type="radio"
-									id="date"
-									value="date"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="date">
-									Date
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="time"
-									value="time"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="time">
-									Time
-								</label>
-							</div>
-
-							<div>
-								<input
-									type="radio"
-									id="datetime"
-									value="datetime"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="datetime">
-									Date and Time
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="currency"
-									value="currency"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="currency">
-									Currency
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="url"
-									value="url"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="url">
-									URL
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="phone"
-									value="phone"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="phone">
-									Phone
-								</label>
-							</div>
-							<div>
-								<input
-									type="radio"
-									id="email"
-									value="email"
-									{...register("t", {required: "Choose field type"})}
-								/>
-								<label className="pl-2 cursor-pointer text-bb" htmlFor="email">
-									Email
-								</label>
-							</div>
-						</div>
+							: extraData.type === "select" ?
+								<FetchItemsAndSelect 
+									hookFormRegister={register}
+									label={extraData.name}
+									token={adminContext?.admin?.token}
+									item_type_id={id}/>
+							:<></>
+							}
+						</>}
 						{errors && errors["t"] && (
 							<p className="text-red-700 text-bb my-1.5 leading-5">
 								{errors["t"]?.message?.toString()}
@@ -295,4 +228,30 @@ export default function AddNewItemField({id}: {id: number | string}) {
 			</div>
 		</div>
 	);
+}
+
+
+function FetchItemsAndSelect({token, hookFormRegister, label, item_type_id}: 
+	{token: string | undefined,
+		hookFormRegister: UseFormRegister<FieldValues>,
+		label:string,
+		item_type_id: string | number
+	}) {
+	const [data, setData] = useState<{n: string, v: string}[]>([]);
+
+	useEffect(() => {
+		getAllItemTypes(token).then((data)=> {
+			setData(data.data
+				.map((item: ItemTypeType) => {return {n: item.name, v: item.id}})
+				.filter((a: {v:string, n: string}) => a.v.toString() !== item_type_id.toString()))
+		})
+	},[])
+
+	return data?.length > 0 ? 
+		<SelectField
+			data={data}
+			hookFormRegister={hookFormRegister}
+			label={label}
+			id="dV"
+			/> : <span className="text-red-700 text-bb my-1.5 leading-5 px-4">No other items are available.</span>
 }
