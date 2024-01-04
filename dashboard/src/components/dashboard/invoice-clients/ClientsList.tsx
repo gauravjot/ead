@@ -1,29 +1,26 @@
-import { AdminContext } from "@/components/Home";
+import {AdminContext} from "@/components/Home";
 import Spinner from "@/components/ui/Spinner";
-import { getAllUsers } from "@/services/user/all_users";
-import { ErrorType } from "@/types/api";
-import { UserType } from "@/types/user";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { useQuery } from "react-query";
+import {getAllClients} from "@/services/invoice/client/all_clients";
+import {ErrorType} from "@/types/api";
+import {ClientType} from "@/types/client";
+import {Dispatch, SetStateAction, useContext, useState} from "react";
+import {useQuery} from "react-query";
 
-export default function UsersList({
+export default function ClientsList({
 	activeItem,
 	setActiveItem,
 }: {
-	activeItem: UserType | undefined;
-	setActiveItem: Dispatch<SetStateAction<UserType | undefined>>;
+	activeItem: ClientType | undefined;
+	setActiveItem: Dispatch<SetStateAction<ClientType | undefined>>;
 }) {
 	const [keyword, setKeyword] = useState<string>("");
 	const adminContext = useContext(AdminContext);
-	const users = useQuery(["user_list"], () => getAllUsers(adminContext.admin?.token));
+	const clients = useQuery(["client_list"], () => getAllClients(adminContext.admin?.token));
 
 	return (
 		<>
 			<div className="flex">
-				<div
-					className="relative flex-1"
-					title="Filter with name, email and title"
-				>
+				<div className="relative flex-1" title="Filter with name, email and title">
 					<input
 						type="text"
 						className="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm focus-visible:bg-white"
@@ -50,11 +47,11 @@ export default function UsersList({
 					<button
 						title="Refresh"
 						onClick={() => {
-							users.refetch();
+							clients.refetch();
 						}}
 						className="h-9 w-9 hover:bg-gray-300 rounded flex place-items-center justify-center"
 					>
-						{users.isFetching ? (
+						{clients.isFetching ? (
 							<Spinner size="sm" color="black" />
 						) : (
 							<span className="ic ic-sync"></span>
@@ -63,58 +60,45 @@ export default function UsersList({
 				</div>
 			</div>
 			<div className="flex flex-col gap-3 my-4">
-				{users.isSuccess ? (
-					users.data.data.map((user: UserType) => {
+				{clients.isSuccess ? (
+					clients.data.data.map((client: ClientType) => {
 						return (
-							(user.email.toLowerCase().includes(keyword.toLowerCase()) ||
-								user.title
-									.toLowerCase()
-									.includes(keyword.toLowerCase()) ||
-								user.name
-									.toLowerCase()
-									.includes(keyword.toLowerCase())) && (
+							(client.email.toLowerCase().includes(keyword.toLowerCase()) ||
+								client.type.toLowerCase().includes(keyword.toLowerCase()) ||
+								client.name.toLowerCase().includes(keyword.toLowerCase())) && (
 								<button
-									key={user.id + user.name + user.title}
+									key={client.id + client.name + client.type}
 									className={
 										"text-left bg-white rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
-										(activeItem && activeItem.id === user.id
+										(activeItem && activeItem.id === client.id
 											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-md"
 											: " shadow")
 									}
 									onClick={() => {
-										setActiveItem(user);
+										setActiveItem(client);
 									}}
 								>
-									<div
-										title={user.name}
-										className="text-bb font-medium"
-									>
-										{user.name}
+									<div title={client.name} className="text-bb font-medium">
+										{client.name}
 									</div>
-									{user.email.length > 0 && (
-										<div
-											title={user.email}
-											className="mt-1 text-sm text-gray-600 truncate"
-										>
-											{user.email}
+									{client.email.length > 0 && (
+										<div title={client.email} className="mt-1 text-sm text-gray-600 truncate">
+											{client.email}
 										</div>
 									)}
-									<div
-										title={user.title}
-										className="mt-1 text-sm text-gray-600 truncate"
-									>
-										{user.title}
+									<div title={client.type} className="mt-1 text-sm text-gray-600 truncate">
+										{client.type}
 									</div>
 								</button>
 							)
 						);
 					})
-				) : users.isLoading ? (
+				) : clients.isLoading ? (
 					<div className="text-center py-24">
 						<Spinner color="gray" size="md" />
 					</div>
-				) : users.isError ? (
-					<div>{(users.error as ErrorType).message}</div>
+				) : clients.isError ? (
+					<div>{(clients.error as ErrorType).message}</div>
 				) : (
 					<></>
 				)}

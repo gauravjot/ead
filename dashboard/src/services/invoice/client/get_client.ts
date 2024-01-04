@@ -2,17 +2,15 @@ import axios from "axios";
 import {BACKEND_ENDPOINT} from "@/config";
 
 /**
- * API call to add user note
+ * API call to get user info
  * @param token
+ * @param id
  * @returns Promise
  */
-export function postNoteToUser(
-	token: string | undefined | null,
-	payload: {content: string; uid: string}
-) {
+export function getClient(token: string | undefined | null, id: string) {
 	return token
 		? axios
-				.post(BACKEND_ENDPOINT + "/api/user/note/post/", JSON.stringify(payload), {
+				.get(BACKEND_ENDPOINT + "/api/invoice/client/info/" + id + "/", {
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: token,

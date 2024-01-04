@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Item, ItemType, Allocation
+from .models import Item, ItemType
 
 
 class ItemTypeSerializer(serializers.ModelSerializer):
@@ -30,17 +30,4 @@ class ItemSerializer(serializers.ModelSerializer):
             'item_type': {'required': True},
             'added_by': {'required': True},
             'added_at': {'required': True},
-        }
-
-
-class AllocationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Allocation
-        fields = ['id', 'item', 'notes', 'assigned_at', 'assigned_by',
-                  'assigned_to', 'returned_at', 'collected_by']
-        extra_kwargs = {
-            'item': {'required': True},
-            'assigned_by': {'required': True},
-            'assigned_to': {'required': True},
-            'assigned_at': {'required': True},
         }

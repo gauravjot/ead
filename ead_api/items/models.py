@@ -1,6 +1,5 @@
 from django.db import models
 from admins.models import Admin
-from users.models import User
 
 
 class ItemType(models.Model):
@@ -35,17 +34,3 @@ class Item(models.Model):
     deleted_by = models.ForeignKey(
         Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_deleted_by', default=None)
     deleted_at = models.DateTimeField(null=True, default=None)
-
-
-class Allocation(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    notes = models.TextField()
-    assigned_at = models.DateTimeField()
-    assigned_by = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='allocation_assigned_by')
-    assigned_to = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True)
-    returned_at = models.DateTimeField()
-    collected_by = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='allocation_collected_by')

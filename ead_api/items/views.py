@@ -6,8 +6,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 # Models & Serializers
-from .models import Item, ItemType, Allocation
-from .serializers import ItemTypeSerializer, ItemSerializer, AllocationSerializer
+from .models import Item, ItemType
+from .serializers import ItemTypeSerializer, ItemSerializer
 from admins.serializers import AdminSerializer
 # Session
 from admins.sessions import getAdminID
@@ -113,9 +113,11 @@ def addItemTypeField(request, id):
                 return Response(data=errorResponse("Field already exists.", "I0003"), status=status.HTTP_400_BAD_REQUEST)
             else:
                 if "dV" in field:
-                    item_type.template.append({"n": field["n"], "t": field["t"], "dV": field["dV"]})
+                    item_type.template.append(
+                        {"n": field["n"], "t": field["t"], "dV": field["dV"]})
                 else:
-                    item_type.template.append({"n": field["n"], "t": field["t"]})
+                    item_type.template.append(
+                        {"n": field["n"], "t": field["t"]})
         item_type.save()
         return Response(data=successResponse(ItemTypeSerializer(item_type).data), status=status.HTTP_200_OK)
     except ItemType.DoesNotExist:

@@ -1,11 +1,12 @@
-import { AdminType } from "@/types/admin";
-import { QuickLinkBar } from "./dashboard/QuickLinkBar";
+import {AdminType} from "@/types/admin";
+import {QuickLinkBar} from "./dashboard/QuickLinkBar";
 import Sidebar from "./dashboard/Sidebar";
 import LoginBox from "./login/LoginBox";
-import React, { Dispatch, SetStateAction } from "react";
+import React, {Dispatch, SetStateAction} from "react";
 import Admins from "./dashboard/admins/Admins";
-import Users from "./dashboard/users/Users";
-import Items from "./dashboard/items/Items";
+import Invoices from "./dashboard/invoices/Invoices";
+import Clients from "./dashboard/invoice-clients/Clients";
+import Items from "./dashboard/database-items/Items";
 
 export const AdminContext = React.createContext<{
 	admin: AdminType | null;
@@ -23,12 +24,12 @@ export default function Home() {
 	console.log(isSearchActive);
 
 	// sidebar
-	const [activeMenu, setActiveMenu] = React.useState<"admins" | "users" | "items">(
-		"users"
+	const [activeMenu, setActiveMenu] = React.useState<"admins" | "clients" | "items" | "invoices">(
+		"clients"
 	);
 
 	return admin ? (
-		<AdminContext.Provider value={{ admin, setAdmin }}>
+		<AdminContext.Provider value={{admin, setAdmin}}>
 			<div className="flex h-screen overflow-hidden">
 				<div className="px-3 border-r h-screen bg-white">
 					<Sidebar
@@ -40,8 +41,9 @@ export default function Home() {
 				<div className="flex-1 h-full overflow-hidden flex flex-col">
 					<QuickLinkBar />
 					{activeMenu === "admins" ? <Admins /> : <></>}
-					{activeMenu === "users" ? <Users /> : <></>}
+					{activeMenu === "clients" ? <Clients /> : <></>}
 					{activeMenu === "items" ? <Items /> : <></>}
+					{activeMenu === "invoices" ? <Invoices /> : <></>}
 				</div>
 			</div>
 		</AdminContext.Provider>

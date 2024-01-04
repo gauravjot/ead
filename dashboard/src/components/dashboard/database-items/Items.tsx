@@ -1,13 +1,13 @@
-import { useState } from "react";
+import {useState} from "react";
 import Button from "@/components/ui/Button";
-import UsersList from "./UsersList";
-import UserDetailPanel from "./UserDetailPanel";
-import AddNewUser from "./AddNewUser";
-import { UserType } from "@/types/user";
+import {ItemTypeType} from "@/types/item";
+import ItemTypeList from "./ItemTypeList";
+import DetailPanel from "./detailpanel/DetailPanel";
+import AddNewItemType from "./AddNewItemType";
 
-export default function Users() {
-	const [activeItem, setActiveItem] = useState<UserType>();
-	const [showAddUserUI, setShowAddUserUI] = useState<boolean>(false);
+export default function Items() {
+	const [activeItem, setActiveItem] = useState<ItemTypeType>();
+	const [showAddItemTypeUI, setShowAddItemTypeUI] = useState<boolean>(false);
 
 	return (
 		<>
@@ -15,7 +15,7 @@ export default function Users() {
 				<div className="w-64 p-4 flex-shrink-0 border-r overflow-y-auto h-full">
 					<div className="flex place-items-center mb-4">
 						<div className="capitalize text-sm mt-2 mb-1 text-gray-800 font-thin tracking-wider flex-1">
-							USERS
+							DATABASE ITEM TYPES
 						</div>
 						<div>
 							<Button
@@ -26,46 +26,38 @@ export default function Users() {
 								elementSize="xsmall"
 								elementInvert={true}
 								onClick={() => {
-									setShowAddUserUI(true);
-									window.setTimeout(
-										() =>
-											document
-												?.getElementById("full_name")
-												?.focus(),
-										0
-									);
+									setShowAddItemTypeUI(true);
+									window.setTimeout(() => document?.getElementById("name")?.focus(), 0);
 								}}
-								aria-expanded={showAddUserUI}
+								aria-expanded={showAddItemTypeUI}
 							/>
 						</div>
 					</div>
-					<UsersList activeItem={activeItem} setActiveItem={setActiveItem} />
+					<ItemTypeList activeItem={activeItem} setActiveItem={setActiveItem} />
 				</div>
 				<div className="overflow-y-auto bg-white w-full">
-					{activeItem?.id && (
-						<UserDetailPanel key={activeItem.id} userID={activeItem.id} />
-					)}
+					{activeItem?.id && <DetailPanel key={activeItem.id} id={activeItem.id} />}
 				</div>
 			</div>
-			<div aria-hidden={!showAddUserUI} className="aria-hidable absolute inset-0">
+			<div aria-hidden={!showAddItemTypeUI} className="aria-hidable absolute inset-0">
 				{/* clicking empty space closes the box */}
 				<div
-					className="absolute inset-0 bg-black/10"
+					className="absolute inset-0 bg-black/10 z-10"
 					onClick={() => {
-						setShowAddUserUI(false);
+						setShowAddItemTypeUI(false);
 					}}
 				></div>
 				{/* dialog box content */}
 				<div className="bg-white shadow-xl px-4 py-6 sm:px-8 sm:py-12 relative z-20">
 					<div className="flex container mx-auto">
 						<h1 className="text-2xl flex-1 font-bold tracking-tight mb-3 xl:min-w-[45rem]">
-							Add new user
+							Add new item type
 						</h1>
 						<div>
 							<button
 								className="ic-xl pt-1 border rounded-md hover:outline hover:outline-gray-200 hover:border-gray-400"
 								onClick={() => {
-									setShowAddUserUI(false);
+									setShowAddItemTypeUI(false);
 								}}
 								title="Close"
 							>
@@ -74,7 +66,7 @@ export default function Users() {
 						</div>
 					</div>
 					<div className="container mx-auto">
-						<AddNewUser setShowDialog={setShowAddUserUI} />
+						<AddNewItemType setShowDialog={setShowAddItemTypeUI} />
 					</div>
 				</div>
 			</div>

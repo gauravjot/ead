@@ -2,29 +2,23 @@ import axios from "axios";
 import {BACKEND_ENDPOINT} from "@/config";
 
 /**
- * API call to change profile data
+ * API call to delete item type fields
  * @param token
  * @param nid Note ID
- * @param content New note content
  * @param uid User ID
  * @returns Promise
  */
-export function updateUserNote(
+export function deleteClientNote(
 	token: string | undefined | null,
-	payload: {
-		nid: number;
-		content: string;
-		uid: string;
-	}
+	payload: {nid: number; uid: string}
 ) {
 	return token
 		? axios
 				.put(
-					BACKEND_ENDPOINT + "/api/user/note/update/",
+					BACKEND_ENDPOINT + `/api/invoice/client/note/delete/`,
 					JSON.stringify({
 						uid: payload.uid,
 						nid: payload.nid,
-						content: payload.content,
 					}),
 					{
 						headers: {

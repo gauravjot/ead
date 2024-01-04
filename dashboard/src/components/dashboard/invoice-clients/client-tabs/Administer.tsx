@@ -2,20 +2,20 @@ import {useForm} from "react-hook-form";
 import InputField from "@/components/ui/InputField";
 import {useMutation, useQueryClient} from "react-query";
 import {AxiosError} from "axios";
-import {updateUser} from "@/services/user/update_user";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import Button from "@/components/ui/Button";
-import {UserType} from "@/types/user";
+import {ClientType} from "@/types/client";
 import {AdminType} from "@/types/admin";
 import {useState} from "react";
 import {dateTimePretty, timeSince} from "@/utils/datetime";
+import {updateClient} from "@/services/invoice/client/update_client";
 
-export interface IUserAdministerProps {
-	user: UserType | null;
+export interface IClientAdministerProps {
+	client: ClientType | null;
 	admin: AdminType | null;
 }
 
-export default function UserAdminister(props: IUserAdministerProps) {
+export default function ClientAdminister(props: IClientAdministerProps) {
 	const queryClient = useQueryClient();
 	// update profile form and mutation
 	const {
@@ -27,48 +27,48 @@ export default function UserAdminister(props: IUserAdministerProps) {
 	const [changeProfileReqError, setChangeProfileReqError] = useState<string | null>(null);
 	const changeProfileMutation = useMutation({
 		mutationFn: (d: {title: string; name: string; email: string; phone: string}) => {
-			return props.user
-				? updateUser(props.admin?.token, props.user?.id, d.name, d.title, d.email, d.phone)
+			return props.client
+				? updateClient(props.admin?.token, props.client?.id, d.name, d.title, d.email, d.phone)
 				: Promise.reject();
 		},
 		onSuccess: () => {
 			setChangeProfileReqError(null);
 			reset2();
-			queryClient.resetQueries(["user_" + props.user?.id]);
+			queryClient.resetQueries(["client_" + props.client?.id]);
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setChangeProfileReqError);
 		},
 	});
 	return (
-		props.user && (
+		props.client && (
 			<div className="mx-8 max-w-[1400px]">
 				{/* profile information */}
-				<h3 className="text-md font-medium text-gray-800 mb-4 mt-8">User Information</h3>
+				<h3 className="text-md font-medium text-gray-800 mb-4 mt-8">Client Information</h3>
 				<table className="text-gray-600 text-bb">
 					<tbody>
 						<tr>
 							<td className="font-medium w-1/2 pb-1">Added on</td>
-							<td>{dateTimePretty(props.user.created_at)}</td>
+							<td>{dateTimePretty(props.client.created_at)}</td>
 						</tr>
 						<tr>
 							<td className="font-medium w-1/2 py-1">Added by</td>
-							<td>{props.user.created_by}</td>
+							<td>{props.client.created_by}</td>
 						</tr>
 						<tr>
 							<td className="font-medium w-1/2 py-1">Updated</td>
-							<td>{timeSince(props.user.updated_at)}</td>
+							<td>{timeSince(props.client.updated_at)}</td>
 						</tr>
 						<tr>
 							<td className="font-medium w-1/2 pt-1">Updated by</td>
-							<td>{props.user.updated_by}</td>
+							<td>{props.client.updated_by}</td>
 						</tr>
 					</tbody>
 				</table>
 				<div className="border-t grid grid-cols-2 gap-6 my-8 pt-2">
 					<div>
 						<h3 className="text-md font-medium text-gray-800 my-4">Update Profile</h3>
-						<p className="text-bb text-gray-500">Make changes to user profile.</p>
+						<p className="text-bb text-gray-500">Make changes to client profile.</p>
 						{changeProfileMutation.isError && (
 							<p className="text-bb text-red-700 my-4">
 								{changeProfileReqError || "Unable to reach server."}
@@ -80,7 +80,7 @@ export default function UserAdminister(props: IUserAdministerProps) {
 					</div>
 					<div className="mt-[2.75rem]">
 						<form
-							key={props.user.id + 2}
+							key={props.client.id + 2}
 							onSubmit={handleSubmit2((d) => {
 								changeProfileMutation.mutate(JSON.parse(JSON.stringify(d)));
 							})}
@@ -91,23 +91,23 @@ export default function UserAdminister(props: IUserAdministerProps) {
 										elementId="name"
 										elementInputType="text"
 										elementHookFormRegister={register2}
-										elementLabel="Full name"
+										elementLabel="Business name"
 										elementInputMinLength={2}
 										elementInputMaxLength={48}
 										elementIsRequired={true}
 										elementHookFormErrors={errors2}
-										defaultValue={props.user.name}
+										defaultValue={props.client.name}
 									/>
 									<InputField
-										elementId="title"
+										elementId="type"
 										elementInputType="text"
 										elementHookFormRegister={register2}
-										elementLabel="Title"
+										elementLabel="Business type"
 										elementInputMinLength={2}
 										elementInputMaxLength={48}
 										elementIsRequired={true}
 										elementHookFormErrors={errors2}
-										defaultValue={props.user.title}
+										defaultValue={props.client.type}
 									/>
 									<InputField
 										elementId="email"
@@ -117,7 +117,7 @@ export default function UserAdminister(props: IUserAdministerProps) {
 										elementInputMinLength={0}
 										elementInputMaxLength={64}
 										elementHookFormErrors={errors2}
-										defaultValue={props.user.email}
+										defaultValue={props.client.email}
 									/>
 									<InputField
 										elementId="phone"
@@ -127,7 +127,7 @@ export default function UserAdminister(props: IUserAdministerProps) {
 										elementInputMinLength={0}
 										elementInputMaxLength={20}
 										elementHookFormErrors={errors2}
-										defaultValue={props.user.phone}
+										defaultValue={props.client.phone}
 									/>
 								</div>
 

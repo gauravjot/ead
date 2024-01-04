@@ -1,7 +1,7 @@
 import axios from "axios";
-import { BACKEND_ENDPOINT } from "@/config";
+import {BACKEND_ENDPOINT} from "@/config";
 
-export type AddUserType = {
+export type AddClientType = {
 	name: string;
 	email: string;
 	phone: string;
@@ -13,10 +13,10 @@ export type AddUserType = {
  * @param token
  * @returns Promise
  */
-export function addUser(token: string | undefined | null, payload: AddUserType) {
+export function addClient(token: string | undefined | null, payload: AddClientType) {
 	return token
 		? axios
-				.post(BACKEND_ENDPOINT + "/api/user/add/", JSON.stringify(payload), {
+				.post(BACKEND_ENDPOINT + "/api/invoice/client/add/", JSON.stringify(payload), {
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: token,
