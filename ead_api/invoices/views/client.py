@@ -102,12 +102,30 @@ def updateClient(request):
         client.type = str(request.data['type'])[0:48]
         client.email = str(request.data['email'])[0:64]
         client.phone = str(request.data['phone'])[0:20]
+        client.vat = str(request.data['vat'])[0:16]
+        client.updated_at = datetime.now(pytz.utc)
+        client.updated_by = admin
+        client.save()
+
+        return Response(data=successResponse(ClientSerializer(client).data), status=status.HTTP_200_OK)
+    except Client.DoesNotExist:
+        return Response(data=errorResponse("Unable to update client.", "CL0002"), status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['PUT'])
+def updateClientAddress(request):
+    # Get requesting admin ID
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    # Update
+    try:
+        client = Client.objects.get(id=request.data['uid'])
         client.street = str(request.data['street'])[0:128]
         client.city = str(request.data['city'])[0:128]
         client.province = str(request.data['province'])[0:128]
         client.postal_code = str(request.data['postal_code'])[0:16]
         client.country = str(request.data['country'])[0:128]
-        client.vat = str(request.data['vat'])[0:16]
         client.updated_at = datetime.now(pytz.utc)
         client.updated_by = admin
         client.save()
@@ -204,14 +222,14 @@ def updateNoteFromClient(request):
 # Disable
 # -------------------------------
 @api_view(['DELETE'])
-def deleteClient(request):
+def deleteClient(request, id):
     # Get requesting admin ID
     admin = getAdminID(request)
     if type(admin) is Response:
         return admin
     # Delete
     try:
-        Client.objects.get(id=request.data['uid']).delete()
+        Client.objects.get(id=id).delete()
         return Response(data=successResponse(), status=status.HTTP_200_OK)
     except Client.DoesNotExist:
         return Response(data=errorResponse("Client does not exist.", "CL0003"), status=status.HTTP_404_NOT_FOUND)

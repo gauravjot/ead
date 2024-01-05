@@ -5,34 +5,35 @@ import {BACKEND_ENDPOINT} from "@/config";
  * API call to change profile data
  * @param token
  * @param id
- * @param name
- * @param title
- * @param phone
- * @param email
+ * @param street
+ * @param city
+ * @param province
+ * @param postal_code
+ * @param country
  * @returns Promise
  */
-export function updateClient(
+export function updateClientAddress(
 	token: string | undefined | null,
 	id: string,
-	d: {
-		name: string;
-		type: string;
-		email: string;
-		phone: string;
-		vat: string;
+	data: {
+		street: string;
+		city: string;
+		province: string;
+		postal_code: string;
+		country: string;
 	}
 ) {
 	return token
 		? axios
 				.put(
-					BACKEND_ENDPOINT + "/api/invoice/client/update/",
+					BACKEND_ENDPOINT + "/api/invoice/client/update_address/",
 					JSON.stringify({
 						uid: id,
-						name: d.name,
-						type: d.type,
-						email: d.email,
-						phone: d.phone,
-						vat: d.vat,
+						street: data.street,
+						city: data.city,
+						province: data.province,
+						postal_code: data.postal_code,
+						country: data.country,
 					}),
 					{
 						headers: {

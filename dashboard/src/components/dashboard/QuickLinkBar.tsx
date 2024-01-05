@@ -1,8 +1,9 @@
-import { useContext } from "react";
-import { AdminContext } from "../Home";
-import DropDown, { DropDownItemType } from "../ui/DropDown";
+import {useContext} from "react";
+import {AdminContext} from "../Home";
+import DropDown, {DropDownItemType} from "../ui/DropDown";
 
-const buttonStyle = "p-2.5 mx-2 text-sm text-gray-700 hover:bg-gray-200";
+const buttonStyle =
+	"inline-block hover:no-underline p-2.5 mx-2 text-sm text-gray-700 hover:bg-gray-200";
 
 export function QuickLinkBar() {
 	const adminContext = useContext(AdminContext);
@@ -25,11 +26,21 @@ export function QuickLinkBar() {
 	];
 
 	return (
-		<div className="w-full flex border-b px-6 place-items-center sticky z-10">
+		<div className="w-full flex gap-4 border-b px-6 place-items-center sticky z-10">
 			<div className="flex flex-1">
-				<button className={buttonStyle}>Quick Tour</button>
-				<button className={buttonStyle}>Statistics</button>
-				<button className={buttonStyle}>Documentation</button>
+				<div className="flex-1 flex place-items-center">
+					<span className="text-sm text-gray-500">Quick Pins</span>
+				</div>
+				<div>
+					<a
+						rel="noreferrer"
+						target="_blank"
+						href="https://github.com/gauravjot/employee-access-info"
+						className={buttonStyle}
+					>
+						Github
+					</a>
+				</div>
 			</div>
 			<DropDown
 				items={adminDropDownMenu}

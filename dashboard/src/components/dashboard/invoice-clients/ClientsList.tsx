@@ -81,13 +81,8 @@ export default function ClientsList({
 									<div title={client.name} className="text-bb font-medium">
 										{client.name}
 									</div>
-									{client.email.length > 0 && (
-										<div title={client.email} className="mt-1 text-sm text-gray-600 truncate">
-											{client.email}
-										</div>
-									)}
-									<div title={client.type} className="mt-1 text-sm text-gray-600 truncate">
-										{client.type}
+									<div title={client.email} className="mt-1 text-sm text-gray-600 truncate">
+										{client.email.length > 0 ? client.email : client.type}
 									</div>
 								</button>
 							)

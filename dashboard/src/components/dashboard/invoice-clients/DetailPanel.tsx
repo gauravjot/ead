@@ -2,8 +2,8 @@ import {useQuery} from "react-query";
 import {AdminContext} from "@/components/Home";
 import {useContext, useState} from "react";
 import Spinner from "@/components/ui/Spinner";
-import ClientAdminister from "./client-tabs/Administer";
-import ClientNotes from "./client-tabs/Notes";
+import ClientAdminister from "./tabs/Administer";
+import ClientNotes from "./tabs/Notes";
 import {ClientType} from "@/types/client";
 import {getClient} from "@/services/invoice/client/get_client";
 
@@ -24,7 +24,6 @@ export default function ClientDetailPanel({userID}: {userID: string}) {
 					</div>
 					<div>
 						<h1 className="text-3xl tracking-tight">{client.name} </h1>
-						<span className="text-gray-500 text-bb">ID: {client.id}</span>
 						<div className="text-gray-500">{client.type}</div>
 					</div>
 				</div>

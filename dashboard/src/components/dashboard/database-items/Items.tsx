@@ -2,7 +2,7 @@ import {useState} from "react";
 import Button from "@/components/ui/Button";
 import {ItemTypeType} from "@/types/item";
 import ItemTypeList from "./ItemTypeList";
-import DetailPanel from "./detailpanel/DetailPanel";
+import ItemTypeDetailPanel from "./DetailPanel";
 import AddNewItemType from "./AddNewItemType";
 
 export default function Items() {
@@ -36,7 +36,7 @@ export default function Items() {
 					<ItemTypeList activeItem={activeItem} setActiveItem={setActiveItem} />
 				</div>
 				<div className="overflow-y-auto bg-white w-full">
-					{activeItem?.id && <DetailPanel key={activeItem.id} id={activeItem.id} />}
+					{activeItem?.id && <ItemTypeDetailPanel key={activeItem.id} id={activeItem.id} />}
 				</div>
 			</div>
 			<div aria-hidden={!showAddItemTypeUI} className="aria-hidable absolute inset-0">

@@ -1,7 +1,7 @@
 import {useState} from "react";
 import Button from "@/components/ui/Button";
 import ClientsList from "./ClientsList";
-import ClientDetailPanel from "./ClientDetailPanel";
+import ClientDetailPanel from "./DetailPanel";
 import AddNewClient from "./AddNewClient";
 import {ClientType} from "@/types/client";
 

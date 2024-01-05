@@ -2,7 +2,7 @@ import {AdminContext} from "@/components/Home";
 import {useContext, useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {getItemType} from "@/services/item/item_type/get_item_type";
-import AddNewItemField from "../AddNewItemField";
+import AddNewItemField from "./AddNewItemField";
 import Spinner from "@/components/ui/Spinner";
 import InputField from "@/components/ui/InputField";
 import {useForm} from "react-hook-form";
@@ -11,9 +11,9 @@ import Button from "@/components/ui/Button";
 import {editItemType} from "@/services/item/item_type/edit_item_type";
 import {deleteItemType} from "@/services/item/item_type/delete_item_type";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
-import { deleteItemTypeFields } from "@/services/item/item_type/delete_item_type_field";
+import {deleteItemTypeFields} from "@/services/item/item_type/delete_item_type_field";
 
-export default function EditItemType({id}: {id: number | string}) {
+export default function ManageItemType({id}: {id: number | string}) {
 	const adminContext = useContext(AdminContext);
 	const itemTypeQuery = useQuery(["item_type_" + id], () =>
 		getItemType(adminContext.admin?.token, id)
@@ -146,7 +146,7 @@ export default function EditItemType({id}: {id: number | string}) {
 						<tr className="text-left border-b border-gray-300 text-gray-500 uppercase">
 							<th className="w-[33%] py-2.5 text-bb font-medium pl-4">Name</th>
 							<th className="w-[25%] py-2.5 text-bb font-medium pl-4">Type</th>
-							<th className="w-[42%] py-2.5 text-bb font-medium pl-4">Default Value</th>
+							<th className="w-[42%] py-2.5 text-bb font-medium pl-4">Attached Value</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -180,14 +180,31 @@ export default function EditItemType({id}: {id: number | string}) {
 											<button
 												className="px-2 p-1 gap-1.5 place-items-center justify-center opacity-80 hover:outline-red-400 hover:outline-1 hover:outline hover:opacity-100 focus:opacity-100 focus:outline focus:outline-2 outline-red-600 rounded hidden group-hover:flex text-red-600"
 												title="Delete field"
-												onClick={()=>{
+												onClick={() => {
 													deleteItemFieldMutation.mutate(JSON.stringify(field));
 												}}
 											>
 												<span className="ic ic-delete ic-red"></span>
 												<span>Remove</span>
 											</button>
-											{deleteItemFieldReqError && <div className="fixed z-10 inset-0 bg-black/10 flex place-items-center justify-center"><div className="bg-white p-6 rounded-lg shadow leading-6 min-w-[300px]"><h1 className="text-lg font-bold mb-4">Could not delete the field</h1><p className="">{deleteItemFieldReqError}</p><br/><Button elementType="button" elementState="default" elementStyle="black" elementChildren="Okay" onClick={()=> {setDeleteItemFieldReqError(null)}}/></div></div>}
+											{deleteItemFieldReqError && (
+												<div className="fixed z-10 inset-0 bg-black/10 flex place-items-center justify-center">
+													<div className="bg-white p-6 rounded-lg shadow leading-6 min-w-[300px]">
+														<h1 className="text-lg font-bold mb-4">Could not delete the field</h1>
+														<p className="">{deleteItemFieldReqError}</p>
+														<br />
+														<Button
+															elementType="button"
+															elementState="default"
+															elementStyle="black"
+															elementChildren="Okay"
+															onClick={() => {
+																setDeleteItemFieldReqError(null);
+															}}
+														/>
+													</div>
+												</div>
+											)}
 										</div>
 									</td>
 								</tr>

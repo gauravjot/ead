@@ -98,7 +98,7 @@ export default function ItemsList({
 			<div className="my-4">
 				{items.isSuccess && items.data && template && (
 					<Table
-						columns={["name", ...template.map((obj) => obj.n.replaceAll(" ","_") + "_c")]}
+						columns={["name", ...template.map((obj) => obj.n.replaceAll(" ", "_") + "_c")]}
 						rows={items.data.data}
 						elementShowSelectMultiple={true}
 						showItem={showItem}
