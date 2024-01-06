@@ -7,8 +7,7 @@ class ItemTypeSerializer(serializers.ModelSerializer):
         model = ItemType
         fields = ['id', 'name', 'description', 'template',
                   'created_by', 'created_at', 'updated_by',
-                  'updated_at', 'mark_deleted', 'deleted_by',
-                  'deleted_at']
+                  'updated_at']
         extra_kwargs = {
             'name': {'required': True},
             'description': {'required': True},
@@ -22,8 +21,7 @@ class ItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = ['id', 'item_type', 'name',
                   'value', 'added_by', 'added_at', 'updated_by',
-                  'updated_at', 'mark_deleted', 'deleted_by',
-                  'deleted_at']
+                  'updated_at']
         extra_kwargs = {
             'name': {'required': True},
             'value': {'required': True},

@@ -2,6 +2,7 @@ from django.db import models
 from admins.models import Admin
 
 
+# Clients that user's company has
 class Client(models.Model):
     id = models.UUIDField(primary_key=True)
     name = models.CharField(max_length=64)
@@ -13,6 +14,7 @@ class Client(models.Model):
     country = models.CharField(max_length=128, null=True, blank=True)
     email = models.EmailField(max_length=64, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
+    separate_shipping_address = models.BooleanField(null=True, default=False)
     vat = models.CharField(max_length=16, null=True, blank=True)
     notes = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField()
@@ -23,6 +25,23 @@ class Client(models.Model):
         Admin, related_name='client_updated_by', on_delete=models.SET_NULL, blank=True, null=True)
 
 
+class ShippingAddress(models.Model):
+    id = models.AutoField(primary_key=True)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    street = models.CharField(max_length=128, null=True, blank=True)
+    city = models.CharField(max_length=128, null=True, blank=True)
+    province = models.CharField(max_length=128, null=True, blank=True)
+    postal_code = models.CharField(max_length=16, null=True, blank=True)
+    country = models.CharField(max_length=128, null=True, blank=True)
+    created_at = models.DateTimeField()
+    created_by = models.ForeignKey(
+        Admin, related_name='invoiceshipping_created_by', on_delete=models.SET_NULL, blank=True, null=True)
+    updated_at = models.DateTimeField()
+    updated_by = models.ForeignKey(
+        Admin, related_name='invoiceshipping_updated_by', on_delete=models.SET_NULL, blank=True, null=True)
+
+
+# Self companies added by the user
 class Company(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=64)
@@ -72,9 +91,8 @@ class Product(models.Model):
     id = models.AutoField(primary_key=True)
     item_type = models.CharField(max_length=48)
     item_name = models.CharField(max_length=48)
-    item_quantity = models.IntegerField()
     item_price = models.FloatField()
-    item_subtotal = models.FloatField()
+    notes = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(
         Admin, related_name='invoiceitem_created_by', on_delete=models.SET_NULL, blank=True, null=True)
@@ -88,6 +106,9 @@ class InvoiceProduct(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     acting_price = models.FloatField()
+    note = models.TextField()
+    product_quantity = models.IntegerField()
+    product_subtotal = models.FloatField()
     created_at = models.DateTimeField()
     created_by = models.ForeignKey(
         Admin, related_name='invoiceproduct_created_by', on_delete=models.SET_NULL, blank=True, null=True)

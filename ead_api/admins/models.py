@@ -7,6 +7,7 @@ class Admin(models.Model):
     username = models.CharField(max_length=24, primary_key=True)
     password = models.CharField(max_length=96)
     active = models.BooleanField(default=True)
+    quick_links = models.JSONField(null=True, blank=True)
     created_at = models.DateTimeField()
     updated_at = models.DateTimeField()
     created_by = models.CharField(max_length=24)

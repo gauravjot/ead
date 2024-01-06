@@ -13,10 +13,6 @@ class ItemType(models.Model):
     updated_by = models.ForeignKey(
         Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='itemtype_updated_by')
     updated_at = models.DateTimeField()
-    mark_deleted = models.BooleanField(default=False)
-    deleted_by = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='itemtype_deleted_by', default=None)
-    deleted_at = models.DateTimeField(null=True, default=None)
 
 
 class Item(models.Model):
@@ -30,7 +26,3 @@ class Item(models.Model):
     updated_by = models.ForeignKey(
         Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_updated_by')
     updated_at = models.DateTimeField()
-    mark_deleted = models.BooleanField(default=False)
-    deleted_by = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_deleted_by', default=None)
-    deleted_at = models.DateTimeField(null=True, default=None)
