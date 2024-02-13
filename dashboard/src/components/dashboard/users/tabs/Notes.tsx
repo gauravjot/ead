@@ -231,9 +231,16 @@ export default function Notes(props: IUserNotesProps) {
 							</button>
 						</div>
 					</div>
-					<div className="container mx-auto">
-						<EditNote note={editNote} token={props.admin?.token} uid={props.user?.id} />
-					</div>
+					{editNote && (
+						<div className="container mx-auto">
+							<EditNote
+								note={editNote}
+								closeFn={() => setEditNote(null)}
+								token={props.admin?.token}
+								uid={props.user?.id}
+							/>
+						</div>
+					)}
 				</div>
 			</div>
 		</>
@@ -242,7 +249,17 @@ export default function Notes(props: IUserNotesProps) {
 	);
 }
 
-function EditNote({note, token, uid}: {note: NoteType | null; token: string; uid: string}) {
+function EditNote({
+	note,
+	token,
+	uid,
+	closeFn,
+}: {
+	note: NoteType | null;
+	token: string;
+	uid: string;
+	closeFn: () => void;
+}) {
 	const [reqError, setReqError] = useState<string | null>(null);
 	const queryClient = useQueryClient();
 
@@ -267,6 +284,7 @@ function EditNote({note, token, uid}: {note: NoteType | null; token: string; uid
 			mutation.reset();
 			reset();
 			queryClient.invalidateQueries(["notes_" + uid]);
+			closeFn();
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setReqError);
@@ -302,9 +320,7 @@ function EditNote({note, token, uid}: {note: NoteType | null; token: string; uid
 					/>
 					<div className="mt-6 flex gap-6 justify-center">
 						<Button
-							elementState={
-								mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
-							}
+							elementState={mutation.isLoading ? "loading" : "default"}
 							elementStyle="black"
 							elementSize="base"
 							elementChildren="Update Note"
