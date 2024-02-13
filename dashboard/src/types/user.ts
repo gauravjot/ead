@@ -4,7 +4,6 @@ export type UserType = {
 	role: string;
 	email: string;
 	phone: string;
-	notes: NoteType[] | null;
 	created_at: string;
 	created_by: string;
 	updated_at: string;
@@ -13,7 +12,10 @@ export type UserType = {
 
 export type NoteType = {
 	id: number;
-	content: string;
-	date: string;
-	author: string;
+	user: string;
+	note: string;
+	created_at: string;
+	created_by: string;
+	updated_at: string;
+	updated_by: string;
 };

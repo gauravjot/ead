@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 # Serializers
-from .serializers import UserSerializer
-from .models import User
+from .serializers import UserSerializer, NoteSerializer
+from .models import User, Note
 from admins.sessions import getAdminID
 from admins.utils import errorResponse, successResponse
 
@@ -48,7 +48,6 @@ def addUser(request):
         email=str(request.data['email'])[0:64].lower(),
         phone=str(request.data['phone'])[0:20],
         role=str(request.data['role'])[0:64],
-        notes=None,
         created_at=dateStamp,
         updated_at=dateStamp,
         created_by=admin.username,
@@ -127,6 +126,16 @@ def deleteUser(request, id):
         return Response(data=errorResponse("User does not exist.", "USR0003"), status=status.HTTP_404_NOT_FOUND)
 
 
+# Get all users
+@api_view(['GET'])
+def getUserNotes(request, id):
+    # Get requesting admin ID
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    return Response(data=successResponse(NoteSerializer(Note.objects.filter(user=id).order_by('-updated_at'), many=True).data), status=status.HTTP_200_OK)
+
+
 # Post a note
 @api_view(['POST'])
 def postNoteToUser(request, id):
@@ -134,25 +143,24 @@ def postNoteToUser(request, id):
     admin = getAdminID(request)
     if type(admin) is Response:
         return admin
-    # Update
-    try:
-        user = User.objects.get(id=id)
-        notes = user.notes
-        if notes is None:
-            notes = []
-        note = dict(
-            date=str(datetime.now(pytz.utc)),
-            author=admin.username,
-            content=request.data['content'],
-            id=(notes[-1]['id'] + 1) if len(notes) > 0 else 0
-        )
-        notes.append(note)
-        user.notes = notes
-        user.save()
+    # Add user
+    dateStamp = datetime.now(pytz.utc)
+    noteSerializer = NoteSerializer(data=dict(
+        user=uuid.UUID(id),
+        note=str(request.data['content']),
+        author=admin,
+        created_at=dateStamp,
+        updated_at=dateStamp,
+        created_by=admin.username,
+        updated_by=admin.username
+    ))
 
-        return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
-    except User.DoesNotExist:
-        return Response(data=errorResponse("Unable to add user note.", "USR0004"), status=status.HTTP_400_BAD_REQUEST)
+    # -- check if data is without bad actors
+    if noteSerializer.is_valid():
+        noteSerializer.save()
+        return Response(data=successResponse(noteSerializer.data), status=status.HTTP_201_CREATED)
+    else:
+        return Response(data=errorResponse(noteSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
 
 # Note Operations
@@ -160,59 +168,44 @@ def postNoteToUser(request, id):
 @api_view(['PUT', 'DELETE'])
 def noteOperations(request, id, noteid):
     if request.method == 'PUT':
-        return updateNoteFromUser(request, id, noteid)
+        return updateNoteFromUser(request, noteid)
     elif request.method == 'DELETE':
-        return deleteNoteFromUser(request, id, noteid)
+        return deleteNoteFromUser(request, noteid)
     else:
         return Response(data=errorResponse("Invalid request method.", "USR0008"), status=status.HTTP_400_BAD_REQUEST)
 
 
 # Delete a note
-def deleteNoteFromUser(request, id, noteid):
+def deleteNoteFromUser(request, noteid):
     # Get requesting admin ID
     admin = getAdminID(request)
     if type(admin) is Response:
         return admin
-    # Update
     try:
-        user = User.objects.get(id=id)
-        notes = user.notes
-        for note in notes:
-            if note['id'] == int(noteid):
-                # If author is not the same or root, return error
-                if admin.username != 'root':
-                    if note['author'] != admin.username:
-                        return Response(data=errorResponse("Unable to delete user note.", "USR0007"), status=status.HTTP_400_BAD_REQUEST)
-                notes.remove(note)
-                break
-        user.notes = notes
-        user.save()
-
-        return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
+        note = Note.objects.get(id=noteid)
+        if admin.username != 'root':
+            if note.author != admin:
+                return Response(data=errorResponse("Unable to delete user note.", "USR0011"), status=status.HTTP_400_BAD_REQUEST)
+        note.delete()
+        return Response(data=successResponse(), status=status.HTTP_200_OK)
     except User.DoesNotExist:
-        return Response(data=errorResponse("Unable to delete user note.", "USR0005"), status=status.HTTP_400_BAD_REQUEST)
+        return Response(data=errorResponse("Unable to delete user note.", "USR0005"), status=status.HTTP_404_NOT_FOUND)
 
 
 # Update note
-def updateNoteFromUser(request, id, noteid):
+def updateNoteFromUser(request, noteid):
     # Get requesting admin ID
     admin = getAdminID(request)
     if type(admin) is Response:
         return admin
     # Update
     try:
-        user = User.objects.get(id=id)
-        notes = user.notes
-        for note in notes:
-            if note['id'] == int(noteid):
-                # If author is not the same, return error
-                if note['author'] != admin.username:
-                    return Response(data=errorResponse("Unable to update user note.", "USR0007"), status=status.HTTP_400_BAD_REQUEST)
-                note['content'] = request.data['content']
-                break
-        user.notes = notes
-        user.save()
-
-        return Response(data=successResponse(UserSerializer(user).data), status=status.HTTP_200_OK)
-    except User.DoesNotExist:
-        return Response(data=errorResponse("Unable to update user note.", "USR0006"), status=status.HTTP_400_BAD_REQUEST)
+        note = Note.objects.get(id=noteid)
+        if admin.username != 'root':
+            if note.author != admin:
+                return Response(data=errorResponse("Unable to update user note.", "USR0007"), status=status.HTTP_400_BAD_REQUEST)
+        note.note = request.data['content']
+        note.save()
+        return Response(data=successResponse(NoteSerializer(note).data), status=status.HTTP_200_OK)
+    except Note.DoesNotExist:
+        return Response(data=errorResponse("Unable to delete user note.", "USR0006"), status=status.HTTP_404_NOT_FOUND)

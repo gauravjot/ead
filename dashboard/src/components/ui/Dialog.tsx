@@ -27,7 +27,7 @@ export default function DialogBox(props: IDialogProps) {
 							elementState="default"
 							elementType="button"
 							elementStyle="no_border_opaque"
-							elementSize="small"
+							elementSize="base"
 							onClick={props.onClose}
 							elementDisabled={props.state === "loading"}
 						/>
@@ -36,7 +36,7 @@ export default function DialogBox(props: IDialogProps) {
 							elementState={props.state}
 							elementType="button"
 							elementStyle={props.isDanger ? "danger" : "primary"}
-							elementSize="small"
+							elementSize="base"
 							onClick={props.onConfirm}
 							elementDisabled={props.state === "loading"}
 						/>

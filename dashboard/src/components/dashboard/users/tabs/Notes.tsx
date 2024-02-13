@@ -5,26 +5,30 @@ import {AdminType} from "@/types/admin";
 import {AxiosError} from "axios";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
-import {useMutation, useQueryClient} from "react-query";
-import {dateTimePretty} from "../../../../utils/datetime";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import {dateTimePretty} from "@/utils/datetime";
 import DropDown from "@/components/ui/DropDown";
 import DialogBox from "@/components/ui/Dialog";
 import {NoteType, UserType} from "@/types/user";
 import {postNote} from "@/services/user/post_note";
 import {deleteNote} from "@/services/user/delete_note";
 import {updateNote} from "@/services/user/update_note";
+import {getUserNotes} from "@/services/user/get_notes";
+import Spinner from "@/components/ui/Spinner";
 
 export interface IUserNotesProps {
 	user: UserType | null;
 	admin: AdminType | null;
 }
 
-export default function ClientNotes(props: IUserNotesProps) {
+export default function Notes(props: IUserNotesProps) {
 	const [reqError, setReqError] = useState<string | null>(null);
 	const [deleteReqError, setDeleteReqError] = useState<string | null>(null);
 	const [editNote, setEditNote] = useState<NoteType | null>(null);
 	const [deleteDialog, setDeleteDialog] = useState<number | null>(null);
-	const queryClient = useQueryClient();
+	const notes = useQuery(["notes_" + props.user?.id], () =>
+		getUserNotes(props.admin?.token, props.user?.id)
+	);
 
 	const {
 		register,
@@ -41,7 +45,7 @@ export default function ClientNotes(props: IUserNotesProps) {
 		onSuccess: () => {
 			setReqError(null);
 			reset();
-			queryClient.resetQueries(["user_" + props.user?.id]);
+			notes.refetch();
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setReqError);
@@ -55,13 +59,15 @@ export default function ClientNotes(props: IUserNotesProps) {
 		},
 		onSuccess: () => {
 			setDeleteReqError(null);
-			queryClient.resetQueries(["user_" + props.user?.id]);
+			notes.refetch();
 			setDeleteDialog(null);
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setDeleteReqError);
 		},
 	});
+
+	console.log("notes", notes);
 
 	return props.user && props.admin ? (
 		<>
@@ -79,9 +85,7 @@ export default function ClientNotes(props: IUserNotesProps) {
 							uid: props.user?.id as string,
 						});
 					}}
-					state={
-						mutationDelete.isLoading ? "loading" : mutationDelete.isSuccess ? "done" : "default"
-					}
+					state={mutationDelete.isLoading ? "loading" : "default"}
 				/>
 			)}
 
@@ -111,9 +115,7 @@ export default function ClientNotes(props: IUserNotesProps) {
 							/>
 							<Button
 								elementChildren="Add note"
-								elementState={
-									mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
-								}
+								elementState={mutation.isLoading ? "loading" : "default"}
 								elementStyle="black"
 								elementSize="base"
 								elementType="submit"
@@ -122,72 +124,83 @@ export default function ClientNotes(props: IUserNotesProps) {
 					</form>
 				</div>
 				<div className="border-t my-4">
-					{props.user && props.user.notes && props.user.notes?.length > 0 ? (
+					{notes.isSuccess && notes.data && notes.data.length > 0 ? (
 						<>
 							<h3 className="text-md font-medium text-gray-800 mb-4 mt-8">Posted Notes</h3>
 							<div>
-								{props.user.notes
-									.sort((a, b) => b.id - a.id)
-									.map((note) => {
-										return (
-											<div key={note.id} className="rounded-md px-4 py-4 my-4 border">
-												<div className="flex place-items-center">
-													<div className="flex-1">
-														<h4 className="text-bb">@{note.author}</h4>
-														<div className="text-sm text-gray-500">{dateTimePretty(note.date)}</div>
+								{notes.data.map((note) => {
+									return (
+										<div
+											key={note.id}
+											className="rounded-md px-4 py-4 my-4 border hover:border-gray-400"
+										>
+											<div className="flex place-items-center">
+												<div className="flex-1">
+													<h4 className="text-bb">@{note.created_by}</h4>
+													<div className="text-sm text-gray-500">
+														{dateTimePretty(note.created_at)}
 													</div>
-													{props.admin?.username === note.author ||
-													props.admin?.username === "root" ? (
-														<DropDown
-															showExpandIcon={false}
-															buttonStyle="icon_only"
-															iconOnly={true}
-															buttonIcon="ic-options-vertical"
-															items={[
-																{
-																	icon: "ic-edit",
-																	title: "Edit",
-																	disabled: note.author !== props.admin?.username,
-																	onClick: () => {
-																		setEditNote(note);
-																	},
-																},
-																{
-																	icon: "ic-delete",
-																	title: "Delete",
-																	disabled: !(
-																		props.admin?.username === "root" ||
-																		note.author === props.admin?.username
-																	),
-																	onClick: () => {
-																		setDeleteDialog(note.id);
-																	},
-																},
-															]}
-														/>
-													) : (
-														<></>
-													)}
 												</div>
-												<p className="mt-2 text-bb text-gray-700">
-													{note.content.split("\n").map((str) => (
-														<>
-															{str ? (
-																<p className="mb-3 last:mb-0">{str}</p>
-															) : (
-																<div className="py-3" />
-															)}
-														</>
-													))}
-												</p>
+												{props.admin?.username === note.created_by ||
+												props.admin?.username === "root" ? (
+													<DropDown
+														showExpandIcon={false}
+														buttonStyle="icon_only"
+														iconOnly={true}
+														buttonIcon="ic-options-vertical"
+														items={[
+															{
+																icon: "ic-edit",
+																title: "Edit",
+																disabled: note.created_by !== props.admin?.username,
+																onClick: () => {
+																	setEditNote(note);
+																},
+															},
+															{
+																icon: "ic-delete",
+																title: "Delete",
+																disabled: !(
+																	props.admin?.username === "root" ||
+																	note.created_by === props.admin?.username
+																),
+																onClick: () => {
+																	setDeleteDialog(note.id);
+																},
+															},
+														]}
+													/>
+												) : (
+													<></>
+												)}
 											</div>
-										);
-									})}
+											<p className="mt-2 text-bb text-gray-700">
+												{note.note.split("\n").map((str) => (
+													<>
+														{str ? (
+															<p className="mb-3 last:mb-0">{str}</p>
+														) : (
+															<div className="py-3" />
+														)}
+													</>
+												))}
+											</p>
+										</div>
+									);
+								})}
 							</div>
 							<div className="text-center text-gray-400 my-8">End of notes</div>
 						</>
-					) : (
+					) : notes.isSuccess && notes.data.length < 1 ? (
 						<div className="text-center text-gray-400 my-8">No notes yet for this user</div>
+					) : notes.isError ? (
+						<div className="text-center text-gray-400 my-8">Error requesting notes</div>
+					) : notes.isLoading ? (
+						<div className="flex place-items-center justify-center text-gray-400 my-8">
+							<Spinner color="gray" size="md" />
+						</div>
+					) : (
+						<></>
 					)}
 				</div>
 			</div>
@@ -253,7 +266,7 @@ function EditNote({note, token, uid}: {note: NoteType | null; token: string; uid
 			setReqError(null);
 			mutation.reset();
 			reset();
-			queryClient.resetQueries(["user_" + uid]);
+			queryClient.invalidateQueries(["notes_" + uid]);
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setReqError);
@@ -284,7 +297,7 @@ function EditNote({note, token, uid}: {note: NoteType | null; token: string; uid
 						elementWidth="full"
 						elementIsRequired={true}
 						elementTextareaRows={3}
-						defaultValue={note?.content}
+						defaultValue={note?.note}
 						elementIsTextareaExpandable={true}
 					/>
 					<div className="mt-6 flex gap-6 justify-center">

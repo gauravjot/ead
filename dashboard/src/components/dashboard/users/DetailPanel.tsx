@@ -3,7 +3,7 @@ import {AdminContext} from "@/components/Home";
 import {useContext, useState} from "react";
 import Spinner from "@/components/ui/Spinner";
 import ClientAdminister from "./tabs/Administer";
-import ClientNotes from "./tabs/Notes";
+import Notes from "./tabs/Notes";
 import {UserType} from "@/types/user";
 import {getUser} from "@/services/user/get_user";
 
@@ -56,7 +56,7 @@ export default function UserDetailPanel({userID}: {userID: string}) {
 				</div>
 			</div>
 			{activeTab === "administer" && <ClientAdminister admin={adminContext.admin} user={user} />}
-			{activeTab === "notes" && <ClientNotes admin={adminContext.admin} user={user} />}
+			{activeTab === "notes" && <Notes admin={adminContext.admin} user={user} />}
 		</>
 	) : userQuery.isLoading ? (
 		<div className="h-full flex place-items-center justify-center">

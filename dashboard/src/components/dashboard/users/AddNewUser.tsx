@@ -82,49 +82,53 @@ export default function AddNewUser({
 				>
 					<fieldset disabled={mutation.isLoading}>
 						<p className="my-1 text-bb text-gray-500">* Required fields.</p>
-						<div>
-							<InputField
-								elementId="aau_name"
-								elementIsRequired={true}
-								elementInputMinLength={2}
-								elementHookFormErrors={errors}
-								elementInputType="text"
-								elementHookFormRegister={register}
-								elementLabel="Full Name"
-								elementWidth="full"
-								elementInputMaxLength={48}
-							/>
-							<InputField
-								elementId="aau_role"
-								elementInputType="text"
-								elementHookFormRegister={register}
-								elementLabel="Role"
-								elementIsRequired={true}
-								elementHookFormErrors={errors}
-								elementWidth="full"
-								elementInputMaxLength={48}
-							/>
-							<InputField
-								elementId="aau_email"
-								elementInputMinLength={0}
-								elementInputMaxLength={64}
-								elementInputType="email"
-								elementIsRequired={true}
-								elementHookFormRegister={register}
-								elementLabel="Email"
-								elementHookFormErrors={errors}
-								elementWidth="full"
-							/>
-							<InputField
-								elementId="aau_phone"
-								elementInputType="text"
-								elementHookFormRegister={register}
-								elementLabel="Phone"
-								elementInputMinLength={0}
-								elementInputMaxLength={20}
-								elementHookFormErrors={errors}
-								elementWidth="full"
-							/>
+						<div className="grid grid-cols-2 gap-16">
+							<div>
+								<InputField
+									elementId="aau_name"
+									elementIsRequired={true}
+									elementInputMinLength={2}
+									elementHookFormErrors={errors}
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Full Name"
+									elementWidth="full"
+									elementInputMaxLength={48}
+								/>
+								<InputField
+									elementId="aau_role"
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Role"
+									elementIsRequired={true}
+									elementHookFormErrors={errors}
+									elementWidth="full"
+									elementInputMaxLength={48}
+								/>
+							</div>
+							<div>
+								<InputField
+									elementId="aau_email"
+									elementInputMinLength={0}
+									elementInputMaxLength={64}
+									elementInputType="email"
+									elementIsRequired={true}
+									elementHookFormRegister={register}
+									elementLabel="Email"
+									elementHookFormErrors={errors}
+									elementWidth="full"
+								/>
+								<InputField
+									elementId="aau_phone"
+									elementInputType="text"
+									elementHookFormRegister={register}
+									elementLabel="Phone"
+									elementInputMinLength={0}
+									elementInputMaxLength={20}
+									elementHookFormErrors={errors}
+									elementWidth="full"
+								/>
+							</div>
 						</div>
 						<div className="mt-6 flex gap-6 justify-center">
 							<Button
