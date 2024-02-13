@@ -10,11 +10,6 @@ export const FIELDS = [
 		inputMethod: "checkbox",
 	},
 	{
-		type: "client",
-		name: "Client",
-		inputMethod: "select",
-	},
-	{
 		type: "currency",
 		name: "Currency",
 		extra: {
@@ -90,5 +85,10 @@ export const FIELDS = [
 		type: "url",
 		name: "URL",
 		inputMethod: "text",
+	},
+	{
+		type: "user",
+		name: "User",
+		inputMethod: "select",
 	},
 ];

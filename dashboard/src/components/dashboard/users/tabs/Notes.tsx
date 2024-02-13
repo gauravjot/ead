@@ -2,7 +2,6 @@ import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {AdminType} from "@/types/admin";
-import {NoteType, ClientType} from "@/types/client";
 import {AxiosError} from "axios";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
@@ -10,16 +9,17 @@ import {useMutation, useQueryClient} from "react-query";
 import {dateTimePretty} from "../../../../utils/datetime";
 import DropDown from "@/components/ui/DropDown";
 import DialogBox from "@/components/ui/Dialog";
-import {postNoteToClient} from "@/services/invoice/client/post_note";
-import {deleteClientNote} from "@/services/invoice/client/delete_note";
-import {updateClientNote} from "@/services/invoice/client/update_note";
+import {NoteType, UserType} from "@/types/user";
+import {postNote} from "@/services/user/post_note";
+import {deleteNote} from "@/services/user/delete_note";
+import {updateNote} from "@/services/user/update_note";
 
-export interface IClientNotesProps {
-	client: ClientType | null;
+export interface IUserNotesProps {
+	user: UserType | null;
 	admin: AdminType | null;
 }
 
-export default function ClientNotes(props: IClientNotesProps) {
+export default function ClientNotes(props: IUserNotesProps) {
 	const [reqError, setReqError] = useState<string | null>(null);
 	const [deleteReqError, setDeleteReqError] = useState<string | null>(null);
 	const [editNote, setEditNote] = useState<NoteType | null>(null);
@@ -36,12 +36,12 @@ export default function ClientNotes(props: IClientNotesProps) {
 	// Add new note mutation
 	const mutation = useMutation({
 		mutationFn: (payload: {content: string; uid: string}) => {
-			return postNoteToClient(props.admin?.token, payload);
+			return postNote(props.admin?.token, payload);
 		},
 		onSuccess: () => {
 			setReqError(null);
 			reset();
-			queryClient.resetQueries(["client_" + props.client?.id]);
+			queryClient.resetQueries(["user_" + props.user?.id]);
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setReqError);
@@ -51,11 +51,11 @@ export default function ClientNotes(props: IClientNotesProps) {
 	// Delete note mutation
 	const mutationDelete = useMutation({
 		mutationFn: (payload: {nid: number; uid: string}) => {
-			return deleteClientNote(props.admin?.token, payload);
+			return deleteNote(props.admin?.token, payload);
 		},
 		onSuccess: () => {
 			setDeleteReqError(null);
-			queryClient.resetQueries(["client_" + props.client?.id]);
+			queryClient.resetQueries(["user_" + props.user?.id]);
 			setDeleteDialog(null);
 		},
 		onError: (error: AxiosError) => {
@@ -63,7 +63,7 @@ export default function ClientNotes(props: IClientNotesProps) {
 		},
 	});
 
-	return props.client && props.admin ? (
+	return props.user && props.admin ? (
 		<>
 			{/* Delete note dialog */}
 			{deleteDialog && (
@@ -76,7 +76,7 @@ export default function ClientNotes(props: IClientNotesProps) {
 					onConfirm={() => {
 						mutationDelete.mutate({
 							nid: deleteDialog,
-							uid: props.client?.id as string,
+							uid: props.user?.id as string,
 						});
 					}}
 					state={
@@ -93,8 +93,7 @@ export default function ClientNotes(props: IClientNotesProps) {
 						onSubmit={handleSubmit((d) => {
 							// Add new item
 							const values = JSON.parse(JSON.stringify(d).replaceAll("an_", ""));
-							if (props.client)
-								mutation.mutate({content: values.content.trim(), uid: props.client.id});
+							if (props.user) mutation.mutate({content: values.content.trim(), uid: props.user.id});
 						})}
 					>
 						<fieldset disabled={mutation.isLoading}>
@@ -123,11 +122,11 @@ export default function ClientNotes(props: IClientNotesProps) {
 					</form>
 				</div>
 				<div className="border-t my-4">
-					{props.client && props.client.notes && props.client.notes?.length > 0 ? (
+					{props.user && props.user.notes && props.user.notes?.length > 0 ? (
 						<>
 							<h3 className="text-md font-medium text-gray-800 mb-4 mt-8">Posted Notes</h3>
 							<div>
-								{props.client.notes
+								{props.user.notes
 									.sort((a, b) => b.id - a.id)
 									.map((note) => {
 										return (
@@ -220,7 +219,7 @@ export default function ClientNotes(props: IClientNotesProps) {
 						</div>
 					</div>
 					<div className="container mx-auto">
-						<EditNote note={editNote} token={props.admin?.token} uid={props.client?.id} />
+						<EditNote note={editNote} token={props.admin?.token} uid={props.user?.id} />
 					</div>
 				</div>
 			</div>
@@ -244,7 +243,7 @@ function EditNote({note, token, uid}: {note: NoteType | null; token: string; uid
 	// Edit note mutation
 	const mutation = useMutation({
 		mutationFn: (payload: {content: string; nid: number}) => {
-			return updateClientNote(token, {
+			return updateNote(token, {
 				content: payload.content.trim(),
 				nid: payload.nid,
 				uid: uid,

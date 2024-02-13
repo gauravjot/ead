@@ -2,17 +2,15 @@ import axios from "axios";
 import {BACKEND_ENDPOINT} from "@/config";
 
 /**
- * API call to add user note
+ * API call to delete client
  * @param token
+ * @param id
  * @returns Promise
  */
-export function postNoteToClient(
-	token: string | undefined | null,
-	payload: {content: string; uid: string}
-) {
+export function deleteUser(token: string | undefined | null, id: string | number) {
 	return token
 		? axios
-				.post(BACKEND_ENDPOINT + "/api/invoice/client/note/post/", JSON.stringify(payload), {
+				.delete(BACKEND_ENDPOINT + `/api/user/${id}/`, {
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: token,

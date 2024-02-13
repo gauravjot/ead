@@ -1,12 +1,12 @@
 import {useState} from "react";
 import Button from "@/components/ui/Button";
-import ClientsList from "./ClientsList";
-import ClientDetailPanel from "./DetailPanel";
-import AddNewClient from "./AddNewClient";
-import {ClientType} from "@/types/client";
+import UsersList from "./UsersList";
+import UserDetailPanel from "./DetailPanel";
+import AddNewUser from "./AddNewUser";
+import {UserType} from "@/types/user";
 
-export default function Clients() {
-	const [activeItem, setActiveItem] = useState<ClientType>();
+export default function Users() {
+	const [activeItem, setActiveItem] = useState<UserType>();
 	const [showAddUserUI, setShowAddUserUI] = useState<boolean>(false);
 
 	return (
@@ -15,7 +15,7 @@ export default function Clients() {
 				<div className="w-64 p-4 flex-shrink-0 border-r overflow-y-auto h-full">
 					<div className="flex place-items-center mb-4">
 						<div className="capitalize text-sm mt-2 mb-1 text-gray-800 font-thin tracking-wider flex-1">
-							CLIENTS
+							USERS
 						</div>
 						<div>
 							<Button
@@ -33,10 +33,10 @@ export default function Clients() {
 							/>
 						</div>
 					</div>
-					<ClientsList activeItem={activeItem} setActiveItem={setActiveItem} />
+					<UsersList activeItem={activeItem} setActiveItem={setActiveItem} />
 				</div>
 				<div className="overflow-y-auto bg-white w-full">
-					{activeItem?.id && <ClientDetailPanel key={activeItem.id} userID={activeItem.id} />}
+					{activeItem?.id && <UserDetailPanel key={activeItem.id} userID={activeItem.id} />}
 				</div>
 			</div>
 			<div aria-hidden={!showAddUserUI} className="aria-hidable absolute inset-0">
@@ -51,7 +51,7 @@ export default function Clients() {
 				<div className="bg-white shadow-xl px-4 py-6 sm:px-8 sm:py-12 relative z-20">
 					<div className="flex container mx-auto">
 						<h1 className="text-2xl flex-1 font-bold tracking-tight mb-3 xl:min-w-[45rem]">
-							Add new client
+							Add new user
 						</h1>
 						<div>
 							<button
@@ -66,7 +66,7 @@ export default function Clients() {
 						</div>
 					</div>
 					<div className="container mx-auto">
-						<AddNewClient setShowDialog={setShowAddUserUI} />
+						<AddNewUser setShowDialog={setShowAddUserUI} />
 					</div>
 				</div>
 			</div>

@@ -26,7 +26,7 @@ urlpatterns = [
 
 # users
 urlpatterns += [
-    path('', include('invoices.urls')),
+    path('', include('users.urls')),
     path('', include('admins.urls')),
     path('', include('items.urls')),
 ]

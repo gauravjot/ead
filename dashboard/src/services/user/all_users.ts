@@ -6,10 +6,10 @@ import {BACKEND_ENDPOINT} from "@/config";
  * @param token
  * @returns Promise
  */
-export function getAllClients(token: string | undefined | null) {
+export function getAllUsers(token: string | undefined | null) {
 	return token
 		? axios
-				.get(BACKEND_ENDPOINT + "/api/invoice/client/all/", {
+				.get(BACKEND_ENDPOINT + "/api/user/all/", {
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: token,

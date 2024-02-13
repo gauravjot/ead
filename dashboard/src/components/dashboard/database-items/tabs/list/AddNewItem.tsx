@@ -4,12 +4,12 @@ import InputField from "@/components/ui/InputField";
 import SelectField from "@/components/ui/SelectField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {getAllAdmins} from "@/services/admins/all_admins";
-import {getAllClients} from "@/services/invoice/client/all_clients";
 import {AddItemType, addItem} from "@/services/item/add_item";
 import {getItems} from "@/services/item/get_items";
+import {getAllUsers} from "@/services/user/all_users";
 import {AdminEntryType} from "@/types/admin";
-import {ClientType} from "@/types/client";
 import {ItemTypeType, CustomFieldType, ItemType} from "@/types/item";
+import {UserType} from "@/types/user";
 import {AxiosError} from "axios";
 import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
 import {FieldErrors, FieldValues, UseFormRegister, useForm} from "react-hook-form";
@@ -196,11 +196,11 @@ export function CustomInputField({
 					/>
 				);
 			});
-		} else if (field.t === "client") {
-			getAllClients(token).then((data) => {
+		} else if (field.t === "user") {
+			getAllUsers(token).then((data) => {
 				setIField(
 					<SelectField
-						data={data.data.map((user: ClientType) => {
+						data={data.data.map((user: UserType) => {
 							return {n: user.name, v: user.id};
 						})}
 						hookFormRegister={hookFormRegister}

@@ -40,7 +40,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'invoices',
+    'users',
     'admins',
     'items',
 ]

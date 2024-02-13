@@ -4,9 +4,8 @@ import Sidebar from "./dashboard/Sidebar";
 import LoginBox from "./login/LoginBox";
 import React, {Dispatch, SetStateAction} from "react";
 import Admins from "./dashboard/admins/Admins";
-import Invoices from "./dashboard/invoices/Invoices";
-import Clients from "./dashboard/invoice-clients/Clients";
 import Items from "./dashboard/database-items/Items";
+import Users from "./dashboard/users/Users";
 
 export const AdminContext = React.createContext<{
 	admin: AdminType | null;
@@ -24,9 +23,7 @@ export default function Home() {
 	console.log(isSearchActive);
 
 	// sidebar
-	const [activeMenu, setActiveMenu] = React.useState<"admins" | "clients" | "items" | "invoices">(
-		"clients"
-	);
+	const [activeMenu, setActiveMenu] = React.useState<"admins" | "users" | "items">("users");
 
 	return admin ? (
 		<AdminContext.Provider value={{admin, setAdmin}}>
@@ -41,9 +38,8 @@ export default function Home() {
 				<div className="flex-1 h-full overflow-hidden flex flex-col">
 					<QuickLinkBar />
 					{activeMenu === "admins" ? <Admins /> : <></>}
-					{activeMenu === "clients" ? <Clients /> : <></>}
+					{activeMenu === "users" ? <Users /> : <></>}
 					{activeMenu === "items" ? <Items /> : <></>}
-					{activeMenu === "invoices" ? <Invoices /> : <></>}
 				</div>
 			</div>
 		</AdminContext.Provider>

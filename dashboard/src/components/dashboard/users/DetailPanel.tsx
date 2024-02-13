@@ -4,27 +4,25 @@ import {useContext, useState} from "react";
 import Spinner from "@/components/ui/Spinner";
 import ClientAdminister from "./tabs/Administer";
 import ClientNotes from "./tabs/Notes";
-import {ClientType} from "@/types/client";
-import {getClient} from "@/services/invoice/client/get_client";
+import {UserType} from "@/types/user";
+import {getUser} from "@/services/user/get_user";
 
-export default function ClientDetailPanel({userID}: {userID: string}) {
+export default function UserDetailPanel({userID}: {userID: string}) {
 	const adminContext = useContext(AdminContext);
-	const clientQuery = useQuery(["client_" + userID], () =>
-		getClient(adminContext.admin?.token, userID)
-	);
-	const client: ClientType | null = clientQuery.isSuccess ? clientQuery.data.data : null;
+	const userQuery = useQuery(["user_" + userID], () => getUser(adminContext.admin?.token, userID));
+	const user: UserType | null = userQuery.isSuccess ? userQuery.data.data : null;
 	const [activeTab, setActiveTab] = useState<"administer" | "notes">("administer");
 
-	return clientQuery.isSuccess && client ? (
+	return userQuery.isSuccess && user ? (
 		<>
 			<div className="border-b sticky top-0 z-[5] bg-white">
 				<div className="flex gap-6 px-8 py-6">
 					<div className="h-16 w-16 bg-gray-200 rounded-full flex place-items-center justify-center capitalize text-4xl text-gray-400">
-						{client.name[0]}
+						{user.name[0]}
 					</div>
 					<div>
-						<h1 className="text-3xl tracking-tight">{client.name} </h1>
-						<div className="text-gray-500">{client.type}</div>
+						<h1 className="text-3xl tracking-tight">{user.name} </h1>
+						<div className="text-gray-500">{user.role}</div>
 					</div>
 				</div>
 				<div className="text-bb px-8 flex gap-6">
@@ -52,17 +50,15 @@ export default function ClientDetailPanel({userID}: {userID: string}) {
 					>
 						Notes
 						<span className="text-sm">
-							{client.notes && client.notes.length > 0 ? " (" + client.notes.length + ")" : ""}
+							{user.notes && user.notes.length > 0 ? " (" + user.notes.length + ")" : ""}
 						</span>
 					</button>
 				</div>
 			</div>
-			{activeTab === "administer" && (
-				<ClientAdminister admin={adminContext.admin} client={client} />
-			)}
-			{activeTab === "notes" && <ClientNotes admin={adminContext.admin} client={client} />}
+			{activeTab === "administer" && <ClientAdminister admin={adminContext.admin} user={user} />}
+			{activeTab === "notes" && <ClientNotes admin={adminContext.admin} user={user} />}
 		</>
-	) : clientQuery.isLoading ? (
+	) : userQuery.isLoading ? (
 		<div className="h-full flex place-items-center justify-center">
 			<Spinner color="accent" size="xl" />
 		</div>

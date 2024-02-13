@@ -4,35 +4,25 @@ import {BACKEND_ENDPOINT} from "@/config";
 /**
  * API call to change profile data
  * @param token
- * @param id
- * @param name
- * @param title
- * @param phone
- * @param email
+ * @param nid Note ID
+ * @param content New note content
+ * @param uid User ID
  * @returns Promise
  */
-export function updateClient(
+export function updateNote(
 	token: string | undefined | null,
-	id: string,
-	d: {
-		name: string;
-		type: string;
-		email: string;
-		phone: string;
-		vat: string;
+	payload: {
+		nid: number;
+		content: string;
+		uid: string;
 	}
 ) {
 	return token
 		? axios
 				.put(
-					BACKEND_ENDPOINT + "/api/invoice/client/update/",
+					BACKEND_ENDPOINT + `/api/user/${payload.uid}/note/${payload.nid}/`,
 					JSON.stringify({
-						uid: id,
-						name: d.name,
-						type: d.type,
-						email: d.email,
-						phone: d.phone,
-						vat: d.vat,
+						content: payload.content,
 					}),
 					{
 						headers: {

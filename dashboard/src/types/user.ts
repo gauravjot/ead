@@ -1,13 +1,7 @@
-export type ClientType = {
+export type UserType = {
 	id: string;
 	name: string;
-	type: string;
-	street: string;
-	city: string;
-	province: string;
-	postal_code: string;
-	country: string;
-	vat: string;
+	role: string;
 	email: string;
 	phone: string;
 	notes: NoteType[] | null;

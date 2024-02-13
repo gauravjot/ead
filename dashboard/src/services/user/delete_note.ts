@@ -2,15 +2,16 @@ import axios from "axios";
 import {BACKEND_ENDPOINT} from "@/config";
 
 /**
- * API call to delete client
+ * API call to delete item type fields
  * @param token
- * @param id
+ * @param nid Note ID
+ * @param uid User ID
  * @returns Promise
  */
-export function deleteClient(token: string | undefined | null, id: string | number) {
+export function deleteNote(token: string | undefined | null, payload: {nid: number; uid: string}) {
 	return token
 		? axios
-				.delete(BACKEND_ENDPOINT + `/api/invoice/client/${id}/delete/`, {
+				.delete(BACKEND_ENDPOINT + `/api/user/${payload.uid}/note/${payload.nid}/`, {
 					headers: {
 						"Content-Type": "application/json",
 						Authorization: token,

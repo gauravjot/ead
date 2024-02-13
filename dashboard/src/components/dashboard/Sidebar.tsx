@@ -1,6 +1,6 @@
 import {Dispatch, SetStateAction} from "react";
 
-type menuType = "admins" | "clients" | "items" | "invoices";
+type menuType = "admins" | "users" | "items";
 
 const menu: {icon: string; type: menuType; title: string; divider?: boolean}[] = [
 	{
@@ -17,13 +17,8 @@ const menu: {icon: string; type: menuType; title: string; divider?: boolean}[] =
 	{
 		divider: true,
 		icon: "ic-users",
-		title: "Clients",
-		type: "clients",
-	},
-	{
-		icon: "ic-invoice",
-		title: "Invoices",
-		type: "invoices",
+		title: "Users",
+		type: "users",
 	},
 ];
 
@@ -53,8 +48,8 @@ export default function Sidebar({
 				</button>
 				{menu.map((item) => {
 					return (
-						<>
-							{"divider" in item && <div className="h-[2px] bg-gray-200"></div>}
+						<div key={item.title}>
+							{"divider" in item && <div className="h-[2px] bg-gray-200 mb-3"></div>}
 							<button
 								key={item.type}
 								className={
@@ -85,7 +80,7 @@ export default function Sidebar({
 									{item.title}
 								</small>
 							</button>
-						</>
+						</div>
 					);
 				})}
 			</div>
