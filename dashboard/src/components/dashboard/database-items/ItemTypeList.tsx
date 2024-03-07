@@ -1,10 +1,9 @@
-import { AdminContext } from "@/components/Home";
 import Spinner from "@/components/ui/Spinner";
-import { getAllItemTypes } from "@/services/item/item_type/get_all_item_types";
-import { ErrorType } from "@/types/api";
-import { ItemTypeType } from "@/types/item";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { useQuery } from "react-query";
+import {getAllItemTypes} from "@/services/item/item_type/get_all_item_types";
+import {ErrorType} from "@/types/api";
+import {ItemTypeType} from "@/types/item";
+import {Dispatch, SetStateAction, useState} from "react";
+import {useQuery} from "react-query";
 
 export default function ItemTypeList({
 	activeItem,
@@ -14,10 +13,7 @@ export default function ItemTypeList({
 	setActiveItem: Dispatch<SetStateAction<ItemTypeType | undefined>>;
 }) {
 	const [keyword, setKeyword] = useState<string>("");
-	const adminContext = useContext(AdminContext);
-	const item_types = useQuery(["item_type_list"], () =>
-		getAllItemTypes(adminContext.admin?.token)
-	);
+	const item_types = useQuery(["item_type_list"], () => getAllItemTypes());
 
 	if (item_types.isSuccess) {
 		// Remove active item if item does not exist.
@@ -29,10 +25,7 @@ export default function ItemTypeList({
 	return (
 		<>
 			<div className="flex">
-				<div
-					className="relative flex-1"
-					title="Filter with name, email and title"
-				>
+				<div className="relative flex-1" title="Filter with name, email and title">
 					<input
 						type="text"
 						className="pl-8 h-9 bg-transparent border border-gray-300 dark:border-gray-700 dark:text-white w-full rounded-md text-sm focus-visible:bg-white"
@@ -88,16 +81,10 @@ export default function ItemTypeList({
 										setActiveItem(item);
 									}}
 								>
-									<div
-										title={item.name}
-										className="text-bb font-medium"
-									>
+									<div title={item.name} className="text-bb font-medium">
 										{item.name}
 									</div>
-									<div
-										title={item.description}
-										className="mt-1 text-sm text-gray-600 truncate"
-									>
+									<div title={item.description} className="mt-1 text-sm text-gray-600 truncate">
 										{item.description}
 									</div>
 								</button>

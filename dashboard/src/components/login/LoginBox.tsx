@@ -5,12 +5,12 @@ import {AxiosError} from "axios";
 import {ErrorType} from "@/types/api";
 import ServerSetup from "@/components/login/ServerSetup";
 import Button from "../ui/Button";
-import {AdminType} from "@/types/admin";
+import {LoggedInAdminType} from "@/types/admin";
 
 export default function LoginBox({
 	setAdmin,
 }: {
-	setAdmin: Dispatch<SetStateAction<AdminType | null>>;
+	setAdmin: Dispatch<SetStateAction<LoggedInAdminType | null>>;
 }) {
 	const [username, setUsername] = React.useState<string>("");
 	const [password, setPassword] = React.useState<string>("");
@@ -22,7 +22,7 @@ export default function LoginBox({
 			return doLogin(username, password);
 		},
 		onSuccess: (data) => {
-			setAdmin({...data.data.admin, token: data.data.token});
+			setAdmin(data);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {

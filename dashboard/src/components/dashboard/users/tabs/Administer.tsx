@@ -4,7 +4,6 @@ import {useMutation, useQueryClient} from "react-query";
 import {AxiosError} from "axios";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import Button from "@/components/ui/Button";
-import {AdminType} from "@/types/admin";
 import {useState} from "react";
 import {dateTimePretty} from "@/utils/datetime";
 import {DualColumnTable} from "@/components/ui/table/DualColumnDetailTable";
@@ -13,8 +12,7 @@ import {UpdateUserType, updateUser} from "@/services/user/update_user";
 import {deleteUser} from "@/services/user/delete_user";
 
 export interface IClientAdministerProps {
-	user: UserType | null;
-	admin: AdminType | null;
+	user: UserType;
 }
 
 export default function ClientAdminister(props: IClientAdministerProps) {
@@ -29,9 +27,7 @@ export default function ClientAdminister(props: IClientAdministerProps) {
 	const [changeProfileReqError, setChangeProfileReqError] = useState<string | null>(null);
 	const changeProfileMutation = useMutation({
 		mutationFn: (d: UpdateUserType["d"]) => {
-			return props.user
-				? updateUser({token: props.admin?.token, id: props.user?.id, d})
-				: Promise.reject();
+			return props.user ? updateUser({id: props.user?.id, d}) : Promise.reject();
 		},
 		onSuccess: () => {
 			setChangeProfileReqError(null);
@@ -47,9 +43,7 @@ export default function ClientAdminister(props: IClientAdministerProps) {
 	const [deleteItemTypeReqError, setDeleteItemTypeReqError] = useState<string | null>(null);
 	const deleteItemTypeMutation = useMutation({
 		mutationFn: () => {
-			return props.admin && props.user?.id
-				? deleteUser(props.admin?.token, props.user?.id)
-				: Promise.reject();
+			return deleteUser(props.user?.id);
 		},
 		onSuccess: () => {
 			queryClient.resetQueries(["user_" + props.user?.id]);

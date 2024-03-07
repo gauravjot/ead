@@ -8,17 +8,15 @@ import {useQuery} from "react-query";
 import Button from "@/components/ui/Button";
 
 export default function ViewItem({
-	token,
 	id,
 	setShowItemWithId,
 	template,
 }: {
-	token: string;
 	id: number | string;
 	setShowItemWithId: Dispatch<SetStateAction<string | number | null>>;
 	template: {n: string; t: string}[] | null;
 }) {
-	const item_query = useQuery(["item_info_" + id.toString()], () => getItem(token, id));
+	const item_query = useQuery(["item_info_" + id.toString()], () => getItem(id));
 	const {
 		register,
 		handleSubmit,
@@ -78,11 +76,11 @@ export default function ViewItem({
 								<div className="mt-10">
 									<h2 className="font-medium mb-3">Field Information</h2>
 									{template?.map((obj) => {
-										console.log("Field", obj.n)
+										console.log("Field", obj.n);
 										const val = item_query.data.data.value.filter(
-											(row: {n: string; v: string}) => row.n === obj.n.replace(" ","_")
+											(row: {n: string; v: string}) => row.n === obj.n.replace(" ", "_")
 										);
-										console.log("Field2", item_query.data.data.value)
+										console.log("Field2", item_query.data.data.value);
 										return obj.t !== "boolean" ? (
 											<InputField
 												key={obj.n + "_c"}

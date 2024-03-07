@@ -16,7 +16,7 @@ class AdminSerializer(serializers.ModelSerializer):
 class SessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Session
-        fields = ['token', 'admin', 'valid', 'created_at']
+        fields = ['id', 'token', 'admin', 'valid', 'created_at']
         extra_kwargs = {
             'token': {'required': True, 'write_only': True},
             'admin': {'required': True},

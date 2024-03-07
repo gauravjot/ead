@@ -1,10 +1,9 @@
-import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import {AddItemTypeType, addItemType} from "@/services/item/item_type/add_item_type";
 import {ItemTypeType} from "@/types/item";
 import {AxiosError} from "axios";
-import {useContext, useState} from "react";
+import {useState} from "react";
 import {useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "react-query";
 import {Dispatch, SetStateAction} from "react";
@@ -15,7 +14,6 @@ export default function AddNewItemType({
 }: {
 	setShowDialog: Dispatch<SetStateAction<boolean>>;
 }) {
-	const adminContext = useContext(AdminContext);
 	const queryClient = useQueryClient();
 	const [reqError, setReqError] = useState<string | null>(null);
 	const [reqResponse, setReqResponse] = useState<ItemTypeType | null>(null);
@@ -29,7 +27,7 @@ export default function AddNewItemType({
 
 	const mutation = useMutation({
 		mutationFn: (payload: AddItemTypeType) => {
-			return addItemType(adminContext.admin?.token, payload);
+			return addItemType(payload);
 		},
 		onSuccess: (data) => {
 			setReqError(null);

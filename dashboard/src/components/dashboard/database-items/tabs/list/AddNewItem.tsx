@@ -1,4 +1,3 @@
-import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import SelectField from "@/components/ui/SelectField";
@@ -11,7 +10,7 @@ import {AdminEntryType} from "@/types/admin";
 import {ItemTypeType, CustomFieldType, ItemType} from "@/types/item";
 import {UserType} from "@/types/user";
 import {AxiosError} from "axios";
-import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {FieldErrors, FieldValues, UseFormRegister, useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "react-query";
 
@@ -22,7 +21,6 @@ export default function AddNewItem({
 	setShowAddItemBox: Dispatch<SetStateAction<boolean>>;
 	itemType: ItemTypeType;
 }) {
-	const adminContext = useContext(AdminContext);
 	const queryClient = useQueryClient();
 	const [reqError, setReqError] = useState<string | null>(null);
 	const {
@@ -33,7 +31,7 @@ export default function AddNewItem({
 	} = useForm();
 	const mutation = useMutation({
 		mutationFn: (payload: AddItemType) => {
-			return addItem(adminContext.admin?.token, payload);
+			return addItem(payload);
 		},
 		onSuccess: () => {
 			setReqError(null);
@@ -109,7 +107,6 @@ export default function AddNewItem({
 											hookFormRegister={register}
 											hookFormErrors={errors}
 											field={field}
-											token={adminContext.admin?.token}
 										/>
 									);
 								})}
@@ -148,12 +145,10 @@ export function CustomInputField({
 	field,
 	hookFormRegister,
 	hookFormErrors,
-	token,
 }: {
 	field: CustomFieldType;
 	hookFormRegister: UseFormRegister<FieldValues>;
 	hookFormErrors: FieldErrors<FieldValues>;
-	token: string | undefined;
 }) {
 	const [IField, setIField] = useState<JSX.Element>();
 
@@ -183,7 +178,7 @@ export function CustomInputField({
 				/>
 			);
 		} else if (field.t === "admin") {
-			getAllAdmins(token).then((data) => {
+			getAllAdmins().then((data) => {
 				setIField(
 					<SelectField
 						data={data.data.admins.map((admin: AdminEntryType) => {
@@ -197,7 +192,7 @@ export function CustomInputField({
 				);
 			});
 		} else if (field.t === "user") {
-			getAllUsers(token).then((data) => {
+			getAllUsers().then((data) => {
 				setIField(
 					<SelectField
 						data={data.data.map((user: UserType) => {
@@ -211,7 +206,7 @@ export function CustomInputField({
 				);
 			});
 		} else if (field.t === "db_item_type" && field.dV) {
-			getItems(token, field.dV).then((data) => {
+			getItems(field.dV).then((data) => {
 				setIField(
 					<SelectField
 						data={data.data.map((item: ItemType) => {
@@ -254,7 +249,7 @@ export function CustomInputField({
 				/>
 			);
 		}
-	}, [field.dV, field.n, field.t, hookFormErrors, hookFormRegister, token]);
+	}, [field.dV, field.n, field.t, hookFormErrors, hookFormRegister]);
 
 	return IField;
 }

@@ -1,11 +1,10 @@
-import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {AddAdminType, addAdmin} from "@/services/admins/add_admin";
 import {AdminEntryType} from "@/types/admin";
 import {AxiosError} from "axios";
-import {useContext, useState, Dispatch, SetStateAction} from "react";
+import {useState, Dispatch, SetStateAction} from "react";
 import {useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "react-query";
 
@@ -14,7 +13,6 @@ export default function AddNewAdmin({
 }: {
 	setShowDialog: Dispatch<SetStateAction<boolean>>;
 }) {
-	const adminContext = useContext(AdminContext);
 	const queryClient = useQueryClient();
 	const [reqError, setReqError] = useState<string | null>(null);
 	const [reqResponse, setReqResponse] = useState<AdminEntryType | null>(null);
@@ -28,7 +26,7 @@ export default function AddNewAdmin({
 
 	const mutation = useMutation({
 		mutationFn: (payload: AddAdminType) => {
-			return addAdmin(adminContext.admin?.token, payload);
+			return addAdmin(payload);
 		},
 		onSuccess: (data) => {
 			setReqError(null);

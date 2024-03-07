@@ -1,4 +1,3 @@
-import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import SelectField from "@/components/ui/SelectField";
@@ -7,13 +6,12 @@ import {addItemTypeFields} from "@/services/item/item_type/add_item_type_field";
 import {getAllItemTypes} from "@/services/item/item_type/get_all_item_types";
 import {ItemTypeType} from "@/types/item";
 import {AxiosError} from "axios";
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import {FieldValues, UseFormRegister, useForm} from "react-hook-form";
 import {useMutation, useQueryClient} from "react-query";
 import {FIELDS} from "./ItemFieldTypes";
 
 export default function AddNewItemField({id}: {id: number | string}) {
-	const adminContext = useContext(AdminContext);
 	const queryClient = useQueryClient();
 	const [showNewField, setShowNewField] = useState<boolean>(false);
 	const [extraData, setExtraDate] = useState<{type: string; name: string} | null>(null);
@@ -28,9 +26,7 @@ export default function AddNewItemField({id}: {id: number | string}) {
 	const [reqError, setReqError] = useState<string | null>(null);
 	const mutation = useMutation({
 		mutationFn: (fields: string) => {
-			return adminContext.admin
-				? addItemTypeFields(adminContext.admin?.token, id, fields)
-				: Promise.reject();
+			return addItemTypeFields(id, fields);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries(["item_type_" + id]);
@@ -109,7 +105,6 @@ export default function AddNewItemField({id}: {id: number | string}) {
 									<FetchItemsAndSelect
 										hookFormRegister={register}
 										label={extraData.name}
-										token={adminContext?.admin?.token}
 										item_type_id={id}
 									/>
 								) : (
@@ -165,12 +160,10 @@ export default function AddNewItemField({id}: {id: number | string}) {
 }
 
 function FetchItemsAndSelect({
-	token,
 	hookFormRegister,
 	label,
 	item_type_id,
 }: {
-	token: string | undefined;
 	hookFormRegister: UseFormRegister<FieldValues>;
 	label: string;
 	item_type_id: string | number;
@@ -178,7 +171,7 @@ function FetchItemsAndSelect({
 	const [data, setData] = useState<{n: string; v: string}[]>([]);
 
 	useEffect(() => {
-		getAllItemTypes(token).then((data) => {
+		getAllItemTypes().then((data) => {
 			setData(
 				data.data
 					.map((item: ItemTypeType) => {
@@ -187,7 +180,7 @@ function FetchItemsAndSelect({
 					.filter((a: {v: string; n: string}) => a.v.toString() !== item_type_id.toString())
 			);
 		});
-	}, [item_type_id, token]);
+	}, [item_type_id]);
 
 	return data?.length > 0 ? (
 		<SelectField data={data} hookFormRegister={hookFormRegister} label={label} id="dV" />

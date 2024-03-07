@@ -1,9 +1,8 @@
-import {AdminContext} from "@/components/Home";
 import Spinner from "@/components/ui/Spinner";
 import {getAllUsers} from "@/services/user/all_users";
 import {ErrorType} from "@/types/api";
 import {UserType} from "@/types/user";
-import {Dispatch, SetStateAction, useContext, useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {useQuery} from "react-query";
 
 export default function UsersList({
@@ -14,8 +13,7 @@ export default function UsersList({
 	setActiveItem: Dispatch<SetStateAction<UserType | undefined>>;
 }) {
 	const [keyword, setKeyword] = useState<string>("");
-	const adminContext = useContext(AdminContext);
-	const users = useQuery(["user_list"], () => getAllUsers(adminContext.admin?.token));
+	const users = useQuery(["user_list"], () => getAllUsers());
 
 	return (
 		<>

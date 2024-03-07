@@ -2,22 +2,19 @@ import axios from "axios";
 import {BACKEND_ENDPOINT} from "@/config";
 
 /**
- * API call to delete client
- * @param token
+ * API call to delete user
  * @param id
  * @returns Promise
  */
-export function deleteUser(token: string | undefined | null, id: string | number) {
-	return token
-		? axios
-				.delete(BACKEND_ENDPOINT + `/api/user/${id}/`, {
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: token,
-					},
-				})
-				.then((res) => {
-					return res.data;
-				})
-		: Promise.reject();
+export function deleteUser(id: string | number) {
+	return axios
+		.delete(BACKEND_ENDPOINT + `/api/user/${id}/`, {
+			headers: {
+				"Content-Type": "application/json",
+			},
+			withCredentials: true,
+		})
+		.then((res) => {
+			return res.data;
+		});
 }

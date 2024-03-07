@@ -1,15 +1,10 @@
-import {useContext} from "react";
-import {AdminContext} from "@/components/Home";
 import {useQuery} from "react-query";
 import {getAdmin} from "@/services/admins/info_admin";
 import Spinner from "@/components/ui/Spinner";
 import {AdminAdminister} from "./tabs/Administer";
 
 export default function AdminsDetailPanel({adminID}: {adminID: string}) {
-	const adminContext = useContext(AdminContext);
-	const adminQuery = useQuery(["admin_" + adminID], () =>
-		getAdmin(adminContext.admin?.token, adminID)
-	);
+	const adminQuery = useQuery(["admin_" + adminID], () => getAdmin(adminID));
 	const admin = adminQuery.isSuccess ? adminQuery.data.data : null;
 
 	return admin && adminQuery.isSuccess ? (
@@ -30,13 +25,7 @@ export default function AdminsDetailPanel({adminID}: {adminID: string}) {
 					<div className="text-dodger-700 border-b-2 border-dodger-600 p-2">Administer</div>
 				</div>
 			</div>
-			{adminContext.admin && (
-				<AdminAdminister
-					admin={admin}
-					token={adminContext.admin?.token}
-					currentAdminID={adminContext.admin?.username}
-				/>
-			)}
+			<AdminAdminister admin={admin} />
 		</>
 	) : adminQuery.isLoading ? (
 		<div className="h-full flex place-items-center justify-center">

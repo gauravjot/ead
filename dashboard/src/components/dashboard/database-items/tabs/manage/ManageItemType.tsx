@@ -1,5 +1,4 @@
-import {AdminContext} from "@/components/Home";
-import {useContext, useState} from "react";
+import {useState} from "react";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {getItemType} from "@/services/item/item_type/get_item_type";
 import AddNewItemField from "./AddNewItemField";
@@ -14,10 +13,7 @@ import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {deleteItemTypeFields} from "@/services/item/item_type/delete_item_type_field";
 
 export default function ManageItemType({id}: {id: number | string}) {
-	const adminContext = useContext(AdminContext);
-	const itemTypeQuery = useQuery(["item_type_" + id], () =>
-		getItemType(adminContext.admin?.token, id)
-	);
+	const itemTypeQuery = useQuery(["item_type_" + id], () => getItemType(id));
 	const queryClient = useQueryClient();
 	const {
 		register,
@@ -29,9 +25,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 	const [reqError, setReqError] = useState<string | null>(null);
 	const editNameDescMutation = useMutation({
 		mutationFn: (fields: {name: string; description: string}) => {
-			return adminContext.admin
-				? editItemType(adminContext.admin?.token, id, fields["name"], fields["description"])
-				: Promise.reject();
+			return editItemType(id, fields["name"], fields["description"]);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries(["item_type_" + id]);
@@ -47,7 +41,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 	const [deleteItemTypeReqError, setDeleteItemTypeReqError] = useState<string | null>(null);
 	const deleteItemTypeMutation = useMutation({
 		mutationFn: () => {
-			return adminContext.admin ? deleteItemType(adminContext.admin?.token, id) : Promise.reject();
+			return deleteItemType(id);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries(["item_type_" + id]);
@@ -63,9 +57,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 	const [deleteItemFieldReqError, setDeleteItemFieldReqError] = useState<string | null>(null);
 	const deleteItemFieldMutation = useMutation({
 		mutationFn: (fields: string) => {
-			return adminContext.admin
-				? deleteItemTypeFields(adminContext.admin?.token, id, fields)
-				: Promise.reject();
+			return deleteItemTypeFields(id, fields);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries(["item_type_" + id]);

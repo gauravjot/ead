@@ -1,11 +1,12 @@
 import {useContext} from "react";
 import {AdminContext} from "../Home";
 import DropDown, {DropDownItemType} from "../ui/DropDown";
+import {doLogout} from "@/services/auth/logout";
 
 const buttonStyle =
 	"inline-block hover:no-underline p-2.5 mx-2 text-sm text-gray-700 hover:bg-gray-200";
 
-export function QuickLinkBar() {
+export default function QuickLinkBar() {
 	const adminContext = useContext(AdminContext);
 
 	const adminDropDownMenu: DropDownItemType[] = [
@@ -20,7 +21,9 @@ export function QuickLinkBar() {
 			title: "Logout",
 			icon: "ic-logout",
 			onClick: () => {
-				adminContext.setAdmin(null);
+				doLogout().then(() => {
+					adminContext.setAdmin(null);
+				});
 			},
 		},
 	];
@@ -46,7 +49,7 @@ export function QuickLinkBar() {
 				items={adminDropDownMenu}
 				showExpandIcon={true}
 				buttonIcon="ic-person"
-				buttonText={adminContext.admin?.full_name}
+				buttonText={adminContext.admin?.profile.full_name}
 			/>
 		</div>
 	);

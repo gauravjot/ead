@@ -4,12 +4,12 @@ import {useMutation} from "react-query";
 import {AxiosError} from "axios";
 import {ErrorType} from "@/types/api";
 import Button from "../ui/Button";
-import {AdminType} from "@/types/admin";
+import {LoggedInAdminType} from "@/types/admin";
 
 export default function ServerSetup({
 	setAdmin,
 }: {
-	setAdmin: Dispatch<SetStateAction<AdminType | null>>;
+	setAdmin: Dispatch<SetStateAction<LoggedInAdminType | null>>;
 }) {
 	const [password, setPassword] = React.useState<string>("");
 	const [error, setError] = React.useState<string>("");
@@ -19,7 +19,7 @@ export default function ServerSetup({
 			return doServerSetup(password);
 		},
 		onSuccess: (data) => {
-			setAdmin({...data.data.admin, token: data.data.token});
+			setAdmin(data);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {

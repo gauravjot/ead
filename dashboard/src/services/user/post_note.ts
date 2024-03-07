@@ -3,27 +3,21 @@ import {BACKEND_ENDPOINT} from "@/config";
 
 /**
  * API call to add user note
- * @param token
  * @returns Promise
  */
-export function postNote(
-	token: string | undefined | null,
-	payload: {content: string; uid: string}
-) {
-	return token
-		? axios
-				.post(
-					BACKEND_ENDPOINT + "/api/user/" + payload.uid + "/note/new/",
-					JSON.stringify({content: payload.content}),
-					{
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: token,
-						},
-					}
-				)
-				.then((res) => {
-					return res.data;
-				})
-		: Promise.reject();
+export function postNote(payload: {content: string; uid: string}) {
+	return axios
+		.post(
+			BACKEND_ENDPOINT + "/api/user/" + payload.uid + "/note/new/",
+			JSON.stringify({content: payload.content}),
+			{
+				headers: {
+					"Content-Type": "application/json",
+				},
+				withCredentials: true,
+			}
+		)
+		.then((res) => {
+			return res.data;
+		});
 }

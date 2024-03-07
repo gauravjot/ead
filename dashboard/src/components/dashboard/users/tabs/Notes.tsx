@@ -1,9 +1,8 @@
 import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
-import {AdminType} from "@/types/admin";
 import {AxiosError} from "axios";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useMutation, useQuery, useQueryClient} from "react-query";
 import {dateTimePretty} from "@/utils/datetime";
@@ -15,10 +14,10 @@ import {deleteNote} from "@/services/user/delete_note";
 import {updateNote} from "@/services/user/update_note";
 import {getUserNotes} from "@/services/user/get_notes";
 import Spinner from "@/components/ui/Spinner";
+import {AdminContext} from "@/components/Home";
 
 export interface IUserNotesProps {
-	user: UserType | null;
-	admin: AdminType | null;
+	user: UserType;
 }
 
 export default function Notes(props: IUserNotesProps) {
@@ -26,9 +25,8 @@ export default function Notes(props: IUserNotesProps) {
 	const [deleteReqError, setDeleteReqError] = useState<string | null>(null);
 	const [editNote, setEditNote] = useState<NoteType | null>(null);
 	const [deleteDialog, setDeleteDialog] = useState<number | null>(null);
-	const notes = useQuery(["notes_" + props.user?.id], () =>
-		getUserNotes(props.admin?.token, props.user?.id)
-	);
+	const notes = useQuery(["notes_" + props.user.id], () => getUserNotes(props.user.id));
+	const adminContext = useContext(AdminContext);
 
 	const {
 		register,
@@ -40,7 +38,7 @@ export default function Notes(props: IUserNotesProps) {
 	// Add new note mutation
 	const mutation = useMutation({
 		mutationFn: (payload: {content: string; uid: string}) => {
-			return postNote(props.admin?.token, payload);
+			return postNote(payload);
 		},
 		onSuccess: () => {
 			setReqError(null);
@@ -55,7 +53,7 @@ export default function Notes(props: IUserNotesProps) {
 	// Delete note mutation
 	const mutationDelete = useMutation({
 		mutationFn: (payload: {nid: number; uid: string}) => {
-			return deleteNote(props.admin?.token, payload);
+			return deleteNote(payload);
 		},
 		onSuccess: () => {
 			setDeleteReqError(null);
@@ -69,7 +67,7 @@ export default function Notes(props: IUserNotesProps) {
 
 	console.log("notes", notes);
 
-	return props.user && props.admin ? (
+	return (
 		<>
 			{/* Delete note dialog */}
 			{deleteDialog && (
@@ -141,8 +139,8 @@ export default function Notes(props: IUserNotesProps) {
 														{dateTimePretty(note.created_at)}
 													</div>
 												</div>
-												{props.admin?.username === note.created_by ||
-												props.admin?.username === "root" ? (
+												{adminContext.admin?.profile.username === note.created_by ||
+												adminContext.admin?.profile.username === "root" ? (
 													<DropDown
 														showExpandIcon={false}
 														buttonStyle="icon_only"
@@ -152,7 +150,7 @@ export default function Notes(props: IUserNotesProps) {
 															{
 																icon: "ic-edit",
 																title: "Edit",
-																disabled: note.created_by !== props.admin?.username,
+																disabled: note.created_by !== adminContext.admin?.profile.username,
 																onClick: () => {
 																	setEditNote(note);
 																},
@@ -161,8 +159,8 @@ export default function Notes(props: IUserNotesProps) {
 																icon: "ic-delete",
 																title: "Delete",
 																disabled: !(
-																	props.admin?.username === "root" ||
-																	note.created_by === props.admin?.username
+																	adminContext.admin?.profile.username === "root" ||
+																	note.created_by === adminContext.admin?.profile.username
 																),
 																onClick: () => {
 																	setDeleteDialog(note.id);
@@ -233,33 +231,16 @@ export default function Notes(props: IUserNotesProps) {
 					</div>
 					{editNote && (
 						<div className="container mx-auto">
-							<EditNote
-								note={editNote}
-								closeFn={() => setEditNote(null)}
-								token={props.admin?.token}
-								uid={props.user?.id}
-							/>
+							<EditNote note={editNote} closeFn={() => setEditNote(null)} uid={props.user?.id} />
 						</div>
 					)}
 				</div>
 			</div>
 		</>
-	) : (
-		<></>
 	);
 }
 
-function EditNote({
-	note,
-	token,
-	uid,
-	closeFn,
-}: {
-	note: NoteType | null;
-	token: string;
-	uid: string;
-	closeFn: () => void;
-}) {
+function EditNote({note, uid, closeFn}: {note: NoteType | null; uid: string; closeFn: () => void}) {
 	const [reqError, setReqError] = useState<string | null>(null);
 	const queryClient = useQueryClient();
 
@@ -273,7 +254,7 @@ function EditNote({
 	// Edit note mutation
 	const mutation = useMutation({
 		mutationFn: (payload: {content: string; nid: number}) => {
-			return updateNote(token, {
+			return updateNote({
 				content: payload.content.trim(),
 				nid: payload.nid,
 				uid: uid,

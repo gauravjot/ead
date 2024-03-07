@@ -1,5 +1,6 @@
 import pytz
-from datetime import datetime
+from datetime import datetime, timedelta
+from decouple import config
 # Security
 import bcrypt
 # RestFramework
@@ -10,13 +11,12 @@ from rest_framework.decorators import api_view
 from .models import Admin, Session
 from .serializers import AdminSerializer
 # Session
-from .sessions import issueToken, dropSession, getAdminID
-from .utils import tokenResponse, errorResponse, successResponse
+from .sessions import issueToken, dropSession, getAdminID, getSessonID
+from .utils import errorResponse, successResponse
+
 
 # First time setup
 # -----------------------------------------------
-
-
 @api_view(['POST'])
 def initialSetup(request):
     if Admin.objects.exists():
@@ -34,14 +34,23 @@ def initialSetup(request):
         updated_by="Intial setup",
         active=True
     ))
-
     # -- check if data is without bad actors
     if adminSerializer.is_valid():
         adminSerializer.save()
-
         # send token to user
-        token = issueToken(adminSerializer.data['username'])
-        return Response(data=successResponse({"admin": adminSerializer.data, **tokenResponse(token)}), status=status.HTTP_201_CREATED)
+        token, session_id = issueToken(adminSerializer.data['username'])
+        response = Response(data=successResponse(
+            {"profile": adminSerializer.data, "session_id": session_id}), status=status.HTTP_201_CREATED)
+        response.set_cookie(
+            key='auth_token',
+            value=token,
+            expires=datetime.now(pytz.utc) + timedelta(days=30),
+            httponly=True,
+            secure=config('AUTH_COOKIE_SAMESITE', default=True),
+            samesite=config('AUTH_COOKIE_SAMESITE', default='Strict'),
+            domain=config('AUTH_COOKIE_DOMAIN', default='localhost')
+        )
+        return response
     else:
         return Response(data=errorResponse(adminSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
@@ -80,15 +89,13 @@ def register(request):
     else:
         return Response(data=errorResponse(adminSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
 
+
 # Log In function, requires email and password
 # -----------------------------------------------
-
-
 @api_view(['POST'])
 def login(request):
     username = str(request.data['username']).lower()
     password = str(request.data['password'])
-
     try:
         admin = Admin.objects.get(username=username)
         # Check if credentials are correct
@@ -100,32 +107,63 @@ def login(request):
     except Admin.DoesNotExist:
         return Response(data=errorResponse("Credentials are invalid.", "A0004"), status=status.HTTP_401_UNAUTHORIZED)
     # send token to user
-    token = issueToken(username)
-    return Response(data=successResponse({"admin": AdminSerializer(admin).data, **tokenResponse(token)}), status=status.HTTP_202_ACCEPTED)
+    token, session_id = issueToken(username)
+    response = Response(data=successResponse({"profile": AdminSerializer(
+        admin).data, "session_id": session_id}), status=status.HTTP_202_ACCEPTED)
+    response.set_cookie(
+        key='auth_token',
+        value=token,
+        expires=datetime.now(pytz.utc) + timedelta(days=30),
+        httponly=True,
+        secure=config('AUTH_COOKIE_SAMESITE', default=True),
+        samesite=config('AUTH_COOKIE_SAMESITE', default='Strict'),
+        domain=config('AUTH_COOKIE_DOMAIN', default='localhost')
+    )
+    return response
+
 
 # Log Out function, requires token
 # -----------------------------------------------
-
-
 @api_view(['DELETE'])
 def logout(request):
     # Invalidate the token
     dropSession(request)
-    return Response(data=successResponse(), status=status.HTTP_200_OK)
+    response = Response(data=successResponse(), status=status.HTTP_200_OK)
+    response.delete_cookie(
+        key='auth_token',
+        domain=config('AUTH_COOKIE_DOMAIN', default='localhost')
+    )
+    return response
 
 
 # Current Admin Info function, requires token
 # -----------------------------------------------
 @api_view(['GET'])
 def me(request):
-    adminID = getAdminID(request)
-    if type(adminID) is Response:
-        return adminID
-    try:
-        admin = Admin.objects.get(username=adminID)
-        return Response(data=successResponse(AdminSerializer(admin).data), status=status.HTTP_200_OK)
-    except Admin.DoesNotExist:
-        return Response(data=errorResponse("Invalid session.", "A0098"), status=status.HTTP_400_BAD_REQUEST)
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    session_id = getSessonID(request)
+    if type(session_id) is Response:
+        return session_id
+    return Response(data=successResponse({"profile": AdminSerializer(
+        admin).data, "session_id": session_id}), status=status.HTTP_200_OK)
+
+
+# Update Current Admin Info function, requires token
+# -----------------------------------------------
+@api_view(['PUT'])
+def update(request):
+    admin = getAdminID(request)
+    if type(admin) is Response:
+        return admin
+    admin.full_name = str(request.data['full_name'])
+    admin.title = str(request.data['title'])
+    admin.updated_at = datetime.now(pytz.utc)
+    admin.updated_by = str(admin.username)
+    admin.save()
+
+    return Response(data=successResponse(AdminSerializer(admin).data), status=status.HTTP_200_OK)
 
 
 # Admin Info function, requires token, username
@@ -137,26 +175,6 @@ def adminInfo(request, username):
         return adminID
     try:
         admin = Admin.objects.get(username=username)
-        return Response(data=successResponse(AdminSerializer(admin).data), status=status.HTTP_200_OK)
-    except Admin.DoesNotExist:
-        return Response(data=errorResponse("Invalid session.", "A0098"), status=status.HTTP_400_BAD_REQUEST)
-
-
-# Update Current Admin Info function, requires token
-# -----------------------------------------------
-@api_view(['PUT'])
-def update(request):
-    adminID = getAdminID(request)
-    if type(adminID) is Response:
-        return adminID
-    try:
-        admin = Admin.objects.get(username=adminID)
-        admin.full_name = str(request.data['full_name'])
-        admin.title = str(request.data['title'])
-        admin.updated_at = datetime.now(pytz.utc)
-        admin.updated_by = str(adminID.username)
-        admin.save()
-
         return Response(data=successResponse(AdminSerializer(admin).data), status=status.HTTP_200_OK)
     except Admin.DoesNotExist:
         return Response(data=errorResponse("Invalid session.", "A0098"), status=status.HTTP_400_BAD_REQUEST)

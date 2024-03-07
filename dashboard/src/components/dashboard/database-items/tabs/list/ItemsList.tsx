@@ -1,8 +1,7 @@
-import {AdminContext} from "@/components/Home";
 import Button from "@/components/ui/Button";
 import Table from "@/components/ui/table/Table";
 import {getItems} from "@/services/item/get_items";
-import {Dispatch, SetStateAction, useContext, useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 import {useQuery} from "react-query";
 import ViewItem from "./ViewItem";
 
@@ -18,8 +17,7 @@ export default function ItemsList({
 	const [keyword, setKeyword] = useState<string>("");
 	const [showItemWithId, setShowItemWithId] = useState<string | number | null>(null);
 
-	const adminContext = useContext(AdminContext);
-	const items = useQuery(["items_" + id.toString()], () => getItems(adminContext.admin?.token, id));
+	const items = useQuery(["items_" + id.toString()], () => getItems(id));
 
 	const data = [];
 	if (items.isSuccess) {
@@ -34,13 +32,8 @@ export default function ItemsList({
 
 	return (
 		<div className="my-4">
-			{adminContext.admin && showItemWithId && (
-				<ViewItem
-					id={showItemWithId}
-					token={adminContext.admin?.token}
-					setShowItemWithId={setShowItemWithId}
-					template={template}
-				/>
+			{showItemWithId && (
+				<ViewItem id={showItemWithId} setShowItemWithId={setShowItemWithId} template={template} />
 			)}
 			<div className="flex place-items-center">
 				<div className="flex gap-1">

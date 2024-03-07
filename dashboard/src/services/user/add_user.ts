@@ -10,20 +10,18 @@ export type AddUserType = {
 
 /**
  * API call to add user
- * @param token
+ * @param payload: AddUserType
  * @returns Promise
  */
-export function addUser(token: string | undefined | null, payload: AddUserType) {
-	return token
-		? axios
-				.post(BACKEND_ENDPOINT + "/api/user/new/", JSON.stringify(payload), {
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: token,
-					},
-				})
-				.then((res) => {
-					return res.data;
-				})
-		: Promise.reject();
+export function addUser(payload: AddUserType) {
+	return axios
+		.post(BACKEND_ENDPOINT + "/api/user/new/", JSON.stringify(payload), {
+			headers: {
+				"Content-Type": "application/json",
+			},
+			withCredentials: true,
+		})
+		.then((res) => {
+			return res.data;
+		});
 }

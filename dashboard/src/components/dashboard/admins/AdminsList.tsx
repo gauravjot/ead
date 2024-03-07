@@ -1,10 +1,9 @@
-import { AdminContext } from "@/components/Home";
 import Spinner from "@/components/ui/Spinner";
-import { getAllAdmins } from "@/services/admins/all_admins";
-import { AdminEntryType } from "@/types/admin";
-import { ErrorType } from "@/types/api";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { useQuery } from "react-query";
+import {getAllAdmins} from "@/services/admins/all_admins";
+import {AdminEntryType} from "@/types/admin";
+import {ErrorType} from "@/types/api";
+import {Dispatch, SetStateAction, useState} from "react";
+import {useQuery} from "react-query";
 
 export default function AdminsList({
 	activeItem,
@@ -14,10 +13,7 @@ export default function AdminsList({
 	setActiveItem: Dispatch<SetStateAction<AdminEntryType | undefined>>;
 }) {
 	const [keyword, setKeyword] = useState<string>("");
-	const adminContext = useContext(AdminContext);
-	const admins = useQuery(["admin_list"], () =>
-		getAllAdmins(adminContext.admin?.token)
-	);
+	const admins = useQuery(["admin_list"], () => getAllAdmins());
 
 	return (
 		<>
@@ -66,18 +62,13 @@ export default function AdminsList({
 					admins.data.data.admins.map((admin: AdminEntryType) => {
 						return (
 							(admin.title.toLowerCase().includes(keyword.toLowerCase()) ||
-								admin.username
-									.toLowerCase()
-									.includes(keyword.toLowerCase()) ||
-								admin.full_name
-									.toLowerCase()
-									.includes(keyword.toLowerCase())) && (
+								admin.username.toLowerCase().includes(keyword.toLowerCase()) ||
+								admin.full_name.toLowerCase().includes(keyword.toLowerCase())) && (
 								<button
 									key={admin.username}
 									className={
 										"text-left rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
-										(activeItem &&
-										activeItem.username === admin.username
+										(activeItem && activeItem.username === admin.username
 											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-md"
 											: " shadow") +
 										(admin.active === false
@@ -88,16 +79,10 @@ export default function AdminsList({
 										setActiveItem(admin);
 									}}
 								>
-									<div
-										title={admin.full_name}
-										className="text-bb font-medium truncate"
-									>
+									<div title={admin.full_name} className="text-bb font-medium truncate">
 										{admin.full_name}
 									</div>
-									<div
-										title={admin.title}
-										className="mt-1 text-sm text-gray-600 truncate"
-									>
+									<div title={admin.title} className="mt-1 text-sm text-gray-600 truncate">
 										{admin.title}
 									</div>
 								</button>

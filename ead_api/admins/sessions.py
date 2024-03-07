@@ -12,11 +12,12 @@ from .serializers import SessionSerializer
 
 from .utils import errorResponse, hashThis
 
+
 # Get user id from request
 def getAdminID(request):
-    # Check if token is present in header
+    # Check if token in present in cookie
     try:
-        token = request.headers['Authorization'].split()[-1]
+        token = request.COOKIES['auth_token']
         if len(token) < 48:
             raise KeyError
     except KeyError:
@@ -32,6 +33,25 @@ def getAdminID(request):
     except Session.DoesNotExist:
         return Response(errorResponse("Unauthorized.", "A1003"), status=status.HTTP_401_UNAUTHORIZED)
 
+
+# Get session id from request
+def getSessonID(request):
+    # Check if token in present in cookie
+    try:
+        token = request.COOKIES['auth_token']
+        if len(token) < 48:
+            raise KeyError
+    except KeyError:
+        return Response(errorResponse("Unauthorized.", "A1071"), status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        session = Session.objects.get(token=hashThis(token))
+        if session.valid:
+            return session.id
+    except Session.DoesNotExist:
+        return None
+
+
 # Create a token
 def issueToken(username):
     newToken = token_hex(24)
@@ -42,13 +62,17 @@ def issueToken(username):
     ))
     if sessionSerializer.is_valid():
         sessionSerializer.save()
-        return newToken
+        return newToken, sessionSerializer.data['id']
+
 
 # Invalidate a token
 def dropSession(request):
     try:
-        session = Session.objects.get(token=hashThis(
-            request.headers['Authorization'].split()[-1]))
+        token = request.COOKIES['auth_token']
+    except KeyError:
+        pass
+    try:
+        session = Session.objects.get(token=hashThis(token))
         session.valid = False
         session.save()
     except Session.DoesNotExist:

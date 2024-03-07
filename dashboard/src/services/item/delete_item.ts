@@ -1,30 +1,19 @@
 import axios from "axios";
-import { BACKEND_ENDPOINT } from "@/config";
+import {BACKEND_ENDPOINT} from "@/config";
 
 /**
- * API call to delete item type fields
- * @param token
+ * API call to delete item
  * @param id
- * @param fields
  * @returns Promise
  */
-export function deleteItem(
-	token: string | undefined | null,
-	id: string | number
-) {
-	return token
-		? axios
-				.delete(
-					BACKEND_ENDPOINT + `/api/item/${id}/delete/`,
-					{
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: token,
-						},
-					}
-				)
-				.then((res) => {
-					return res.data;
-				})
-		: Promise.reject();
+export function deleteItem(id: string | number) {
+	return axios
+		.delete(BACKEND_ENDPOINT + `/api/item/${id}/delete/`, {
+			headers: {
+				"Content-Type": "application/json",
+			},
+		})
+		.then((res) => {
+			return res.data;
+		});
 }

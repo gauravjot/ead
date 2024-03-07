@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BACKEND_ENDPOINT } from "@/config";
+import {BACKEND_ENDPOINT} from "@/config";
 
 export type AddAdminType = {
 	username: string;
@@ -11,24 +11,17 @@ export type AddAdminType = {
 
 /**
  * API call to add admins
- * @param token
  * @returns Promise
  */
-export function addAdmin(token: string | undefined | null, payload: AddAdminType) {
-	return token
-		? axios
-				.post(
-					BACKEND_ENDPOINT + "/api/admin/register/",
-					JSON.stringify(payload),
-					{
-						headers: {
-							"Content-Type": "application/json",
-							Authorization: token,
-						},
-					}
-				)
-				.then((res) => {
-					return res.data;
-				})
-		: Promise.reject();
+export function addAdmin(payload: AddAdminType) {
+	return axios
+		.post(BACKEND_ENDPOINT + "/api/admin/register/", JSON.stringify(payload), {
+			headers: {
+				"Content-Type": "application/json",
+			},
+			withCredentials: true,
+		})
+		.then((res) => {
+			return res.data;
+		});
 }

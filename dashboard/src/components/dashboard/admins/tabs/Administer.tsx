@@ -9,18 +9,18 @@ import {useForm} from "react-hook-form";
 import InputField from "@/components/ui/InputField";
 import {dateTimePretty, timeSince} from "@/utils/datetime";
 import Button from "@/components/ui/Button";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {QueryClient, useMutation} from "react-query";
 import {disableAdmin} from "@/services/admins/disable_admin";
+import {AdminContext} from "@/components/Home";
 
 export interface IAdminAdministerProps {
 	admin: AdminEntryType;
-	token: string;
-	currentAdminID: string;
 }
 
 export function AdminAdminister(props: IAdminAdministerProps) {
 	const queryClient = new QueryClient();
+	const adminContext = useContext(AdminContext);
 
 	// change password form and mutation
 	const {
@@ -33,7 +33,7 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 	const [reqError, setReqError] = useState<string | null>(null);
 	const changePswdMutation = useMutation({
 		mutationFn: (password: string) => {
-			return changePassword(props.token, props.admin.username, password);
+			return changePassword(props.admin.username, password);
 		},
 		onSuccess: () => {
 			setReqError(null);
@@ -54,7 +54,7 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 	const [changeProfileReqError, setChangeProfileReqError] = useState<string | null>(null);
 	const changeProfileMutation = useMutation({
 		mutationFn: (d: {title: string; full_name: string}) => {
-			return changeProfile(props.token, props.admin.username, d.title, d.full_name);
+			return changeProfile(props.admin.username, d.title, d.full_name);
 		},
 		onSuccess: () => {
 			setChangeProfileReqError(null);
@@ -71,7 +71,7 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 	const [disableAdminReqError, setDisableAdminReqError] = useState<string | null>(null);
 	const disableAdminMutation = useMutation({
 		mutationFn: () => {
-			return disableAdmin(props.token, props.admin.username);
+			return disableAdmin(props.admin.username);
 		},
 		onSuccess: () => {
 			disableAdminMutation.reset();
@@ -91,7 +91,7 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 	const [enableAdminReqError, setEnableAdminReqError] = useState<string | null>(null);
 	const enableAdminMutation = useMutation({
 		mutationFn: () => {
-			return enableAdmin(props.token, props.admin.username);
+			return enableAdmin(props.admin.username);
 		},
 		onSuccess: () => {
 			enableAdminMutation.reset();
@@ -137,7 +137,8 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 					>
 						<fieldset
 							disabled={
-								(props.currentAdminID !== "root" && props.admin.username === "root") ||
+								(adminContext.admin?.profile.username !== "root" &&
+									props.admin.username === "root") ||
 								changePswdMutation.isLoading
 							}
 						>

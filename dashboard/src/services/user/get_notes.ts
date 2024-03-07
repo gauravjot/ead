@@ -3,18 +3,18 @@ import {BACKEND_ENDPOINT} from "@/config";
 import {NoteType} from "@/types/user";
 
 /**
- * API call to get all users
- * @param token
+ * API call to get user notes
+ * @param id string
  * @returns Promise
  */
-export function getUserNotes(token: string | undefined | null, id: string | undefined | null) {
-	return token && id
+export function getUserNotes(id: string | undefined | null) {
+	return id
 		? axios
 				.get(BACKEND_ENDPOINT + `/api/user/${id}/note/all/`, {
 					headers: {
 						"Content-Type": "application/json",
-						Authorization: token,
 					},
+					withCredentials: true,
 				})
 				.then((res) => {
 					return res.data.data as NoteType[];

@@ -148,3 +148,17 @@
 .table-highlight:has(input:checked) {
 	@apply bg-primary-100 border-primary-800/30;
 }
+
+.screen-loader {
+	animation: fade-in-with-delay 0.3s ease-in-out;
+}
+
+@keyframes fade-in-with-delay {
+	0%,
+	50% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
