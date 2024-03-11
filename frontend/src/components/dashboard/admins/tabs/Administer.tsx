@@ -12,7 +12,7 @@ import Button from "@/components/ui/Button";
 import {useContext, useState} from "react";
 import {QueryClient, useMutation} from "react-query";
 import {disableAdmin} from "@/services/admins/disable_admin";
-import {AdminContext} from "@/components/Home";
+import {AdminContext} from "@/App";
 
 export interface IAdminAdministerProps {
 	admin: AdminEntryType;

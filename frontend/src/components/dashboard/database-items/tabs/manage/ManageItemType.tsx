@@ -1,8 +1,6 @@
 import {useState} from "react";
-import {useMutation, useQuery, useQueryClient} from "react-query";
-import {getItemType} from "@/services/item/item_type/get_item_type";
+import {useMutation, useQueryClient} from "react-query";
 import AddNewItemField from "./AddNewItemField";
-import Spinner from "@/components/ui/Spinner";
 import InputField from "@/components/ui/InputField";
 import {useForm} from "react-hook-form";
 import {AxiosError} from "axios";
@@ -11,9 +9,9 @@ import {editItemType} from "@/services/item/item_type/edit_item_type";
 import {deleteItemType} from "@/services/item/item_type/delete_item_type";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {deleteItemTypeFields} from "@/services/item/item_type/delete_item_type_field";
+import {ItemTypeType} from "@/types/item";
 
-export default function ManageItemType({id}: {id: number | string}) {
-	const itemTypeQuery = useQuery(["item_type_" + id], () => getItemType(id));
+export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 	const queryClient = useQueryClient();
 	const {
 		register,
@@ -25,10 +23,10 @@ export default function ManageItemType({id}: {id: number | string}) {
 	const [reqError, setReqError] = useState<string | null>(null);
 	const editNameDescMutation = useMutation({
 		mutationFn: (fields: {name: string; description: string}) => {
-			return editItemType(id, fields["name"], fields["description"]);
+			return editItemType(itemtype.id, fields["name"], fields["description"]);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(["item_type_" + id]);
+			queryClient.invalidateQueries(["item_type_" + itemtype.id]);
 			setReqError(null);
 			reset();
 		},
@@ -41,10 +39,10 @@ export default function ManageItemType({id}: {id: number | string}) {
 	const [deleteItemTypeReqError, setDeleteItemTypeReqError] = useState<string | null>(null);
 	const deleteItemTypeMutation = useMutation({
 		mutationFn: () => {
-			return deleteItemType(id);
+			return deleteItemType(itemtype.id);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(["item_type_" + id]);
+			queryClient.invalidateQueries(["item_type_" + itemtype.id]);
 			queryClient.invalidateQueries(["item_type_list"]);
 			setDeleteItemTypeReqError(null);
 			reset();
@@ -57,10 +55,10 @@ export default function ManageItemType({id}: {id: number | string}) {
 	const [deleteItemFieldReqError, setDeleteItemFieldReqError] = useState<string | null>(null);
 	const deleteItemFieldMutation = useMutation({
 		mutationFn: (fields: string) => {
-			return deleteItemTypeFields(id, fields);
+			return deleteItemTypeFields(itemtype.id, fields);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(["item_type_" + id]);
+			queryClient.invalidateQueries(["item_type_" + itemtype.id]);
 			setDeleteItemFieldReqError(null);
 			reset();
 		},
@@ -69,7 +67,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 		},
 	});
 
-	return itemTypeQuery.isSuccess ? (
+	return (
 		<div className="max-w-[1400px]">
 			{/* edit name and descrition */}
 			<div className="grid grid-cols-2 gap-6 mb-6 mt-4 border-b pb-8">
@@ -87,7 +85,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 				</div>
 				<div className="mt-[2.75rem]">
 					<form
-						key={id}
+						key={itemtype.id}
 						onSubmit={handleSubmit((d) => {
 							editNameDescMutation.mutate(JSON.parse(JSON.stringify(d)));
 						})}
@@ -103,7 +101,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 									elementInputMaxLength={48}
 									elementIsRequired={true}
 									elementHookFormErrors={errors}
-									defaultValue={itemTypeQuery.data.data.name}
+									defaultValue={itemtype.name}
 								/>
 								<InputField
 									elementId="description"
@@ -113,7 +111,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 									elementLabel="Description"
 									elementIsRequired={true}
 									elementHookFormErrors={errors}
-									defaultValue={itemTypeQuery.data.data.description}
+									defaultValue={itemtype.description}
 								/>
 							</div>
 
@@ -149,8 +147,8 @@ export default function ManageItemType({id}: {id: number | string}) {
 							</td>
 							<td className="w-[42%]"></td>
 						</tr>
-						{itemTypeQuery.isSuccess && itemTypeQuery.data.data.template?.length > 0 ? (
-							itemTypeQuery.data.data.template.map((field: {n: string; t: string; dV?: string}) => (
+						{itemtype.template && itemtype.template?.length > 0 ? (
+							itemtype.template.map((field: {n: string; t: string; dV?: string}) => (
 								<tr
 									key={field.n}
 									className="group border-b border-gray-200 hover:bg-gray-50 bg-white"
@@ -201,9 +199,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 									</td>
 								</tr>
 							))
-						) : itemTypeQuery.isSuccess &&
-						  (!itemTypeQuery.data.data.template ||
-								itemTypeQuery.data.data.template?.length < 1) ? (
+						) : !itemtype.template || itemtype.template?.length < 1 ? (
 							<tr>
 								<td
 									colSpan={3}
@@ -218,7 +214,7 @@ export default function ManageItemType({id}: {id: number | string}) {
 					</tbody>
 				</table>
 			</div>
-			<AddNewItemField id={id} />
+			<AddNewItemField id={itemtype.id} />
 			{/* ### delete ### */}
 			<div className="border-t grid grid-cols-2 gap-6 mt-8 pb-8 pt-2">
 				<div>
@@ -265,11 +261,5 @@ export default function ManageItemType({id}: {id: number | string}) {
 				</div>
 			</div>
 		</div>
-	) : itemTypeQuery.isLoading ? (
-		<div className="my-24 flex place-items-center justify-center">
-			<Spinner color="gray" size="xl" />
-		</div>
-	) : (
-		<></>
 	);
 }

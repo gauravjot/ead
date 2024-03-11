@@ -1,36 +1,33 @@
-import {Dispatch, SetStateAction} from "react";
+import {useNavigate} from "react-router-dom";
 
 type menuType = "admins" | "users" | "items";
 
-const menu: {icon: string; type: menuType; title: string; divider?: boolean}[] = [
+const menu: {icon: string; type: menuType; title: string; divider?: boolean; path: string}[] = [
 	{
 		divider: true,
 		icon: "ic-admins",
 		title: "Admins",
 		type: "admins",
+		path: "/admins",
 	},
 	{
 		icon: "ic-database",
 		title: "DB",
 		type: "items",
+		path: "/items",
 	},
 	{
 		divider: true,
 		icon: "ic-users",
 		title: "Users",
 		type: "users",
+		path: "/users",
 	},
 ];
 
-export default function Sidebar({
-	activeMenu,
-	setActiveMenu,
-	setIsSearchActive,
-}: {
-	activeMenu: menuType;
-	setActiveMenu: Dispatch<SetStateAction<menuType>>;
-	setIsSearchActive: Dispatch<SetStateAction<boolean>>;
-}) {
+export default function Sidebar({activeMenu}: {activeMenu: menuType}) {
+	const navigate = useNavigate();
+
 	return (
 		<>
 			{/* sidebar */}
@@ -41,7 +38,7 @@ export default function Sidebar({
 				<button
 					className="px-3 py-2.5 leading-[0] hover:outline outline-2 outline-gray-200 rounded-md focus:outline"
 					onClick={() => {
-						setIsSearchActive(true);
+						// TODO: Implement search
 					}}
 				>
 					<span className="ic-lg ic-gray-50 ic-search"></span>
@@ -58,11 +55,7 @@ export default function Sidebar({
 										: "outline-gray-200") +
 									" hover:outline aspect-square overflow-hidden outline-2 w-14 leading-[0] rounded-md"
 								}
-								onClick={() => {
-									if (activeMenu !== item.type) {
-										setActiveMenu(item.type);
-									}
-								}}
+								onClick={() => navigate(activeMenu !== item.type ? item.path : "#")}
 								title={item.title}
 							>
 								<span

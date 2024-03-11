@@ -2,16 +2,12 @@ import Spinner from "@/components/ui/Spinner";
 import {getAllAdmins} from "@/services/admins/all_admins";
 import {AdminEntryType} from "@/types/admin";
 import {ErrorType} from "@/types/api";
-import {Dispatch, SetStateAction, useState} from "react";
+import {useState} from "react";
 import {useQuery} from "react-query";
+import {useNavigate} from "react-router-dom";
 
-export default function AdminsList({
-	activeItem,
-	setActiveItem,
-}: {
-	activeItem: AdminEntryType | undefined;
-	setActiveItem: Dispatch<SetStateAction<AdminEntryType | undefined>>;
-}) {
+export default function AdminsList({activeItem}: {activeItem: AdminEntryType | undefined}) {
+	const navigate = useNavigate();
 	const [keyword, setKeyword] = useState<string>("");
 	const admins = useQuery(["admin_list"], () => getAllAdmins());
 
@@ -30,7 +26,7 @@ export default function AdminsList({
 					/>
 					<svg
 						viewBox="0 0 24 24"
-						className="w-4 absolute text-gray-400 top-1/2 transform translate-x-0.5 -translate-y-1/2 left-2"
+						className="ic absolute text-gray-400 top-1/2 transform translate-x-0.5 -translate-y-1/2 left-2"
 						stroke="currentColor"
 						strokeWidth={2}
 						fill="none"
@@ -76,7 +72,7 @@ export default function AdminsList({
 											: " bg-white")
 									}
 									onClick={() => {
-										setActiveItem(admin);
+										navigate(`/admins/${admin.username}`);
 									}}
 								>
 									<div title={admin.full_name} className="text-bb font-medium truncate">

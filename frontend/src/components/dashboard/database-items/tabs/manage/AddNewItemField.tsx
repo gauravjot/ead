@@ -84,6 +84,7 @@ export default function AddNewItemField({id}: {id: number | string}) {
 											}
 										}}
 										value={option.type}
+										key={option.name}
 									>
 										{option.name}
 									</option>

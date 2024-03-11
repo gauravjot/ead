@@ -14,7 +14,7 @@ import {deleteNote} from "@/services/user/delete_note";
 import {updateNote} from "@/services/user/update_note";
 import {getUserNotes} from "@/services/user/get_notes";
 import Spinner from "@/components/ui/Spinner";
-import {AdminContext} from "@/components/Home";
+import {AdminContext} from "@/App";
 
 export interface IUserNotesProps {
 	user: UserType;

@@ -1,26 +1,15 @@
 import Spinner from "@/components/ui/Spinner";
-import {getAllItemTypes} from "@/services/item/item_type/get_all_item_types";
+import {getAllUsers} from "@/services/user/all_users";
 import {ErrorType} from "@/types/api";
-import {ItemTypeType} from "@/types/item";
-import {Dispatch, SetStateAction, useState} from "react";
+import {UserType} from "@/types/user";
+import {useState} from "react";
 import {useQuery} from "react-query";
+import {useNavigate} from "react-router-dom";
 
-export default function ItemTypeList({
-	activeItem,
-	setActiveItem,
-}: {
-	activeItem: ItemTypeType | undefined;
-	setActiveItem: Dispatch<SetStateAction<ItemTypeType | undefined>>;
-}) {
+export default function UsersList({activeItem}: {activeItem: UserType | undefined}) {
+	const navigate = useNavigate();
 	const [keyword, setKeyword] = useState<string>("");
-	const item_types = useQuery(["item_type_list"], () => getAllItemTypes());
-
-	if (item_types.isSuccess) {
-		// Remove active item if item does not exist.
-		if (!item_types.data.data.includes(activeItem)) {
-			setActiveItem(undefined);
-		}
-	}
+	const users = useQuery(["user_list"], () => getAllUsers());
 
 	return (
 		<>
@@ -37,7 +26,7 @@ export default function ItemTypeList({
 					/>
 					<svg
 						viewBox="0 0 24 24"
-						className="w-4 absolute text-gray-400 top-1/2 transform translate-x-0.5 -translate-y-1/2 left-2"
+						className="ic absolute text-gray-400 top-1/2 transform translate-x-0.5 -translate-y-1/2 left-2"
 						stroke="currentColor"
 						strokeWidth={2}
 						fill="none"
@@ -52,11 +41,11 @@ export default function ItemTypeList({
 					<button
 						title="Refresh"
 						onClick={() => {
-							item_types.refetch();
+							users.refetch();
 						}}
 						className="h-9 w-9 hover:bg-gray-300 rounded flex place-items-center justify-center"
 					>
-						{item_types.isFetching ? (
+						{users.isFetching ? (
 							<Spinner size="sm" color="black" />
 						) : (
 							<span className="ic ic-sync"></span>
@@ -65,38 +54,38 @@ export default function ItemTypeList({
 				</div>
 			</div>
 			<div className="flex flex-col gap-3 my-4">
-				{item_types.isSuccess ? (
-					item_types.data.data.map((item: ItemTypeType) => {
+				{users.isSuccess ? (
+					users.data.data.map((user: UserType) => {
 						return (
-							item.name.toLowerCase().includes(keyword.toLowerCase()) && (
+							(user.email.toLowerCase().includes(keyword.toLowerCase()) ||
+								user.role.toLowerCase().includes(keyword.toLowerCase()) ||
+								user.name.toLowerCase().includes(keyword.toLowerCase())) && (
 								<button
-									key={item.id + item.name}
+									key={user.id + user.name}
 									className={
 										"text-left bg-white rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
-										(activeItem && activeItem.id === item.id
+										(activeItem && activeItem.id === user.id
 											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-md"
 											: " shadow")
 									}
-									onClick={() => {
-										setActiveItem(item);
-									}}
+									onClick={() => navigate(`/users/${user.id}`)}
 								>
-									<div title={item.name} className="text-bb font-medium">
-										{item.name}
+									<div title={user.name} className="text-bb font-medium">
+										{user.name}
 									</div>
-									<div title={item.description} className="mt-1 text-sm text-gray-600 truncate">
-										{item.description}
+									<div title={user.email} className="mt-1 text-sm text-gray-600 truncate">
+										{user.email.length > 0 ? user.email : user.role}
 									</div>
 								</button>
 							)
 						);
 					})
-				) : item_types.isLoading ? (
+				) : users.isLoading ? (
 					<div className="text-center py-24">
 						<Spinner color="gray" size="md" />
 					</div>
-				) : item_types.isError ? (
-					<div>{(item_types.error as ErrorType).message}</div>
+				) : users.isError ? (
+					<div>{(users.error as ErrorType).message}</div>
 				) : (
 					<></>
 				)}

@@ -1,16 +1,12 @@
-import {getItemType} from "@/services/item/item_type/get_item_type";
 import {ItemTypeType} from "@/types/item";
 import {useState} from "react";
-import {useQuery} from "react-query";
 import ManageItemType from "./tabs/manage/ManageItemType";
 import ItemsList from "./tabs/list/ItemsList";
 import AddNewItem from "./tabs/list/AddNewItem";
 
-export default function ItemTypeDetailPanel({id}: {id: number | string}) {
+export default function ItemTypeDetailPanel({itemtype}: {itemtype: ItemTypeType}) {
 	const [activeTab, setActiveTab] = useState<"list" | "edit">("list");
 	const [showAddItemPrompt, setShowAddItemPrompt] = useState<boolean>(false);
-	const itemTypeQuery = useQuery(["item_type_" + id], () => getItemType(id));
-	const itemtype: ItemTypeType | null = itemTypeQuery.isSuccess ? itemTypeQuery.data.data : null;
 
 	return (
 		<div className="min-h-[100%]">
@@ -52,14 +48,14 @@ export default function ItemTypeDetailPanel({id}: {id: number | string}) {
 				</div>
 			</div>
 			<div className="mx-8">
-				{activeTab === "edit" && <ManageItemType id={id} />}
+				{activeTab === "edit" && <ManageItemType itemtype={itemtype} />}
 				{activeTab === "list" && (
 					<>
 						{itemtype && showAddItemPrompt && (
 							<AddNewItem setShowAddItemBox={setShowAddItemPrompt} itemType={itemtype} />
 						)}
 						<ItemsList
-							id={id}
+							id={itemtype.id}
 							template={itemtype?.template || null}
 							setShowAddItemBox={setShowAddItemPrompt}
 						/>

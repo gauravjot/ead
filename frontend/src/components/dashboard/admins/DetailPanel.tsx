@@ -1,13 +1,8 @@
-import {useQuery} from "react-query";
-import {getAdmin} from "@/services/admins/info_admin";
-import Spinner from "@/components/ui/Spinner";
 import {AdminAdminister} from "./tabs/Administer";
+import {AdminEntryType} from "@/types/admin";
 
-export default function AdminsDetailPanel({adminID}: {adminID: string}) {
-	const adminQuery = useQuery(["admin_" + adminID], () => getAdmin(adminID));
-	const admin = adminQuery.isSuccess ? adminQuery.data.data : null;
-
-	return admin && adminQuery.isSuccess ? (
+export default function AdminsDetailPanel({admin}: {admin: AdminEntryType}) {
+	return (
 		<>
 			<div className="border-b sticky top-0 bg-white z-[5]">
 				<div className="flex gap-6 px-8 py-6">
@@ -27,11 +22,5 @@ export default function AdminsDetailPanel({adminID}: {adminID: string}) {
 			</div>
 			<AdminAdminister admin={admin} />
 		</>
-	) : adminQuery.isLoading ? (
-		<div className="h-full flex place-items-center justify-center">
-			<Spinner color="accent" size="xl" />
-		</div>
-	) : (
-		<></>
 	);
 }
