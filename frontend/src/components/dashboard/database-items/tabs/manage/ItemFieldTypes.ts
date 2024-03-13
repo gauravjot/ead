@@ -1,10 +1,5 @@
 export const FIELDS = [
 	{
-		type: "admin",
-		name: "Admin",
-		inputMethod: "select",
-	},
-	{
 		type: "boolean",
 		name: "Boolean",
 		inputMethod: "checkbox",

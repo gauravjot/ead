@@ -1,9 +1,10 @@
 export type UserType = {
 	id: string;
 	name: string;
-	role: string;
-	email: string;
-	phone: string;
+	title: string | null;
+	email: string | null;
+	phone: string | null;
+	is_admin: string | null;
 	created_at: string;
 	created_by: string;
 	updated_at: string;

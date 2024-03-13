@@ -1,7 +1,6 @@
 import {AxiosError} from "axios";
 import {ErrorType} from "@/types/api";
 import {changePassword} from "@/services/admins/change_password";
-import {changeProfile} from "@/services/admins/change_profile";
 import {enableAdmin} from "@/services/admins/enable_admin";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {AdminEntryType} from "@/types/admin";
@@ -10,7 +9,7 @@ import InputField from "@/components/ui/InputField";
 import {dateTimePretty, timeSince} from "@/utils/datetime";
 import Button from "@/components/ui/Button";
 import {useContext, useState} from "react";
-import {QueryClient, useMutation} from "react-query";
+import {useMutation, useQueryClient} from "react-query";
 import {disableAdmin} from "@/services/admins/disable_admin";
 import {AdminContext} from "@/App";
 
@@ -19,7 +18,7 @@ export interface IAdminAdministerProps {
 }
 
 export function AdminAdminister(props: IAdminAdministerProps) {
-	const queryClient = new QueryClient();
+	const queryClient = useQueryClient();
 	const adminContext = useContext(AdminContext);
 
 	// change password form and mutation
@@ -41,29 +40,6 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setReqError);
-		},
-	});
-
-	// update profile form and mutation
-	const {
-		register: register2,
-		formState: {errors: errors2},
-		reset: reset2,
-		handleSubmit: handleSubmit2,
-	} = useForm();
-	const [changeProfileReqError, setChangeProfileReqError] = useState<string | null>(null);
-	const changeProfileMutation = useMutation({
-		mutationFn: (d: {title: string; full_name: string}) => {
-			return changeProfile(props.admin.username, d.title, d.full_name);
-		},
-		onSuccess: () => {
-			setChangeProfileReqError(null);
-			reset2();
-			queryClient.invalidateQueries(["admin_" + props.admin.username]);
-			queryClient.invalidateQueries(["admin_list"]);
-		},
-		onError: (error: AxiosError) => {
-			handleAxiosError(error, setChangeProfileReqError);
 		},
 	});
 
@@ -137,7 +113,7 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 					>
 						<fieldset
 							disabled={
-								(adminContext.admin?.profile.username !== "root" &&
+								(adminContext.admin?.admin.username !== "root" &&
 									props.admin.username === "root") ||
 								changePswdMutation.isLoading
 							}
@@ -174,66 +150,6 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 									elementStyle="black"
 									elementSize="base"
 									elementChildren="Change password"
-									elementType="submit"
-								/>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-			</div>
-			{/* ### update profile ### */}
-			<div className="border-t grid grid-cols-2 gap-6 my-8 pt-2">
-				<div>
-					<h3 className="text-md font-medium text-gray-800 my-4">Update Profile</h3>
-					<p className="text-bb text-gray-500">Make changes to name and title of the admin.</p>
-					{changeProfileMutation.isError && (
-						<p className="text-bb text-red-700 my-4">
-							{changeProfileReqError || "Unable to reach server."}
-						</p>
-					)}
-					{changeProfileMutation.isSuccess && (
-						<p className="text-bb text-green-700 my-4">Changes have been saved.</p>
-					)}
-				</div>
-				<div className="mt-[2.75rem]">
-					<form
-						key={props.admin.username + 2}
-						onSubmit={handleSubmit2((d) => {
-							changeProfileMutation.mutate(JSON.parse(JSON.stringify(d)));
-						})}
-					>
-						<fieldset>
-							<div>
-								<InputField
-									elementId="full_name"
-									elementInputType="text"
-									elementHookFormRegister={register2}
-									elementLabel="Full name"
-									elementInputMinLength={2}
-									elementInputMaxLength={48}
-									elementIsRequired={true}
-									elementHookFormErrors={errors2}
-									defaultValue={props.admin.full_name}
-								/>
-								<InputField
-									elementId="title"
-									elementInputType="text"
-									elementHookFormRegister={register2}
-									elementLabel="Title"
-									elementInputMinLength={2}
-									elementInputMaxLength={48}
-									elementIsRequired={true}
-									elementHookFormErrors={errors2}
-									defaultValue={props.admin.title}
-								/>
-							</div>
-
-							<div className="mt-6">
-								<Button
-									elementState={changeProfileMutation.isLoading ? "loading" : "default"}
-									elementStyle="black"
-									elementSize="base"
-									elementChildren="Update"
 									elementType="submit"
 								/>
 							</div>
@@ -279,7 +195,10 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 								onClick={() => {
 									disableAdminMutation.mutate();
 								}}
-								elementDisabled={props.admin.username === "root"}
+								elementDisabled={
+									props.admin.username === "root" ||
+									props.admin.username == adminContext.admin?.admin.username
+								}
 							/>
 						</>
 					) : (
@@ -301,12 +220,17 @@ export function AdminAdminister(props: IAdminAdministerProps) {
 								onClick={() => {
 									enableAdminMutation.mutate();
 								}}
-								elementDisabled={props.admin.username === "root"}
 							/>
 						</>
 					)}
-					{props.admin.username === "root" && (
+					{props.admin.username === "root" ? (
 						<p className="my-2 text-gray-600 text-sm">Root account cannot be disabled.</p>
+					) : props.admin.username == adminContext.admin?.admin.username ? (
+						<p className="my-2 text-gray-600 text-sm">
+							Use root account to disable your own account.
+						</p>
+					) : (
+						<></>
 					)}
 				</div>
 			</div>

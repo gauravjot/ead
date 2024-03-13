@@ -2,11 +2,9 @@ import Button from "@/components/ui/Button";
 import InputField from "@/components/ui/InputField";
 import SelectField from "@/components/ui/SelectField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
-import {getAllAdmins} from "@/services/admins/all_admins";
 import {AddItemType, addItem} from "@/services/item/add_item";
 import {getItems} from "@/services/item/get_items";
 import {getAllUsers} from "@/services/user/all_users";
-import {AdminEntryType} from "@/types/admin";
 import {ItemTypeType, CustomFieldType, ItemType} from "@/types/item";
 import {UserType} from "@/types/user";
 import {AxiosError} from "axios";
@@ -177,26 +175,12 @@ export function CustomInputField({
 					elementWidth="full"
 				/>
 			);
-		} else if (field.t === "admin") {
-			getAllAdmins().then((data) => {
-				setIField(
-					<SelectField
-						data={data.data.admins.map((admin: AdminEntryType) => {
-							return {n: admin.full_name, v: admin.username};
-						})}
-						hookFormRegister={hookFormRegister}
-						label={field.n}
-						id={field.n.replace(" ", "_")}
-						elementWidth="full"
-					/>
-				);
-			});
 		} else if (field.t === "user") {
 			getAllUsers().then((data) => {
 				setIField(
 					<SelectField
 						data={data.data.map((user: UserType) => {
-							return {n: user.name, v: user.id};
+							return {n: `${user.name} (ID: ${user.id})`, v: user.id};
 						})}
 						hookFormRegister={hookFormRegister}
 						label={field.n}

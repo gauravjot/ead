@@ -37,6 +37,7 @@ export default function ItemsList({
 			)}
 			<div className="flex place-items-center">
 				<div className="flex gap-1">
+					{/* Add and Export Buttons */}
 					<Button
 						elementChildren="Add Item"
 						elementState="default"
@@ -63,6 +64,7 @@ export default function ItemsList({
 					/>
 				</div>
 				<div className="flex-1 flex justify-end">
+					{/* Filer bar */}
 					<div className="relative w-64" title="Filter list">
 						<input
 							type="text"
@@ -92,6 +94,7 @@ export default function ItemsList({
 				{items.isSuccess && items.data && template && (
 					<Table
 						columns={["name", ...template.map((obj) => obj.n.replaceAll(" ", "_") + "_c")]}
+						template={template}
 						rows={items.data.data}
 						elementShowSelectMultiple={true}
 						showItem={showItem}

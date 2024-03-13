@@ -1,7 +1,7 @@
 from pathlib import Path
 from decouple import config
 
-#-----------------------------------------------------
+# -----------------------------------------------------
 # No need to change anything in this file
 
 DOMAIN = config('FRONTEND_URL', 'http://localhost')
@@ -19,7 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'users',
-    'notes',
+    'admins',
+    'items'
 ]
 
 MIDDLEWARE = [

@@ -14,8 +14,15 @@ export default function UserDetailPanel({user}: {user: UserType}) {
 						{user.name[0]}
 					</div>
 					<div>
-						<h1 className="text-3xl tracking-tight">{user.name} </h1>
-						<div className="text-gray-500">{user.role}</div>
+						<h1 className="text-3xl tracking-tight">{user.name}</h1>
+						<div className="text-gray-500">{user.title}</div>
+						{user.is_admin && (
+							<div className="my-1">
+								<span className="text-bb border font-medium bg-gray-100 tracking-normal text-gray-500 rounded px-1.5 py-px">
+									ADMIN
+								</span>
+							</div>
+						)}
 					</div>
 				</div>
 				<div className="text-bb px-8 flex gap-6">

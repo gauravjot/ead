@@ -11,7 +11,8 @@ interface Props {
 		| "white_opaque"
 		| "no_border_opaque"
 		| "border_opaque"
-		| "no_border_primary_opaque";
+		| "no_border_primary_opaque"
+		| "primary_text_opaque";
 	elementState: "default" | "loading" | "done";
 	elementType: "button" | "submit" | "reset";
 	elementSize?: "xsmall" | "small" | "base" | "large";
@@ -39,8 +40,11 @@ export default function Button(props: Props) {
 		no_border_opaque:
 			"border border-transparent shadow-none text-gray-700 outline-transparent hover:bg-gray-200 focus:bg-gray-200",
 		border_opaque:
-			"border border-gray-200 text-gray-700 hover:outline-gray-200 hover:border-gray-400 focus:outline-gray-200 focus:bg-gray-50",
-		no_border_primary_opaque: "border border-transparent shadow-none text-primary-700 outline-transparent hover:bg-primary-50 focus:bg-primary-50"
+			"border border-gray-300 text-gray-700 hover:outline-gray-200 hover:border-gray-400 focus:outline-gray-200 focus:bg-gray-50",
+		no_border_primary_opaque:
+			"border border-transparent shadow-none text-primary-700 outline-transparent hover:bg-primary-50 focus:bg-primary-50",
+		primary_text_opaque:
+			"text-primary-700 font-medium bg-white border-none shadow-none hover:outline-none hover:bg-primary-50 focus:bg-primary-50",
 	};
 	const buttonSizing =
 		props.elementSize === "base"

@@ -139,8 +139,8 @@ export default function Notes(props: IUserNotesProps) {
 														{dateTimePretty(note.created_at)}
 													</div>
 												</div>
-												{adminContext.admin?.profile.username === note.created_by ||
-												adminContext.admin?.profile.username === "root" ? (
+												{adminContext.admin?.admin.username === note.created_by ||
+												adminContext.admin?.admin.username === "root" ? (
 													<DropDown
 														showExpandIcon={false}
 														buttonStyle="icon_only"
@@ -150,7 +150,7 @@ export default function Notes(props: IUserNotesProps) {
 															{
 																icon: "ic-edit",
 																title: "Edit",
-																disabled: note.created_by !== adminContext.admin?.profile.username,
+																disabled: note.created_by !== adminContext.admin?.admin.username,
 																onClick: () => {
 																	setEditNote(note);
 																},
@@ -159,8 +159,8 @@ export default function Notes(props: IUserNotesProps) {
 																icon: "ic-delete",
 																title: "Delete",
 																disabled: !(
-																	adminContext.admin?.profile.username === "root" ||
-																	note.created_by === adminContext.admin?.profile.username
+																	adminContext.admin?.admin.username === "root" ||
+																	note.created_by === adminContext.admin?.admin.username
 																),
 																onClick: () => {
 																	setDeleteDialog(note.id);

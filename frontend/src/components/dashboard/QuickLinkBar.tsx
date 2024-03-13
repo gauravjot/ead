@@ -52,7 +52,7 @@ export default function QuickLinkBar() {
 				items={adminDropDownMenu}
 				showExpandIcon={true}
 				buttonIcon="ic-person"
-				buttonText={adminContext.admin?.profile.full_name}
+				buttonText={adminContext.admin?.user?.name || adminContext.admin?.admin.username}
 			/>
 		</div>
 	);

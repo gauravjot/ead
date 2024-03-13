@@ -9,7 +9,7 @@ import {useNavigate} from "react-router-dom";
 export default function UsersList({activeItem}: {activeItem: UserType | undefined}) {
 	const navigate = useNavigate();
 	const [keyword, setKeyword] = useState<string>("");
-	const users = useQuery(["user_list"], () => getAllUsers());
+	const users = useQuery(["user_list"], () => getAllUsers(), {refetchOnWindowFocus: false});
 
 	return (
 		<>
@@ -57,24 +57,50 @@ export default function UsersList({activeItem}: {activeItem: UserType | undefine
 				{users.isSuccess ? (
 					users.data.data.map((user: UserType) => {
 						return (
-							(user.email.toLowerCase().includes(keyword.toLowerCase()) ||
-								user.role.toLowerCase().includes(keyword.toLowerCase()) ||
+							(user.email?.toLowerCase().includes(keyword.toLowerCase()) ||
+								user.title?.toLowerCase().includes(keyword.toLowerCase()) ||
 								user.name.toLowerCase().includes(keyword.toLowerCase())) && (
 								<button
 									key={user.id + user.name}
 									className={
-										"text-left bg-white rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
+										"text-left flex bg-white rounded-md py-2.5 px-4 focus:outline hover:outline hover:outline-2 focus:outline-dodger-600 hover:outline-dodger-700 focus:outline-2" +
 										(activeItem && activeItem.id === user.id
 											? " outline outline-[2.5px] outline-dodger-600 hover:outline-dodger-500 shadow-md"
 											: " shadow")
 									}
 									onClick={() => navigate(`/users/${user.id}`)}
 								>
-									<div title={user.name} className="text-bb font-medium">
-										{user.name}
+									<div className="flex-1 truncate">
+										<div title={user.name} className="text-bb font-medium truncate text-ellipsis">
+											{user.name}
+										</div>
+										{user.email ? (
+											<div
+												title={user.email}
+												className="mt-1 text-sm text-gray-600 truncate text-ellipsis"
+											>
+												{user.email}
+											</div>
+										) : user.title ? (
+											<div
+												title={user.title}
+												className="mt-1 text-sm text-gray-600 truncate text-ellipsis"
+											>
+												{user.title}
+											</div>
+										) : (
+											<></>
+										)}
 									</div>
-									<div title={user.email} className="mt-1 text-sm text-gray-600 truncate">
-										{user.email.length > 0 ? user.email : user.role}
+									<div>
+										{user.is_admin && (
+											<div
+												title="Admin"
+												className="text-xs font-medium bg-gray-100 text-gray-500 border rounded inline-block px-1.5 py-px ml-2"
+											>
+												A
+											</div>
+										)}
 									</div>
 								</button>
 							)

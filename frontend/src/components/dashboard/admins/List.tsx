@@ -57,9 +57,9 @@ export default function AdminsList({activeItem}: {activeItem: AdminEntryType | u
 				{admins.isSuccess ? (
 					admins.data.data.admins.map((admin: AdminEntryType) => {
 						return (
-							(admin.title.toLowerCase().includes(keyword.toLowerCase()) ||
+							(admin.user_title?.toLowerCase().includes(keyword.toLowerCase()) ||
 								admin.username.toLowerCase().includes(keyword.toLowerCase()) ||
-								admin.full_name.toLowerCase().includes(keyword.toLowerCase())) && (
+								admin.user_name?.toLowerCase().includes(keyword.toLowerCase())) && (
 								<button
 									key={admin.username}
 									className={
@@ -75,12 +75,17 @@ export default function AdminsList({activeItem}: {activeItem: AdminEntryType | u
 										navigate(`/admins/${admin.username}`);
 									}}
 								>
-									<div title={admin.full_name} className="text-bb font-medium truncate">
-										{admin.full_name}
+									<div
+										title={admin.user_name || admin.username}
+										className="text-bb font-medium truncate"
+									>
+										{admin.user_name || "@" + admin.username}
 									</div>
-									<div title={admin.title} className="mt-1 text-sm text-gray-600 truncate">
-										{admin.title}
-									</div>
+									{admin.user_created_at && (
+										<div title={admin.username} className="mt-1 text-sm text-gray-600 truncate">
+											@{admin.username}
+										</div>
+									)}
 								</button>
 							)
 						);

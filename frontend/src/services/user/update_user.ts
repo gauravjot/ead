@@ -5,7 +5,7 @@ export interface UpdateUserType {
 	id: string;
 	d: {
 		name: string;
-		role: string;
+		title: string;
 		email: string;
 		phone: string;
 	};
@@ -23,7 +23,7 @@ export function updateUser(props: UpdateUserType) {
 			JSON.stringify({
 				uid: props.id,
 				name: props.d.name,
-				role: props.d.role,
+				title: props.d.title,
 				email: props.d.email,
 				phone: props.d.phone,
 			}),

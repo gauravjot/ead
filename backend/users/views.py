@@ -1,5 +1,4 @@
 import pytz
-import uuid
 from datetime import datetime
 from django.shortcuts import render
 # RestFramework
@@ -43,11 +42,10 @@ def addUser(request):
     # Add user
     dateStamp = datetime.now(pytz.utc)
     userSerializer = UserSerializer(data=dict(
-        id=uuid.uuid4(),
         name=str(request.data['name'])[0:64],
         email=str(request.data['email'])[0:64].lower(),
         phone=str(request.data['phone'])[0:20],
-        role=str(request.data['role'])[0:64],
+        title=str(request.data['title'])[0:64],
         created_at=dateStamp,
         updated_at=dateStamp,
         created_by=admin.username,
@@ -99,8 +97,8 @@ def updateUser(request):
     # Update
     try:
         user = User.objects.get(id=request.data['uid'])
-        user.name = str(request.data['name'])[0:48]
-        user.role = str(request.data['role'])[0:48]
+        user.name = str(request.data['name'])[0:64]
+        user.title = str(request.data['title'])[0:64]
         user.email = str(request.data['email'])[0:64]
         user.phone = str(request.data['phone'])[0:20]
         user.updated_at = datetime.now(pytz.utc)
@@ -146,9 +144,8 @@ def postNoteToUser(request, id):
     # Add user
     dateStamp = datetime.now(pytz.utc)
     noteSerializer = NoteSerializer(data=dict(
-        user=uuid.UUID(id),
+        user=int(id),
         note=str(request.data['content']),
-        author=admin,
         created_at=dateStamp,
         updated_at=dateStamp,
         created_by=admin.username,
@@ -184,7 +181,7 @@ def deleteNoteFromUser(request, noteid):
     try:
         note = Note.objects.get(id=noteid)
         if admin.username != 'root':
-            if note.author != admin:
+            if note.created_by != admin:
                 return Response(data=errorResponse("Unable to delete user note.", "USR0011"), status=status.HTTP_400_BAD_REQUEST)
         note.delete()
         return Response(data=successResponse(), status=status.HTTP_200_OK)
@@ -202,7 +199,7 @@ def updateNoteFromUser(request, noteid):
     try:
         note = Note.objects.get(id=noteid)
         if admin.username != 'root':
-            if note.author != admin:
+            if note.created_by != admin:
                 return Response(data=errorResponse("Unable to update user note.", "USR0007"), status=status.HTTP_400_BAD_REQUEST)
         note.note = request.data['content']
         note.save()

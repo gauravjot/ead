@@ -24,9 +24,10 @@ def getAdminID(request):
         return Response(errorResponse("Unauthorized.", "A1001"), status=status.HTTP_401_UNAUTHORIZED)
     # Check if token is present in database and is valid
     try:
-        session = Session.objects.get(token=hashThis(token))
+        session = Session.objects.select_related(
+            "admin").get(token=hashThis(token))
         # Return admin id if token is valid
-        if session.valid:
+        if session.valid and session.admin.active:
             return session.admin
         else:
             return Response(errorResponse("Unauthorized.", "A1002"), status=status.HTTP_401_UNAUTHORIZED)

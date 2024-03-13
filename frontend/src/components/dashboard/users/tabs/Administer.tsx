@@ -10,6 +10,7 @@ import {DualColumnTable} from "@/components/ui/table/DualColumnDetailTable";
 import {UserType} from "@/types/user";
 import {UpdateUserType, updateUser} from "@/services/user/update_user";
 import {deleteUser} from "@/services/user/delete_user";
+import {Link} from "react-router-dom";
 
 export interface IClientAdministerProps {
 	user: UserType;
@@ -63,9 +64,9 @@ export default function ClientAdminister(props: IClientAdministerProps) {
 				<DualColumnTable
 					left={[
 						{title: "Full name", value: props.user.name},
-						{title: "Role", value: props.user.role},
-						{title: "Email", value: props.user.email},
-						{title: "Phone", value: props.user.phone},
+						{title: "Title", value: props.user.title || "N/A"},
+						{title: "Email", value: props.user.email || "N/A"},
+						{title: "Phone", value: props.user.phone || "N/A"},
 						{title: "User ID", value: props.user.id},
 					]}
 					right={[
@@ -75,6 +76,16 @@ export default function ClientAdminister(props: IClientAdministerProps) {
 						{title: "Added by", value: props.user.created_by},
 					]}
 				/>
+
+				{props.user.is_admin && (
+					<div className="border-t my-8 pt-2">
+						<h3 className="text-md font-medium text-gray-800 my-4">Admin</h3>
+						<p className="text-bb text-gray-500 my-2">This user is attached to an Admin account.</p>
+						<Link to={"/admins/" + props.user.is_admin} className="text-bb font-medium ml-4">
+							View admin account
+						</Link>
+					</div>
+				)}
 				<div className="border-t grid grid-cols-2 gap-6 my-8 pt-2">
 					<div>
 						<h3 className="text-md font-medium text-gray-800 my-4">Update Profile</h3>
@@ -109,15 +120,15 @@ export default function ClientAdminister(props: IClientAdministerProps) {
 										defaultValue={props.user.name}
 									/>
 									<InputField
-										elementId="role"
+										elementId="title"
 										elementInputType="text"
 										elementHookFormRegister={register2}
-										elementLabel="Role"
+										elementLabel="Title"
 										elementInputMinLength={2}
 										elementInputMaxLength={64}
-										elementIsRequired={true}
+										elementIsRequired={false}
 										elementHookFormErrors={errors2}
-										defaultValue={props.user.role}
+										defaultValue={props.user.title || ""}
 									/>
 									<InputField
 										elementId="email"
@@ -127,7 +138,7 @@ export default function ClientAdminister(props: IClientAdministerProps) {
 										elementInputMinLength={0}
 										elementInputMaxLength={64}
 										elementHookFormErrors={errors2}
-										defaultValue={props.user.email}
+										defaultValue={props.user.email || ""}
 									/>
 									<InputField
 										elementId="phone"
@@ -137,7 +148,7 @@ export default function ClientAdminister(props: IClientAdministerProps) {
 										elementInputMinLength={0}
 										elementInputMaxLength={20}
 										elementHookFormErrors={errors2}
-										defaultValue={props.user.phone}
+										defaultValue={props.user.phone || ""}
 									/>
 								</div>
 

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,7 +13,7 @@
 		@apply bg-gray-500/30 rounded px-1 py-px text-purple-700 text-sm;
 	}
 	a {
-		@apply text-sky-700;
+		@apply text-primary-700;
 		@apply hover:underline hover:underline-offset-4;
 	}
 	pre {
@@ -26,22 +28,6 @@
 }
 
 @layer utilities {
-}
-
-@font-face {
-	font-family: "DM Sans";
-	font-style: normal;
-	font-weight: 400;
-	font-display: swap;
-	src: url(/DMSans-Regular.woff2) format("woff2");
-}
-
-@font-face {
-	font-family: "DM Sans";
-	font-style: normal;
-	font-weight: 500;
-	font-display: swap;
-	src: url(/DMSans-Medium.woff2) format("woff2");
 }
 
 .container {

@@ -5,8 +5,10 @@ export type AddAdminType = {
 	username: string;
 	password: string;
 	full_name: string;
+	email: string;
+	phone: string;
 	title: string;
-	confirm_password?: string;
+	connect_to?: number;
 };
 
 /**

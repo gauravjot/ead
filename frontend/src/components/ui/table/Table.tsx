@@ -1,15 +1,18 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import {Dispatch, SetStateAction, useState} from "react";
+import {Link} from "react-router-dom";
 
 export default function Table({
 	columns,
+	template,
 	rows,
 	elementShowSelectMultiple,
-	showItem
+	showItem,
 }: {
 	columns: string[];
-	rows: { [key: string]: string | boolean | number }[];
+	template: {n: string; t: string}[] | null;
+	rows: {[key: string]: string | boolean | number}[];
 	elementShowSelectMultiple: boolean;
-	showItem: (id: number| string) => void;
+	showItem: (id: number | string) => void;
 }) {
 	const [sortColumn, setSortColumn] = useState<string | null>(null);
 	const [sortOrder, setSortOrder] = useState<"ascending" | "descending">("ascending");
@@ -17,15 +20,11 @@ export default function Table({
 	if (sortColumn) {
 		if (sortOrder == "ascending") {
 			rows.sort((a, b) =>
-				(a[sortColumn] || "").toString() > (b[sortColumn] || "").toString()
-					? 1
-					: -1
+				(a[sortColumn] || "").toString() > (b[sortColumn] || "").toString() ? 1 : -1
 			);
 		} else {
 			rows.sort((a, b) =>
-				(a[sortColumn] || "").toString() < (b[sortColumn] || "").toString()
-					? 1
-					: -1
+				(a[sortColumn] || "").toString() < (b[sortColumn] || "").toString() ? 1 : -1
 			);
 		}
 	}
@@ -45,18 +44,20 @@ export default function Table({
 					</tr>
 				</thead>
 				<tbody>
-				{rows && rows.map((row) => {
-					return (
-						<tr className="table-highlight group w-full border-b last:border-b1 hover:bg-gray-100 relative">
-							<TCell
-								columns={columns}
-								row={row}
-								elementShowSelectMultiple={elementShowSelectMultiple}
-								showItem={showItem}
-							/>
-						</tr>
-					);
-					})}
+					{rows &&
+						rows.map((row) => {
+							return (
+								<tr className="table-highlight group w-full border-b last:border-b1 hover:bg-gray-100 relative">
+									<TCell
+										columns={columns}
+										row={row}
+										template={template}
+										elementShowSelectMultiple={elementShowSelectMultiple}
+										showItem={showItem}
+									/>
+								</tr>
+							);
+						})}
 				</tbody>
 			</table>
 		</div>
@@ -69,7 +70,7 @@ function THeader({
 	setSortOrder,
 	sortColumn,
 	setSortColumn,
-	elementShowSelectMultiple
+	elementShowSelectMultiple,
 }: {
 	columns: string[];
 	sortOrder: "ascending" | "descending";
@@ -90,9 +91,7 @@ function THeader({
 				onClick={() => {
 					if (sortColumn === col) {
 						// just change sort sortOrder
-						setSortOrder((val) =>
-							val === "ascending" ? "descending" : "ascending"
-						);
+						setSortOrder((val) => (val === "ascending" ? "descending" : "ascending"));
 					} else {
 						setSortColumn(col);
 						setSortOrder("ascending");
@@ -105,21 +104,12 @@ function THeader({
 					{sortColumn === col && (
 						<div
 							className={
-								"block ic " +
-								(sortOrder === "ascending"
-									? "ic-up-arrow rotate-180"
-									: "ic-up-arrow")
+								"block ic " + (sortOrder === "ascending" ? "ic-up-arrow rotate-180" : "ic-up-arrow")
 							}
 						></div>
 					)}
-					<span
-						className={
-							sortColumn === col
-								? "text-gray-600 font-bold"
-								: "text-gray-500"
-						}
-					>
-						{col.replaceAll("_c", "").replaceAll("_"," ")}
+					<span className={sortColumn === col ? "text-gray-600 font-bold" : "text-gray-500"}>
+						{col.replaceAll("_c", "").replaceAll("_", " ")}
 					</span>
 				</div>
 			</td>
@@ -135,49 +125,68 @@ const cellStyle =
 
 function TCell({
 	columns,
+	template,
 	row,
 	elementShowSelectMultiple,
-	showItem
+	showItem,
 }: {
 	columns: string[];
-	row: { [key: string]: string | boolean | number };
+	template: {n: string; t: string}[] | null;
+	row: {[key: string]: string | boolean | number};
 	elementShowSelectMultiple: boolean;
-	showItem: (id: number|string) => void;
+	showItem: (id: number | string) => void;
 }) {
-
+	// Convert template n and t to key-value pair
+	const templateKV: {[key: string]: string} = {};
+	template?.forEach((t) => {
+		templateKV[t.n + "_c"] = t.t;
+	});
 
 	return (
 		<>
 			{columns.map((col, index) => {
-								return typeof row[col] === "boolean" ? (
-									<td className="text-center min-w-[6rem] max-w-[14rem] px-2">
-										{row[col] ? (
-											<div className="bg-dodger-600 rounded-full w-4 h-4 flex place-items-center justify-center">
-												<span className="ic-sm ic-white ic-done"></span>
-											</div>
-										) : (
-											<div className="bg-gray-400 rounded-full w-4 h-4 flex place-items-center justify-center">
-												<span className="ic-sm ic-white ic-close"></span>
-											</div>
-										)}
-									</td>
-								) : (
-									<td
-										className={cellStyle}
-										title={row[col]?.toString()}
-									>
-										{index == 0 && elementShowSelectMultiple && <div className="inline-block w-9 scale-[0.8]"><label htmlFor={row.id.toString()} className="px-3 -mx-3 py-3 hover:cursor-pointer"><input id={row.id.toString()} type="checkbox" name={row.id.toString() as string}/></label></div>}
-										{index == 0 ?
-											<button
-												className="underline underline-offset-2"
-												onClick={()=>{showItem(row.id.toString())}}
-											>
-												{row[col]}
-											</button>
-											:row[col]}
-									</td>
-								);
-							})}
-								</>
+				return typeof row[col] === "boolean" ? (
+					<td className="text-center min-w-[6rem] max-w-[14rem] px-2">
+						{row[col] ? (
+							<div className="bg-dodger-600 rounded-full w-4 h-4 flex place-items-center justify-center">
+								<span className="ic-sm ic-white ic-done"></span>
+							</div>
+						) : (
+							<div className="bg-gray-400 rounded-full w-4 h-4 flex place-items-center justify-center">
+								<span className="ic-sm ic-white ic-close"></span>
+							</div>
+						)}
+					</td>
+				) : (
+					<td className={cellStyle} title={row[col]?.toString()}>
+						{index == 0 && elementShowSelectMultiple && (
+							<div className="inline-block w-9 scale-[0.8]">
+								<label htmlFor={row.id.toString()} className="px-3 -mx-3 py-3 hover:cursor-pointer">
+									<input
+										id={row.id.toString()}
+										type="checkbox"
+										name={row.id.toString() as string}
+									/>
+								</label>
+							</div>
+						)}
+						{index == 0 ? (
+							<button
+								className="underline underline-offset-2"
+								onClick={() => {
+									showItem(row.id.toString());
+								}}
+							>
+								{row[col]}
+							</button>
+						) : templateKV[col] === "user" ? (
+							<Link to={"/users/" + row[col]}>{row[col]}</Link>
+						) : (
+							row[col]
+						)}
+					</td>
+				);
+			})}
+		</>
 	);
 }

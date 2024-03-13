@@ -180,19 +180,14 @@ def getAllItems(request, id):
     if type(admin) is Response:
         return admin
     l = list()
-    for item in Item.objects.filter(item_type=id).order_by('name'):
-        admin_detail = dict(AdminSerializer(item.added_by).data)
-        admin_detail = dict(
-            full_name=admin_detail['full_name'],
-            username=admin_detail['username']
-        )
+    for item in Item.objects.select_related("added_by", "updated_by").filter(item_type=id).order_by('name'):
         l.append({
             'name': item.name,
             'id': item.id,
             'added_at': item.added_at,
-            'added_by': admin_detail,
+            'added_by': item.added_by.username,
             'updated_at': item.updated_at,
-            'updated_by': admin_detail,
+            'updated_by': item.updated_by.username,
             **{i.get("n")+"_c": i.get("v") for i in item.value}
         })
     res = successResponse(l)
