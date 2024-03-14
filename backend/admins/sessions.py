@@ -10,7 +10,7 @@ from rest_framework import status
 from .models import Session
 from .serializers import SessionSerializer
 
-from .utils import errorResponse, hashThis
+from .utils import errorResponse, hashThis, logThis
 
 
 # Get user id from request
@@ -56,13 +56,17 @@ def getSessonID(request):
 # Create a token
 def issueToken(username):
     newToken = token_hex(24)
+    hashed = hashThis(newToken)
     sessionSerializer = SessionSerializer(data=dict(
-        token=hashThis(newToken),
+        token=hashed,
         admin=username,
         created_at=datetime.now(pytz.utc)
     ))
     if sessionSerializer.is_valid():
         sessionSerializer.save()
+        # log this
+        logThis(username, "admin", username, "login",
+                "New session started with unique signature: " + newToken[0:6])
         return newToken, sessionSerializer.data['id']
 
 
@@ -73,8 +77,12 @@ def dropSession(request):
     except KeyError:
         pass
     try:
-        session = Session.objects.get(token=hashThis(token))
+        hashed = hashThis(token)
+        session = Session.objects.get(token=hashed)
         session.valid = False
         session.save()
+        # log this
+        logThis(session.admin, "admin", session.admin.username, "logout",
+                "Session closed with unique signature: " + token[0:6])
     except Session.DoesNotExist:
         pass

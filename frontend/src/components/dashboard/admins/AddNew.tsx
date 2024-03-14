@@ -123,7 +123,7 @@ export default function AddNewAdmin({
 							<div>
 								<InputField
 									elementId="ana_full_name"
-									elementIsRequired={false}
+									elementIsRequired={true}
 									elementInputMinLength={2}
 									elementHookFormErrors={errors}
 									elementInputType="text"

@@ -27,10 +27,10 @@ class SessionSerializer(serializers.ModelSerializer):
 class LogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Log
-        fields = ['id', 'admin', 'action', 'actioned_by', 'actioned_at']
+        fields = ['id', 'action', 'actioned_by', 'actioned_at']
         extra_kwargs = {
-            'admin': {'required': True},
             'action': {'required': True},
+            'actioned_by': {'required': True},
         }
 
 

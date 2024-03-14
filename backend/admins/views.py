@@ -15,7 +15,7 @@ from users.models import User
 from users.serializers import UserSerializer
 # Session
 from .sessions import issueToken, dropSession, getAdminID, getSessonID
-from .utils import errorResponse, successResponse
+from .utils import errorResponse, successResponse, logThis
 
 
 # First time setup
@@ -69,6 +69,8 @@ def initialSetup(request):
         samesite=config('AUTH_COOKIE_SAMESITE', default='Strict'),
         domain=config('AUTH_COOKIE_DOMAIN', default='localhost')
     )
+    # Log this
+    logThis(admin, "admin", admin.username, "create", "Created root account")
     return response
 
 
@@ -93,6 +95,9 @@ def register(request):
             user = User.objects.get(id=request.data['connect_to'])
         except User.DoesNotExist:
             return Response(data=errorResponse("User does not exist.", "A0091"), status=status.HTTP_404_NOT_FOUND)
+
+    if 'full_name' not in request.data or request.data['full_name'] == "":
+        return Response(data=errorResponse("Name is required.", "A0092"), status=status.HTTP_400_BAD_REQUEST)
 
     if user is None:
         user = User.objects.create(
@@ -121,6 +126,9 @@ def register(request):
         admin = adminSerializer.save()
         user.is_admin = admin
         user.save()
+        # log this
+        logThis(adminID, "admin", admin.username, "create",
+                f"Created admin account. Attached with user id '{user.id}'.")
         return Response(data=successResponse(), status=status.HTTP_201_CREATED)
     else:
         return Response(data=errorResponse(adminSerializer.errors), status=status.HTTP_400_BAD_REQUEST)
@@ -144,6 +152,7 @@ def login(request):
         return Response(data=errorResponse("Credentials are invalid.", "A0004"), status=status.HTTP_401_UNAUTHORIZED)
     # send token to user
     token, session_id = issueToken(username)
+    # issueToken does the logging
     try:
         response = Response(data=successResponse({
             "admin": AdminSerializer(admin).data,
@@ -230,6 +239,10 @@ def disable(request):
         # Disable all active sessions
         Session.objects.filter(admin=otherAdmin.username).update(valid=False)
 
+        # log this
+        logThis(adminID, "admin", otherAdmin.username,
+                "account_disable", "Disabled account.")
+
         return Response(data=successResponse(), status=status.HTTP_200_OK)
     except Admin.DoesNotExist:
         return Response(data=errorResponse("Admin does not exist.", "A0097"), status=status.HTTP_404_NOT_FOUND)
@@ -256,6 +269,10 @@ def enable(request):
         # Disable all active sessions
         Session.objects.filter(admin=otherAdmin.username).update(valid=False)
 
+        # log this
+        logThis(adminID, "admin", otherAdmin.username,
+                "account_enable", "Enabled account.")
+
         return Response(data=successResponse(), status=status.HTTP_200_OK)
     except Admin.DoesNotExist:
         return Response(data=errorResponse("Admin does not exist.", "A0097"), status=status.HTTP_404_NOT_FOUND)
@@ -274,6 +291,10 @@ def changeMyPassword(request):
         admin.updated_at = datetime.now(pytz.utc)
         admin.updated_by = adminID
         admin.save()
+
+        # log this
+        logThis(adminID, "admin", admin.username,
+                "password_change", "Changed own account password.")
 
         return Response(data=successResponse(), status=status.HTTP_200_OK)
     except Admin.DoesNotExist:
@@ -297,6 +318,10 @@ def changePassword(request):
         admin.updated_at = datetime.now(pytz.utc)
         admin.updated_by = adminID
         admin.save()
+
+        # log this
+        logThis(adminID, "admin", admin.username,
+                "password_change", "Changed account password.")
 
         return Response(data=successResponse(), status=status.HTTP_200_OK)
     except Admin.DoesNotExist:

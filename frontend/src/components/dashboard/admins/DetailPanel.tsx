@@ -1,8 +1,11 @@
+import {useState} from "react";
 import {AdminAdminister} from "./tabs/Administer";
 import {AdminEntryType} from "@/types/admin";
+import {LogsTab} from "./tabs/Logs";
 
 export default function AdminsDetailPanel({admin}: {admin: AdminEntryType}) {
-	console.log(admin);
+	const [activeTab, setActiveTab] = useState<"administer" | "logs">("administer");
+
 	return (
 		<>
 			<div className="border-b sticky top-0 bg-white z-[5]">
@@ -25,10 +28,34 @@ export default function AdminsDetailPanel({admin}: {admin: AdminEntryType}) {
 					</div>
 				</div>
 				<div className="text-bb px-8 flex gap-6">
-					<div className="text-dodger-700 border-b-2 border-dodger-600 p-2">Administer</div>
+					<button
+						onClick={() => {
+							setActiveTab("administer");
+						}}
+						className={
+							(activeTab === "administer"
+								? "text-dodger-700 border-dodger-600"
+								: "text-gray-600 border-transparent") + " border-b-2 p-2 active:bg-dodger-50"
+						}
+					>
+						Administer
+					</button>
+					<button
+						onClick={() => {
+							setActiveTab("logs");
+						}}
+						className={
+							(activeTab === "logs"
+								? "text-dodger-700 border-dodger-600"
+								: "text-gray-600 border-transparent") + " border-b-2 p-2 active:bg-dodger-50"
+						}
+					>
+						Logs
+					</button>
 				</div>
 			</div>
-			<AdminAdminister admin={admin} />
+			{activeTab === "administer" && <AdminAdminister admin={admin} />}
+			{activeTab === "logs" && <LogsTab admin={admin} />}
 		</>
 	);
 }

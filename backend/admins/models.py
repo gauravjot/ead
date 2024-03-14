@@ -22,8 +22,6 @@ class Session(models.Model):
 
 
 class Log(models.Model):
-    admin = models.ForeignKey(
-        Admin, related_name="log_admin", on_delete=models.CASCADE)
     action = models.TextField()
     actioned_by = models.ForeignKey(
         Admin, related_name="log_actioned_by", on_delete=models.SET_NULL, blank=True, null=True)
