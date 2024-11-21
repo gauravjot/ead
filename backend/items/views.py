@@ -4,14 +4,13 @@ from datetime import datetime
 # RestFramework
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from django_axor_auth.users.permissions import IsAuthenticated
+from django_axor_auth.users.api import get_request_user
 # Models & Serializers
+from utils.response import successResponse, errorResponse
 from .models import Item, ItemType
 from .serializers import ItemTypeSerializer, ItemSerializer
-from admins.serializers import AdminSerializer
-# Session
-from admins.sessions import getAdminID
-from admins.utils import errorResponse, successResponse
 
 
 """
@@ -24,19 +23,18 @@ from admins.utils import errorResponse, successResponse
 # Add new Item Type
 # -----------------------------------------------
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def addItemType(request):
-    adminID = getAdminID(request)
-    if type(adminID) is Response:
-        return adminID
+    user = get_request_user(request)
     # create serializer
     itemTypeSerializer = ItemTypeSerializer(data=dict(
         name=request.data['name'],
         description=request.data['description'],
         template=None,
-        created_by=str(adminID.username),
+        created_by=user.id,
         created_at=datetime.now(pytz.utc),
         updated_at=datetime.now(pytz.utc),
-        updated_by=str(adminID.username)
+        updated_by=user.id
     ))
     # if valid then add
     if itemTypeSerializer.is_valid():
@@ -49,23 +47,16 @@ def addItemType(request):
 # Get all Item Type
 # -----------------------------------------------
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getAllItemTypes(request):
-    # Get requesting admin ID
-    admin = getAdminID(request)
-    if type(admin) is Response:
-        return admin
     return Response(data=successResponse(ItemTypeSerializer(ItemType.objects.all().order_by('name'), many=True).data), status=status.HTTP_200_OK)
 
 
 # Get Item Type
 # -------------------------------
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getItemType(request, id):
-    # Get requesting admin ID
-    admin = getAdminID(request)
-    if type(admin) is Response:
-        return admin
-    # Get item type
     try:
         item_type = ItemType.objects.get(id=id)
         return Response(data=successResponse(ItemTypeSerializer(item_type).data), status=status.HTTP_200_OK)
@@ -76,12 +67,8 @@ def getItemType(request, id):
 # Edit Item Type
 # -------------------------------
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def editItemType(request, id):
-    # Get requesting admin ID
-    admin = getAdminID(request)
-    if type(admin) is Response:
-        return admin
-    # Get item type
     try:
         item_type = ItemType.objects.get(id=id)
         item_type.name = str(request.data['name'])
@@ -96,12 +83,8 @@ def editItemType(request, id):
 # Add Item type field
 # -------------------------------
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def addItemTypeField(request, id):
-    # Get requesting admin ID
-    admin = getAdminID(request)
-    if type(admin) is Response:
-        return admin
-    # Get item type
     try:
         item_type = ItemType.objects.get(id=id)
         fields = json.loads(request.data['fields'])
@@ -127,12 +110,8 @@ def addItemTypeField(request, id):
 # Delete Item type field
 # -------------------------------
 @api_view(['PUT'])
+@permission_classes([IsAuthenticated])
 def deleteItemTypeField(request, id):
-    # Get requesting admin ID
-    admin = getAdminID(request)
-    if type(admin) is Response:
-        return admin
-    # Get item type
     try:
         item_type = ItemType.objects.get(id=id)
         field = json.loads(request.data['fields'])
@@ -153,10 +132,8 @@ def deleteItemTypeField(request, id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def deleteItemType(request, id):
-    adminID = getAdminID(request)
-    if type(adminID) is Response:
-        return adminID
     try:
         ItemType.objects.get(id=id).delete()
         return Response(data=successResponse(), status=status.HTTP_200_OK)
@@ -174,20 +151,17 @@ def deleteItemType(request, id):
 # Get all Items
 # -----------------------------------------------
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getAllItems(request, id):
-    # Get requesting admin ID
-    admin = getAdminID(request)
-    if type(admin) is Response:
-        return admin
     l = list()
     for item in Item.objects.select_related("added_by", "updated_by").filter(item_type=id).order_by('name'):
         l.append({
             'name': item.name,
             'id': item.id,
             'added_at': item.added_at,
-            'added_by': item.added_by.username,
+            'added_by': item.added_by.id,
             'updated_at': item.updated_at,
-            'updated_by': item.updated_by.username,
+            'updated_by': item.updated_by.id,
             **{i.get("n")+"_c": i.get("v") for i in item.value}
         })
     res = successResponse(l)
@@ -197,19 +171,18 @@ def getAllItems(request, id):
 # Add new Item
 # -----------------------------------------------
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def addItem(request):
-    adminID = getAdminID(request)
-    if type(adminID) is Response:
-        return adminID
+    user = get_request_user(request)
     # create serializer
     itemSerializer = ItemSerializer(data=dict(
         name=request.data['name'],
         value=request.data['value'],
         item_type=request.data['item_type'],
-        added_by=str(adminID.username),
+        added_by=user.id,
         added_at=datetime.now(pytz.utc),
         updated_at=datetime.now(pytz.utc),
-        updated_by=str(adminID.username)
+        updated_by=user.id
 
     ))
     # if valid then add
@@ -221,10 +194,8 @@ def addItem(request):
 
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def getItem(request, id):
-    adminID = getAdminID(request)
-    if type(adminID) is Response:
-        return adminID
     try:
         return Response(data=successResponse(ItemSerializer(Item.objects.get(id=id)).data), status=status.HTTP_200_OK)
     except Item.DoesNotExist:
@@ -232,10 +203,8 @@ def getItem(request, id):
 
 
 @api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
 def deleteItem(request, id):
-    adminID = getAdminID(request)
-    if type(adminID) is Response:
-        return adminID
     try:
         Item.objects.get(id=id).delete()
         return Response(data=successResponse(), status=status.HTTP_200_OK)

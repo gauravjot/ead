@@ -8,10 +8,20 @@ import {UserLoggedInType} from "@/types/user";
  * @param password
  * @returns Promise
  */
-export async function doLogin(email: string, password: string): Promise<UserLoggedInType> {
+export async function doRegister(
+	first_name: string,
+	last_name: string,
+	email: string,
+	password: string,
+): Promise<UserLoggedInType> {
 	return axios.post(
-		BACKEND_ENDPOINT + "/api/user/login/",
-		JSON.stringify({email: email, password: password}),
+		BACKEND_ENDPOINT + "/api/user/register/",
+		JSON.stringify({
+			first_name: first_name,
+			last_name: last_name,
+			email: email,
+			password: password,
+		}),
 		{
 			headers: {
 				"Content-Type": "application/json",

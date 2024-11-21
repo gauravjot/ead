@@ -1,27 +1,20 @@
 import {useNavigate} from "react-router-dom";
 
-type menuType = "admins" | "users" | "items";
+type menuType = "dashboard" | "users" | "items";
 
 const menu: {icon: string; type: menuType; title: string; divider?: boolean; path: string}[] = [
 	{
 		divider: true,
 		icon: "ic-admins",
-		title: "Admins",
-		type: "admins",
-		path: "/admins",
+		title: "Home",
+		type: "dashboard",
+		path: "/dashbaord",
 	},
 	{
 		icon: "ic-database",
 		title: "DB",
 		type: "items",
 		path: "/items",
-	},
-	{
-		divider: true,
-		icon: "ic-users",
-		title: "Users",
-		type: "users",
-		path: "/users",
 	},
 ];
 

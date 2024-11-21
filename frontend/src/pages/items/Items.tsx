@@ -22,7 +22,7 @@ export default function ItemsPage() {
 			enabled: !!id,
 			onSuccess: (data) => setActiveItem(data.data),
 			onError: () => setActiveItem(undefined),
-		}
+		},
 	);
 
 	return (
@@ -31,6 +31,7 @@ export default function ItemsPage() {
 				<Sidebar activeMenu={"items"} />
 			</div>
 			<div className="flex-1 h-full overflow-hidden flex flex-col">
+				{/* main content starts */}
 				<QuickLinkBar />
 				<div className="flex flex-grow overflow-x-hidden">
 					<div className="w-64 p-4 flex-shrink-0 border-r overflow-y-auto h-full bg-gray-100">
@@ -92,6 +93,7 @@ export default function ItemsPage() {
 					</div>
 				</div>
 			</div>
+			{/* main content end */}
 		</div>
 	);
 }

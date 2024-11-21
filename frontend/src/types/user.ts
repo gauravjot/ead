@@ -1,22 +1,19 @@
 export type UserType = {
 	id: string;
-	name: string;
-	title: string | null;
-	email: string | null;
-	phone: string | null;
-	is_admin: string | null;
+	password: string;
+	email: string;
+	first_name: string;
+	last_name: string;
+	timezone: string;
+	is_active: boolean;
 	created_at: string;
-	created_by: string;
 	updated_at: string;
+	created_by: string;
 	updated_by: string;
 };
 
-export type NoteType = {
-	id: number;
-	user: string;
-	note: string;
-	created_at: string;
-	created_by: string;
-	updated_at: string;
-	updated_by: string;
+export type UserLoggedInType = {
+	last_session: any;
+	last_token_session: any;
+	user: UserType;
 };

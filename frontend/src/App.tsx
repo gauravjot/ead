@@ -6,65 +6,49 @@ import "@/assets/styles/icons.css";
 import "@/assets/styles/inputs.css";
 /* Components */
 import React, {Dispatch, SetStateAction, Suspense} from "react";
-import {LoggedInAdminType} from "./types/admin";
 import {useQuery} from "react-query";
-import {getLoggedInAdmin} from "@/services/auth/get_me";
+import {getMe} from "@/services/auth/get_me";
 import HomePage from "./pages/Home";
 import LoginPage from "./pages/Login";
+import {UserType} from "./types/user";
+import DashboardPage from "./pages/dashboard/Index";
 
-const AdminsPage = React.lazy(() => import("@/pages/admins/Admins"));
 const ItemsPage = React.lazy(() => import("@/pages/items/Items"));
-const UsersPage = React.lazy(() => import("@/pages/users/Users"));
 
-export const AdminContext = React.createContext<{
-	admin: LoggedInAdminType | null;
-	setAdmin: Dispatch<SetStateAction<LoggedInAdminType | null>>;
+export const UserContext = React.createContext<{
+	user: UserType | null;
+	setUser: Dispatch<SetStateAction<UserType | null>>;
 }>({
-	admin: null,
-	setAdmin: () => {
+	user: null,
+	setUser: () => {
 		return null;
 	},
 });
 
 export default function App() {
-	const [admin, setAdmin] = React.useState<LoggedInAdminType | null>(null);
+	const [user, setUser] = React.useState<UserType | null>(null);
 
 	// Get user profile for logged-in admin
-	const query = useQuery(["loggedInAdmin"], () => getLoggedInAdmin(), {
+	const query = useQuery(["get_me"], () => getMe(), {
 		onSuccess: (data) => {
-			setAdmin(data);
+			setUser(data);
 		},
 		refetchOnWindowFocus: false,
 		retry: false,
 	});
 
 	return query.isSuccess || query.isError ? (
-		<AdminContext.Provider value={{admin, setAdmin}}>
+		<UserContext.Provider value={{user: user, setUser: setUser}}>
 			<Router>
 				<Routes>
 					<Route path={"/"} element={<HomePage />} />
 					<Route path={"/login"} element={<LoginPage />} />
 					{/* Redirect to login page if not logged in */}
-					{!admin && <Route path={"*"} element={<Navigate to={"/login"} />} />}
+					{!user && <Route path={"*"} element={<Navigate to={"/login"} />} />}
 					{/* Auth routes */}
-					{admin && (
+					{user && (
 						<>
-							<Route
-								path={"/admins"}
-								element={
-									<Suspense fallback={<Loading msg="Loading dashboard..." />}>
-										<AdminsPage />
-									</Suspense>
-								}
-							/>
-							<Route
-								path={"/admins/:id"}
-								element={
-									<Suspense fallback={<Loading msg="Loading dashboard..." />}>
-										<AdminsPage />
-									</Suspense>
-								}
-							/>
+							<Route path={"/dashboard"} element={<DashboardPage />} />
 							<Route
 								path={"/items"}
 								element={
@@ -81,27 +65,11 @@ export default function App() {
 									</Suspense>
 								}
 							/>
-							<Route
-								path={"/users"}
-								element={
-									<Suspense fallback={<Loading msg="Loading dashboard..." />}>
-										<UsersPage />
-									</Suspense>
-								}
-							/>
-							<Route
-								path={"/users/:id"}
-								element={
-									<Suspense fallback={<Loading msg="Loading dashboard..." />}>
-										<UsersPage />
-									</Suspense>
-								}
-							/>
 						</>
 					)}
 				</Routes>
 			</Router>
-		</AdminContext.Provider>
+		</UserContext.Provider>
 	) : (
 		<Loading msg="Authenticating with server..." />
 	);

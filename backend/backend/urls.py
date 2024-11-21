@@ -5,13 +5,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-]
-
-# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# users
-urlpatterns += [
-    path('', include('users.urls')),
-    path('', include('admins.urls')),
+    path('api/user/', include('django_axor_auth.users.urls')),
     path('', include('items.urls')),
 ]

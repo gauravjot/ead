@@ -4,13 +4,16 @@ import {useMutation} from "react-query";
 import {AxiosError} from "axios";
 import {ErrorType} from "@/types/api";
 import Button from "@/components/ui/Button";
-import {AdminContext} from "@/App";
-import {doServerSetup} from "@/services/auth/server_setup";
+import {UserContext} from "@/App";
 import {useNavigate} from "react-router-dom";
+import {SubmitHandler, useForm} from "react-hook-form";
+import InputField from "@/components/ui/InputField";
+import {UserLoggedInType} from "@/types/user";
+import {doRegister} from "@/services/auth/register";
 
 export default function LoginPage() {
 	const navigate = useNavigate();
-	const adminContext = useContext(AdminContext);
+	const adminContext = useContext(UserContext);
 
 	const [username, setUsername] = React.useState<string>("");
 	const [password, setPassword] = React.useState<string>("");
@@ -18,8 +21,8 @@ export default function LoginPage() {
 	const [newServerSetup, setNewServerSetup] = React.useState<boolean>(false);
 
 	useEffect(() => {
-		if (adminContext.admin) {
-			navigate("/admins");
+		if (adminContext.user) {
+			navigate("/dashboard");
 		}
 	}, [adminContext, navigate]);
 
@@ -28,7 +31,7 @@ export default function LoginPage() {
 			return doLogin(username, password);
 		},
 		onSuccess: (data) => {
-			adminContext.setAdmin(data);
+			adminContext.setUser(data.user);
 			navigate("/admins");
 		},
 		onError: (error: AxiosError) => {
@@ -45,7 +48,7 @@ export default function LoginPage() {
 		mutation.mutate();
 	}
 
-	return adminContext.admin ? (
+	return adminContext.user ? (
 		<></>
 	) : (
 		<div className="container max-w-5xl px-4 mx-auto py-6">
@@ -72,7 +75,7 @@ export default function LoginPage() {
 							>
 								<fieldset disabled={mutation.isLoading || mutation.isSuccess}>
 									<label className="block text-white text-sm py-1.5 mt-4" htmlFor="username">
-										Username
+										Email
 									</label>
 									<input
 										className={
@@ -117,9 +120,6 @@ export default function LoginPage() {
 									</div>
 								</fieldset>
 							</form>
-							<p className="mt-8 text-gray-200 text-[0.875rem]">
-								If you forgot your credentials, please contact your administrator.
-							</p>
 							<p className="mt-3">
 								<button
 									className="text-white underline underline-offset-4 hover:underline-offset-[5px] transition-all text-sm"
@@ -128,7 +128,7 @@ export default function LoginPage() {
 										setNewServerSetup(true);
 									}}
 								>
-									Setup new server
+									Register for an account
 								</button>
 							</p>
 						</div>
@@ -153,18 +153,25 @@ export default function LoginPage() {
 	);
 }
 
-export function ServerSetup() {
-	const adminContext = useContext(AdminContext);
+type RegistrationForm = {
+	first_name: string;
+	last_name: string;
+	email: string;
+	password: string;
+};
 
-	const [password, setPassword] = React.useState<string>("");
-	const [error, setError] = React.useState<string>("");
+export function ServerSetup() {
+	const adminContext = useContext(UserContext);
+	const [error, setError] = React.useState("");
+
+	const form = useForm<RegistrationForm>();
 
 	const mutation = useMutation({
-		mutationFn: () => {
-			return doServerSetup(password);
+		mutationFn: (data: RegistrationForm) => {
+			return doRegister(data.first_name, data.last_name, data.email, data.password);
 		},
-		onSuccess: (data) => {
-			adminContext.setAdmin(data);
+		onSuccess: (data: UserLoggedInType) => {
+			adminContext.setUser(data.user);
 		},
 		onError: (error: AxiosError) => {
 			if (error.response) {
@@ -176,67 +183,65 @@ export function ServerSetup() {
 		},
 	});
 
-	function setup() {
-		mutation.mutate();
-	}
+	const onSubmit: SubmitHandler<RegistrationForm> = (data) => mutation.mutate(data);
 
 	return (
 		<div className="bg-white rounded-md px-12 py-24 shadow-lg grid grid-cols-2 gap-12">
 			<div className="my-4">
-				<h1 className="text-3xl font-bold tracking-tighter">Welcome</h1>
-				<div className="text-gray-700 leading-6 mt-7">
-					<span>Few things to note</span>
-					<ul className="ml-4 block mt-3 list-disc text-bb">
-						<li>
-							The username for administrative account is <span className="italic">root</span> and
-							cannot be changed.
-						</li>
-						<li className="my-2">You can change password of root account later.</li>
-						<li>Root account cannot be disabled.</li>
-					</ul>
-				</div>
+				<h1 className="text-3xl font-bold tracking-tighter">Register for Account</h1>
+				<div className="text-gray-700 leading-6 mt-7">{error}</div>
 			</div>
 			<div>
-				{error.length > 0 && <p className="mt-5 text-red-700">{error}</p>}
-				<form
-					onSubmit={(e: React.FormEvent) => {
-						e.preventDefault();
-						if (password.length < 1) {
-							setError("Please enter a strong password.");
-						} else if (password.length < 8) {
-							setError("Password needs to be atleast 8 characters.");
-						} else {
-							setup();
-						}
-					}}
-				>
+				<form onSubmit={form.handleSubmit(onSubmit)}>
 					<fieldset disabled={mutation.isLoading || mutation.isSuccess}>
-						<label className="block text-gray-600 text-sm py-1.5 mt-4" htmlFor="username1">
-							Username
-						</label>
-						<input
-							className="block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300 disabled:bg-blue-50 disabled:text-gray-500"
-							type="text"
-							id="username1"
-							name="username"
-							value="root"
-							disabled={true}
+						<InputField
+							elementHookFormRegister={form.register}
+							elementId="first_name"
+							elementInputType="text"
+							elementLabel="First Name"
+							elementIsRequired={true}
+							elementWidth="full"
+							elementHookFormErrors={form.formState.errors}
 						/>
-						<label className="block text-gray-600 text-sm py-1.5 mt-2" htmlFor="password1">
-							Password
-						</label>
-						<input
-							className={
-								"block w-full border px-3 py-1.5 rounded focus-visible:outline-3 focus-visible:outline-gray-200 focus-visible:outline focus-visible:border-gray-300" +
-								(error.length > 0 && password.length < 1 ? " border-red-500/70" : "")
-							}
-							type="password"
-							id="password1"
-							name="password"
-							value={password}
-							onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-								setPassword(e.target.value);
-							}}
+						<InputField
+							elementHookFormRegister={form.register}
+							elementId="last_name"
+							elementInputType="text"
+							elementLabel="Last Name"
+							elementIsRequired={true}
+							elementWidth="full"
+							elementHookFormErrors={form.formState.errors}
+						/>
+						<InputField
+							elementHookFormRegister={form.register}
+							elementId="email"
+							elementInputType="email"
+							elementLabel="Email"
+							elementIsRequired={true}
+							elementWidth="full"
+							elementHookFormErrors={form.formState.errors}
+						/>
+						<InputField
+							elementHookFormRegister={form.register}
+							elementId="password"
+							elementInputType="password"
+							elementLabel="Password"
+							elementIsPassword={true}
+							elementIsRequired={true}
+							elementWidth="full"
+							elementHookFormErrors={form.formState.errors}
+						/>
+						<InputField
+							elementHookFormRegister={form.register}
+							elementId="confirm_password"
+							elementInputType="password"
+							elementLabel="Confirm Password"
+							elementIsPassword={true}
+							elementIsRequired={true}
+							elementHookFormWatch={form.watch}
+							elementHookFormWatchField="password"
+							elementWidth="full"
+							elementHookFormErrors={form.formState.errors}
 						/>
 						<div className="mt-6">
 							<Button

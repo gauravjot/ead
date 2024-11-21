@@ -25,9 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'django_axor_auth',
 
-    'users',
-    'admins',
     'items',
 ]
 
@@ -40,6 +39,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # Apply on request
+    # # required
+    "django_axor_auth.middlewares.HeaderRequestedByMiddleware",
+    "django_axor_auth.users.middlewares.ActiveUserMiddleware",
+    # # optional
+    "django_axor_auth.extras.middlewares.VerifyRequestOriginMiddleware",
+    "django_axor_auth.extras.middlewares.ValidateJsonMiddleware",
+
+    # Apply on response
+    "django_axor_auth.logs.middlewares.APILogMiddleware",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -61,6 +71,37 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
+
+AXOR_AUTH = dict(
+    # General
+    APP_NAME = "your_app_name",
+    FRONTEND_URL = "http://localhost:3000",
+    URI_PREFIX = "/api", # URI prefix for all API endpoints
+
+    # Cookies
+    AUTH_COOKIE_NAME = 'axor_auth',
+    AUTH_COOKIE_AGE = 60 * 60 * 24 * 7,  # 1 week
+    AUTH_COOKIE_SECURE = True,
+    AUTH_COOKIE_SAMESITE = 'Strict',
+    AUTH_COOKIE_DOMAIN = 'localhost',
+
+    # Forgot password
+    FORGET_PASSWORD_LINK_TIMEOUT = 30, # in minutes
+    FORGET_PASSWORD_LOCKOUT_TIME = 24, # in hours
+
+    # TOTP
+    TOTP_NUM_OF_BACKUP_CODES = 8,
+    TOTP_BACKUP_CODE_LENGTH = 8,
+
+    # Email
+    SMTP_USE_TLS = True,
+    SMTP_USE_SSL = False,
+    SMTP_HOST = "smtp.office365.com",
+    SMTP_PORT = 587,
+    SMTP_USER = "your_email",
+    SMTP_PASSWORD = "your_password",
+    SMTP_DEFAULT_SEND_FROM = "no-reply@your_domain.com",
+)
 
 # CORS
 # https://github.com/adamchainz/django-cors-headers

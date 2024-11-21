@@ -4,9 +4,7 @@ import SelectField from "@/components/ui/SelectField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {AddItemType, addItem} from "@/services/item/add_item";
 import {getItems} from "@/services/item/get_items";
-import {getAllUsers} from "@/services/user/all_users";
 import {ItemTypeType, CustomFieldType, ItemType} from "@/types/item";
-import {UserType} from "@/types/user";
 import {AxiosError} from "axios";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {FieldErrors, FieldValues, UseFormRegister, useForm} from "react-hook-form";
@@ -162,10 +160,10 @@ export function CustomInputField({
 						field.t === "email"
 							? "email"
 							: field.t === "number" || field.t === "phone"
-							? "number"
-							: field.t === "text" || field.t === "url"
-							? "text"
-							: "text"
+								? "number"
+								: field.t === "text" || field.t === "url"
+									? "text"
+									: "text"
 					}
 					elementLabel={field.n}
 					elementIsRequired={true}
@@ -173,22 +171,8 @@ export function CustomInputField({
 					elementIsTextarea={field.t === "longtext"}
 					elementTextareaRows={3}
 					elementWidth="full"
-				/>
+				/>,
 			);
-		} else if (field.t === "user") {
-			getAllUsers().then((data) => {
-				setIField(
-					<SelectField
-						data={data.data.map((user: UserType) => {
-							return {n: `${user.name} (ID: ${user.id})`, v: user.id};
-						})}
-						hookFormRegister={hookFormRegister}
-						label={field.n}
-						id={field.n.replace(" ", "_")}
-						elementWidth="full"
-					/>
-				);
-			});
 		} else if (field.t === "db_item_type" && field.dV) {
 			getItems(field.dV).then((data) => {
 				setIField(
@@ -200,7 +184,7 @@ export function CustomInputField({
 						label={field.n}
 						id={field.n.replace(" ", "_")}
 						elementWidth="full"
-					/>
+					/>,
 				);
 			});
 		} else if (field.t === "boolean") {
@@ -216,7 +200,7 @@ export function CustomInputField({
 						id={field.n.replace(" ", "_")}
 						{...hookFormRegister(field.n.replace(" ", "_"))}
 					/>
-				</label>
+				</label>,
 			);
 		} else if (field.t === "currency") {
 			setIField(
@@ -230,7 +214,7 @@ export function CustomInputField({
 					elementIsRequired={true}
 					elementHookFormErrors={hookFormErrors}
 					elementWidth="full"
-				/>
+				/>,
 			);
 		}
 	}, [field.dV, field.n, field.t, hookFormErrors, hookFormRegister]);

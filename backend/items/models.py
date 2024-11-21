@@ -1,5 +1,5 @@
 from django.db import models
-from admins.models import Admin
+from django_axor_auth.users.models import User
 
 
 class ItemType(models.Model):
@@ -8,10 +8,10 @@ class ItemType(models.Model):
     description = models.TextField()
     template = models.JSONField(null=True, blank=True)
     created_by = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='itemtype_created_by')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='itemtype_created_by')
     created_at = models.DateTimeField()
     updated_by = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='itemtype_updated_by')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='itemtype_updated_by')
     updated_at = models.DateTimeField()
 
 
@@ -21,8 +21,8 @@ class Item(models.Model):
     name = models.CharField(max_length=48)
     value = models.JSONField()
     added_by = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_added_by')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_added_by')
     added_at = models.DateTimeField()
     updated_by = models.ForeignKey(
-        Admin, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_updated_by')
+        User, on_delete=models.SET_NULL, null=True, blank=True, related_name='item_updated_by')
     updated_at = models.DateTimeField()

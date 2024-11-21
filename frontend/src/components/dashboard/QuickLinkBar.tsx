@@ -1,7 +1,7 @@
 import {useContext} from "react";
 import DropDown, {DropDownItemType} from "../ui/DropDown";
 import {doLogout} from "@/services/auth/logout";
-import {AdminContext} from "@/App";
+import {UserContext} from "@/App";
 import {useNavigate} from "react-router-dom";
 
 const buttonStyle =
@@ -9,7 +9,9 @@ const buttonStyle =
 
 export default function QuickLinkBar() {
 	const navigate = useNavigate();
-	const adminContext = useContext(AdminContext);
+	const userContext = useContext(UserContext);
+
+	console.log(userContext.user);
 
 	const adminDropDownMenu: DropDownItemType[] = [
 		{
@@ -24,7 +26,7 @@ export default function QuickLinkBar() {
 			icon: "ic-logout",
 			onClick: () => {
 				doLogout().then(() => {
-					adminContext.setAdmin(null);
+					userContext.setUser(null);
 					navigate("/");
 				});
 			},
@@ -52,7 +54,7 @@ export default function QuickLinkBar() {
 				items={adminDropDownMenu}
 				showExpandIcon={true}
 				buttonIcon="ic-person"
-				buttonText={adminContext.admin?.user?.name || adminContext.admin?.admin.username}
+				buttonText={`${userContext.user?.first_name} ${userContext.user?.last_name}`}
 			/>
 		</div>
 	);
