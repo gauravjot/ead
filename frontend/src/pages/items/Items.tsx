@@ -1,29 +1,31 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {ItemTypeType} from "@/types/item";
-import {useQuery} from "react-query";
 import {getItemType} from "@/services/item/item_type/get_item_type";
-import Button from "@/components/ui/Button";
+import InputButton from "@/components/custom-ui/InputButton";
 import ItemTypeList from "@/components/dashboard/database-items/List";
 import ItemTypeDetailPanel from "@/components/dashboard/database-items/DetailPanel";
 import AddNewItemType from "@/components/dashboard/database-items/AddNew";
 import QuickLinkBar from "@/components/dashboard/QuickLinkBar";
 import Sidebar from "@/components/dashboard/Sidebar";
+import {useMutation} from "@tanstack/react-query";
 
 export default function ItemsPage() {
 	const {id} = useParams();
 	const [activeItem, setActiveItem] = useState<ItemTypeType>();
 	const [showAddItemTypeUI, setShowAddItemTypeUI] = useState<boolean>(false);
 
-	useQuery(
-		["item_type_" + id],
-		() => (id ? getItemType(id) : Promise.reject("No value is selected.")),
-		{
-			enabled: !!id,
-			onSuccess: (data) => setActiveItem(data.data),
-			onError: () => setActiveItem(undefined),
-		},
-	);
+	const mutation = useMutation({
+		mutationFn: (id?: string) => (id ? getItemType(id) : Promise.reject("No value is selected.")),
+		onSuccess: (data) => setActiveItem(data.data),
+		onError: () => setActiveItem(undefined),
+	});
+
+	useEffect(() => {
+		if (id && mutation.isIdle) {
+			mutation.mutate(id);
+		}
+	}, [mutation, id]);
 
 	return (
 		<div className="flex h-screen overflow-hidden">
@@ -40,7 +42,7 @@ export default function ItemsPage() {
 								DATABASE ITEM TYPES
 							</div>
 							<div>
-								<Button
+								<InputButton
 									elementState="default"
 									elementStyle="primary"
 									elementType="button"

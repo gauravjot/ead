@@ -1,6 +1,6 @@
-import Button from "@/components/ui/Button";
-import InputField from "@/components/ui/InputField";
-import SelectField from "@/components/ui/SelectField";
+import InputButton from "@/components/custom-ui/InputButton";
+import InputField from "@/components/custom-ui/InputField";
+import SelectField from "@/components/custom-ui/SelectField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {addItemTypeFields} from "@/services/item/item_type/add_item_type_field";
 import {getAllItemTypes} from "@/services/item/item_type/get_all_item_types";
@@ -8,8 +8,8 @@ import {ItemTypeType} from "@/types/item";
 import {AxiosError} from "axios";
 import {useEffect, useState} from "react";
 import {FieldValues, UseFormRegister, useForm} from "react-hook-form";
-import {useMutation, useQueryClient} from "react-query";
 import {FIELDS} from "./ItemFieldTypes";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 export default function AddNewItemField({id}: {id: number | string}) {
 	const queryClient = useQueryClient();
@@ -29,7 +29,7 @@ export default function AddNewItemField({id}: {id: number | string}) {
 			return addItemTypeFields(id, fields);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(["item_type_" + id]);
+			queryClient.invalidateQueries({queryKey: ["item_type_" + id]});
 			setReqError(null);
 			setShowNewField(false);
 			reset();
@@ -131,14 +131,14 @@ export default function AddNewItemField({id}: {id: number | string}) {
 									elementInputMaxLength={24}
 								/>
 								<div className="mt-6 flex gap-3">
-									<Button
-										elementState={mutation.isLoading ? "loading" : "default"}
+									<InputButton
+										elementState={mutation.isPending ? "loading" : "default"}
 										elementStyle="black"
 										elementSize="base"
 										elementChildren="Add field"
 										elementType="submit"
 									/>
-									<Button
+									<InputButton
 										elementState="default"
 										elementInvert={true}
 										elementStyle="black"

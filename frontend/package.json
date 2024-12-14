@@ -10,14 +10,23 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@hookform/resolvers": "^3.9.1",
+		"@radix-ui/react-label": "^2.1.1",
+		"@radix-ui/react-slot": "^1.1.1",
+		"@tanstack/react-query": "^5.62.7",
 		"axios": "^1.7.7",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"lucide-react": "^0.468.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"react-helmet": "^6.1.0",
-		"react-hook-form": "^7.53.2",
-		"react-query": "^3.39.3",
+		"react-hook-form": "^7.54.1",
 		"react-router-dom": "^6.28.0",
-		"use-doc-theme": "^0.3.1"
+		"tailwind-merge": "^2.5.5",
+		"tailwindcss-animate": "^1.0.7",
+		"use-doc-theme": "^0.3.1",
+		"zod": "^3.24.1"
 	},
 	"devDependencies": {
 		"@types/react": "^18.3.12",

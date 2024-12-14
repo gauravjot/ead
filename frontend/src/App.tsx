@@ -5,13 +5,12 @@ import "@/assets/styles/global.css";
 import "@/assets/styles/icons.css";
 import "@/assets/styles/inputs.css";
 /* Components */
-import React, {Dispatch, SetStateAction, Suspense} from "react";
-import {useQuery} from "react-query";
+import React, {Dispatch, SetStateAction, Suspense, useEffect} from "react";
 import {getMe} from "@/services/auth/get_me";
 import HomePage from "./pages/Home";
-import LoginPage from "./pages/Login";
 import {UserType} from "./types/user";
 import DashboardPage from "./pages/dashboard/Index";
+import {useMutation} from "@tanstack/react-query";
 
 const ItemsPage = React.lazy(() => import("@/pages/items/Items"));
 
@@ -28,23 +27,26 @@ export const UserContext = React.createContext<{
 export default function App() {
 	const [user, setUser] = React.useState<UserType | null>(null);
 
-	// Get user profile for logged-in admin
-	const query = useQuery(["get_me"], () => getMe(), {
+	const mutation = useMutation({
+		mutationFn: () => getMe(),
 		onSuccess: (data) => {
 			setUser(data);
 		},
-		refetchOnWindowFocus: false,
-		retry: false,
 	});
 
-	return query.isSuccess || query.isError ? (
+	useEffect(() => {
+		if (mutation.isIdle) {
+			mutation.mutate();
+		}
+	}, []);
+
+	return (mutation.isSuccess && user) || mutation.isError ? (
 		<UserContext.Provider value={{user: user, setUser: setUser}}>
 			<Router>
 				<Routes>
-					<Route path={"/"} element={<HomePage />} />
-					<Route path={"/login"} element={<LoginPage />} />
+					<Route path={"/"} element={user ? <Navigate to={"/dashboard"} /> : <HomePage />} />
 					{/* Redirect to login page if not logged in */}
-					{!user && <Route path={"*"} element={<Navigate to={"/login"} />} />}
+					{!user && <Route path={"*"} element={<Navigate to={"/"} />} />}
 					{/* Auth routes */}
 					{user && (
 						<>
@@ -70,6 +72,8 @@ export default function App() {
 				</Routes>
 			</Router>
 		</UserContext.Provider>
+	) : mutation.isSuccess && !user ? (
+		<Route path={"*"} element={<Navigate to={"/"} />} />
 	) : (
 		<Loading msg="Authenticating with server..." />
 	);

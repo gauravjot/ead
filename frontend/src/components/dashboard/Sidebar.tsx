@@ -8,7 +8,7 @@ const menu: {icon: string; type: menuType; title: string; divider?: boolean; pat
 		icon: "ic-admins",
 		title: "Home",
 		type: "dashboard",
-		path: "/dashbaord",
+		path: "/dashboard",
 	},
 	{
 		icon: "ic-database",

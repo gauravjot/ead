@@ -1,14 +1,14 @@
-import Button from "@/components/ui/Button";
-import InputField from "@/components/ui/InputField";
-import SelectField from "@/components/ui/SelectField";
+import InputButton from "@/components/custom-ui/InputButton";
+import InputField from "@/components/custom-ui/InputField";
+import SelectField from "@/components/custom-ui/SelectField";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {AddItemType, addItem} from "@/services/item/add_item";
 import {getItems} from "@/services/item/get_items";
 import {ItemTypeType, CustomFieldType, ItemType} from "@/types/item";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {AxiosError} from "axios";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {FieldErrors, FieldValues, UseFormRegister, useForm} from "react-hook-form";
-import {useMutation, useQueryClient} from "react-query";
 
 export default function AddNewItem({
 	setShowAddItemBox,
@@ -33,7 +33,7 @@ export default function AddNewItem({
 			setReqError(null);
 			reset();
 			setShowAddItemBox(false);
-			queryClient.invalidateQueries(["items_" + itemType.id]);
+			queryClient.invalidateQueries({queryKey: ["items_" + itemType.id]});
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setReqError);
@@ -53,7 +53,7 @@ export default function AddNewItem({
 					<div className="flex flex-row">
 						<h1 className="text-2xl flex-1 font-bold tracking-tight">Add new item</h1>
 						<div>
-							<Button
+							<InputButton
 								elementChildren={""}
 								elementState="default"
 								elementStyle="border_opaque"
@@ -108,7 +108,7 @@ export default function AddNewItem({
 								})}
 							</div>
 							<div className="mt-6 flex gap-6 justify-center">
-								<Button
+								<InputButton
 									elementState="default"
 									elementStyle="black"
 									elementInvert={true}
@@ -119,9 +119,9 @@ export default function AddNewItem({
 										reset();
 									}}
 								/>
-								<Button
+								<InputButton
 									elementState={
-										mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
+										mutation.isPending ? "loading" : mutation.isSuccess ? "done" : "default"
 									}
 									elementStyle="black"
 									elementSize="base"
@@ -160,10 +160,10 @@ export function CustomInputField({
 						field.t === "email"
 							? "email"
 							: field.t === "number" || field.t === "phone"
-								? "number"
-								: field.t === "text" || field.t === "url"
-									? "text"
-									: "text"
+							? "number"
+							: field.t === "text" || field.t === "url"
+							? "text"
+							: "text"
 					}
 					elementLabel={field.n}
 					elementIsRequired={true}
@@ -171,7 +171,7 @@ export function CustomInputField({
 					elementIsTextarea={field.t === "longtext"}
 					elementTextareaRows={3}
 					elementWidth="full"
-				/>,
+				/>
 			);
 		} else if (field.t === "db_item_type" && field.dV) {
 			getItems(field.dV).then((data) => {
@@ -184,7 +184,7 @@ export function CustomInputField({
 						label={field.n}
 						id={field.n.replace(" ", "_")}
 						elementWidth="full"
-					/>,
+					/>
 				);
 			});
 		} else if (field.t === "boolean") {
@@ -200,7 +200,7 @@ export function CustomInputField({
 						id={field.n.replace(" ", "_")}
 						{...hookFormRegister(field.n.replace(" ", "_"))}
 					/>
-				</label>,
+				</label>
 			);
 		} else if (field.t === "currency") {
 			setIField(
@@ -214,7 +214,7 @@ export function CustomInputField({
 					elementIsRequired={true}
 					elementHookFormErrors={hookFormErrors}
 					elementWidth="full"
-				/>,
+				/>
 			);
 		}
 	}, [field.dV, field.n, field.t, hookFormErrors, hookFormRegister]);

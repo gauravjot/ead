@@ -1,15 +1,15 @@
 import {useState} from "react";
-import {useMutation, useQueryClient} from "react-query";
 import AddNewItemField from "./AddNewItemField";
-import InputField from "@/components/ui/InputField";
+import InputField from "@/components/custom-ui/InputField";
 import {useForm} from "react-hook-form";
 import {AxiosError} from "axios";
-import Button from "@/components/ui/Button";
+import InputButton from "@/components/custom-ui/InputButton";
 import {editItemType} from "@/services/item/item_type/edit_item_type";
 import {deleteItemType} from "@/services/item/item_type/delete_item_type";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
 import {deleteItemTypeFields} from "@/services/item/item_type/delete_item_type_field";
 import {ItemTypeType} from "@/types/item";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 	const queryClient = useQueryClient();
@@ -26,7 +26,7 @@ export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 			return editItemType(itemtype.id, fields["name"], fields["description"]);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(["item_type_" + itemtype.id]);
+			queryClient.invalidateQueries({queryKey: ["item_type_" + itemtype.id]});
 			setReqError(null);
 			reset();
 		},
@@ -42,8 +42,8 @@ export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 			return deleteItemType(itemtype.id);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(["item_type_" + itemtype.id]);
-			queryClient.invalidateQueries(["item_type_list"]);
+			queryClient.invalidateQueries({queryKey: ["item_type_" + itemtype.id]});
+			queryClient.invalidateQueries({queryKey: ["item_type_list"]});
 			setDeleteItemTypeReqError(null);
 			reset();
 		},
@@ -58,7 +58,7 @@ export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 			return deleteItemTypeFields(itemtype.id, fields);
 		},
 		onSuccess: () => {
-			queryClient.invalidateQueries(["item_type_" + itemtype.id]);
+			queryClient.invalidateQueries({queryKey: ["item_type_" + itemtype.id]});
 			setDeleteItemFieldReqError(null);
 			reset();
 		},
@@ -90,7 +90,7 @@ export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 							editNameDescMutation.mutate(JSON.parse(JSON.stringify(d)));
 						})}
 					>
-						<fieldset disabled={editNameDescMutation.isLoading}>
+						<fieldset disabled={editNameDescMutation.isPending}>
 							<div>
 								<InputField
 									elementId="name"
@@ -116,8 +116,8 @@ export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 							</div>
 
 							<div className="mt-6">
-								<Button
-									elementState={editNameDescMutation.isLoading ? "loading" : "default"}
+								<InputButton
+									elementState={editNameDescMutation.isPending ? "loading" : "default"}
 									elementStyle="black"
 									elementSize="base"
 									elementChildren="Submit"
@@ -183,7 +183,7 @@ export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 														<h1 className="text-lg font-bold mb-4">Could not delete the field</h1>
 														<p className="">{deleteItemFieldReqError}</p>
 														<br />
-														<Button
+														<InputButton
 															elementType="button"
 															elementState="default"
 															elementStyle="black"
@@ -240,9 +240,9 @@ export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 						/>
 						<label htmlFor="continue-delete">Yes, I am sure.</label>
 					</p>
-					<Button
+					<InputButton
 						elementState={
-							deleteItemTypeMutation.isLoading
+							deleteItemTypeMutation.isPending
 								? "loading"
 								: deleteItemTypeMutation.isSuccess
 								? "done"
@@ -256,7 +256,7 @@ export default function ManageItemType({itemtype}: {itemtype: ItemTypeType}) {
 						onClick={() => {
 							deleteItemTypeMutation.mutate();
 						}}
-						elementDisabled={deleteItemTypeMutation.isLoading || !deleteCheckbox}
+						elementDisabled={deleteItemTypeMutation.isPending || !deleteCheckbox}
 					/>
 				</div>
 			</div>

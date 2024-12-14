@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import DropDown, {DropDownItemType} from "../ui/DropDown";
+import DropDown, {DropDownItemType} from "@/components/custom-ui/DropDown";
 import {doLogout} from "@/services/auth/logout";
 import {UserContext} from "@/App";
 import {useNavigate} from "react-router-dom";
@@ -43,7 +43,7 @@ export default function QuickLinkBar() {
 					<a
 						rel="noreferrer"
 						target="_blank"
-						href="https://github.com/gauravjot/employee-access-info"
+						href="https://github.com/gauravjot/ead"
 						className={buttonStyle}
 					>
 						Github

@@ -1,4 +1,4 @@
-import Button from "./Button";
+import InputButton from "./InputButton";
 
 export interface IDialogProps {
 	title: string;
@@ -22,7 +22,7 @@ export default function DialogBox(props: IDialogProps) {
 						{props.error && <div className="text-red-500">{props.error}</div>}
 					</div>
 					<div className="flex gap-6 justify-center pb-6">
-						<Button
+						<InputButton
 							elementChildren="Cancel"
 							elementState="default"
 							elementType="button"
@@ -31,7 +31,7 @@ export default function DialogBox(props: IDialogProps) {
 							onClick={props.onClose}
 							elementDisabled={props.state === "loading"}
 						/>
-						<Button
+						<InputButton
 							elementChildren="Confirm"
 							elementState={props.state}
 							elementType="button"

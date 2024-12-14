@@ -1,13 +1,13 @@
-import Button from "@/components/ui/Button";
-import InputField from "@/components/ui/InputField";
+import InputButton from "@/components/custom-ui/InputButton";
+import InputField from "@/components/custom-ui/InputField";
 import {AddItemTypeType, addItemType} from "@/services/item/item_type/add_item_type";
 import {ItemTypeType} from "@/types/item";
 import {AxiosError} from "axios";
 import {useState} from "react";
 import {useForm} from "react-hook-form";
-import {useMutation, useQueryClient} from "react-query";
 import {Dispatch, SetStateAction} from "react";
 import {handleAxiosError} from "@/components/utils/HandleAxiosError";
+import {useMutation, useQueryClient} from "@tanstack/react-query";
 
 export default function AddNewItemType({
 	setShowDialog,
@@ -33,7 +33,7 @@ export default function AddNewItemType({
 			setReqError(null);
 			reset();
 			setReqResponse(data.data);
-			queryClient.resetQueries(["item_type_list"]);
+			queryClient.resetQueries({queryKey: ["item_type_list"]});
 		},
 		onError: (error: AxiosError) => {
 			handleAxiosError(error, setReqError);
@@ -49,7 +49,7 @@ export default function AddNewItemType({
 						Item type is added successfully. You can close this window now.
 					</p>
 					<div className="mt-10 flex gap-4">
-						<Button
+						<InputButton
 							elementState="default"
 							elementStyle="black"
 							elementType="button"
@@ -59,7 +59,7 @@ export default function AddNewItemType({
 								mutation.reset();
 							}}
 						/>
-						<Button
+						<InputButton
 							elementState="default"
 							elementStyle="black"
 							elementType="button"
@@ -80,7 +80,7 @@ export default function AddNewItemType({
 						mutation.mutate(JSON.parse(JSON.stringify(d)));
 					})}
 				>
-					<fieldset disabled={mutation.isLoading}>
+					<fieldset disabled={mutation.isPending}>
 						<p className="my-1 text-bb text-gray-500">* Required fields.</p>
 						<div className="grid sm:grid-cols-2 grid-cols-1 gap-12">
 							<div>
@@ -112,7 +112,7 @@ export default function AddNewItemType({
 						</div>
 
 						<div className="mt-6 flex gap-6 justify-center">
-							<Button
+							<InputButton
 								elementState="default"
 								elementStyle="black"
 								elementInvert={true}
@@ -123,9 +123,9 @@ export default function AddNewItemType({
 									reset();
 								}}
 							/>
-							<Button
+							<InputButton
 								elementState={
-									mutation.isLoading ? "loading" : mutation.isSuccess ? "done" : "default"
+									mutation.isPending ? "loading" : mutation.isSuccess ? "done" : "default"
 								}
 								elementStyle="black"
 								elementSize="base"

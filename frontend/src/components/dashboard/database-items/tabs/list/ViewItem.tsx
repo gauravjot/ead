@@ -1,11 +1,11 @@
-import InputField from "@/components/ui/InputField";
-import Spinner from "@/components/ui/Spinner";
+import InputField from "@/components/custom-ui/InputField";
+import Spinner from "@/components/custom-ui/Spinner";
 import {getItem} from "@/services/item/get_item";
 import {ItemFieldValueType} from "@/types/item";
 import {useForm} from "react-hook-form";
 import {Dispatch, SetStateAction, useState} from "react";
-import {useQuery} from "react-query";
-import Button from "@/components/ui/Button";
+import InputButton from "@/components/custom-ui/InputButton";
+import {useQuery} from "@tanstack/react-query";
 
 export default function ViewItem({
 	id,
@@ -16,7 +16,10 @@ export default function ViewItem({
 	setShowItemWithId: Dispatch<SetStateAction<string | number | null>>;
 	template: {n: string; t: string}[] | null;
 }) {
-	const item_query = useQuery(["item_info_" + id.toString()], () => getItem(id));
+	const item_query = useQuery({
+		queryKey: ["item_info_" + id.toString()],
+		queryFn: () => getItem(id),
+	});
 	const {
 		register,
 		handleSubmit,
@@ -31,7 +34,7 @@ export default function ViewItem({
 				<div className="container mx-auto">
 					<div className="flex">
 						<h1 className="text-2xl flex-1 font-bold tracking-tight">Item Details</h1>
-						<Button
+						<InputButton
 							elementType="button"
 							elementState="default"
 							elementStyle="border_opaque"
@@ -100,7 +103,7 @@ export default function ViewItem({
 								</div>
 								<div className="mt-10">
 									{!isReadOnly && (
-										<Button
+										<InputButton
 											elementState="default"
 											elementChildren="Apply Changes"
 											elementType="submit"
@@ -131,7 +134,7 @@ export default function ViewItem({
 								<div className="font-medium text-bb mb-1">Done by</div>
 								<div className="text-gray-600 text-md">Admino Namegen</div>
 								<div className="flex gap-6 text-gray-600 text-md mb-4">May 12, 2023</div>
-								<Button
+								<InputButton
 									elementChildren="Move allocation"
 									elementStyle="primary"
 									elementInvert={true}

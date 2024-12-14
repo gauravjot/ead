@@ -1,15 +1,14 @@
-import Spinner from "@/components/ui/Spinner";
+import Spinner from "@/components/custom-ui/Spinner";
 import {getAllItemTypes} from "@/services/item/item_type/get_all_item_types";
-import {ErrorType} from "@/types/api";
 import {ItemTypeType} from "@/types/item";
+import {useQuery} from "@tanstack/react-query";
 import {useState} from "react";
-import {useQuery} from "react-query";
 import {useNavigate} from "react-router-dom";
 
 export default function ItemTypeList({activeItem}: {activeItem: ItemTypeType | undefined}) {
 	const navigate = useNavigate();
 	const [keyword, setKeyword] = useState<string>("");
-	const item_types = useQuery(["item_type_list"], () => getAllItemTypes());
+	const item_types = useQuery({queryKey: ["item_type_list"], queryFn: () => getAllItemTypes()});
 
 	return (
 		<>
@@ -83,7 +82,7 @@ export default function ItemTypeList({activeItem}: {activeItem: ItemTypeType | u
 						<Spinner color="gray" size="md" />
 					</div>
 				) : item_types.isError ? (
-					<div>{(item_types.error as ErrorType).message}</div>
+					<div>{item_types.error.message}</div>
 				) : (
 					<></>
 				)}

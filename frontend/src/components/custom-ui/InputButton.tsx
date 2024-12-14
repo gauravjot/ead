@@ -1,5 +1,5 @@
 import React from "react";
-import Spinner from "@/components/ui/Spinner";
+import Spinner from "@/components/custom-ui/Spinner";
 
 interface Props {
 	onClick?: () => void;
@@ -25,7 +25,7 @@ interface Props {
 const buttonBaseStyle =
 	"leading-[1] shadow font-medium rounded-md pointer hover:outline focus:outline focus:outline-4 hover:outline-4 disabled:outline-0 disabled:opacity-50";
 
-export default function Button(props: Props) {
+export default function InputButton(props: Props) {
 	const style = {
 		primary: props.elementInvert
 			? "border border-primary-600 text-primary-600 outline-primary-100 focus:bg-primary-50"

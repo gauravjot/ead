@@ -1,9 +1,9 @@
-import Button from "@/components/ui/Button";
-import Table from "@/components/ui/table/Table";
+import InputButton from "@/components/custom-ui/InputButton";
+import Table from "@/components/custom-ui/table/Table";
 import {getItems} from "@/services/item/get_items";
 import {Dispatch, SetStateAction, useState} from "react";
-import {useQuery} from "react-query";
 import ViewItem from "./ViewItem";
+import {useQuery} from "@tanstack/react-query";
 
 export default function ItemsList({
 	id,
@@ -17,7 +17,7 @@ export default function ItemsList({
 	const [keyword, setKeyword] = useState<string>("");
 	const [showItemWithId, setShowItemWithId] = useState<string | number | null>(null);
 
-	const items = useQuery(["items_" + id.toString()], () => getItems(id));
+	const items = useQuery({queryKey: ["items_" + id.toString()], queryFn: () => getItems(id)});
 
 	const data = [];
 	if (items.isSuccess) {
@@ -38,7 +38,7 @@ export default function ItemsList({
 			<div className="flex place-items-center">
 				<div className="flex gap-1">
 					{/* Add and Export Buttons */}
-					<Button
+					<InputButton
 						elementChildren="Add Item"
 						elementState="default"
 						elementStyle="black"
@@ -50,7 +50,7 @@ export default function ItemsList({
 							setShowAddItemBox(true);
 						}}
 					/>
-					<Button
+					<InputButton
 						elementChildren="Export"
 						elementState="default"
 						elementStyle="no_border_opaque"
