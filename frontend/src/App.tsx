@@ -1,5 +1,5 @@
 /* Router */
-import {Route, Routes, BrowserRouter as Router, Navigate} from "react-router-dom";
+import {Route, Routes, BrowserRouter as Router} from "react-router-dom";
 /* CSS */
 import "@/assets/styles/global.css";
 import "@/assets/styles/icons.css";
@@ -16,9 +16,11 @@ const ItemsPage = React.lazy(() => import("@/pages/items/Items"));
 
 export const UserContext = React.createContext<{
 	user: UserType | null;
+	isLoading: boolean;
 	setUser: Dispatch<SetStateAction<UserType | null>>;
 }>({
 	user: null,
+	isLoading: true,
 	setUser: () => {
 		return null;
 	},
@@ -26,11 +28,16 @@ export const UserContext = React.createContext<{
 
 export default function App() {
 	const [user, setUser] = React.useState<UserType | null>(null);
+	const [isMutating, setIsMutating] = React.useState(true);
 
 	const mutation = useMutation({
 		mutationFn: () => getMe(),
 		onSuccess: (data) => {
 			setUser(data);
+			setIsMutating(false);
+		},
+		onError: () => {
+			setIsMutating(false);
 		},
 	});
 
@@ -40,42 +47,31 @@ export default function App() {
 		}
 	}, []);
 
-	return (mutation.isSuccess && user) || mutation.isError ? (
-		<UserContext.Provider value={{user: user, setUser: setUser}}>
+	return (
+		<UserContext.Provider value={{user: user, isLoading: isMutating, setUser: setUser}}>
 			<Router>
 				<Routes>
-					<Route path={"/"} element={user ? <Navigate to={"/dashboard"} /> : <HomePage />} />
-					{/* Redirect to login page if not logged in */}
-					{!user && <Route path={"*"} element={<Navigate to={"/"} />} />}
-					{/* Auth routes */}
-					{user && (
-						<>
-							<Route path={"/dashboard"} element={<DashboardPage />} />
-							<Route
-								path={"/items"}
-								element={
-									<Suspense fallback={<Loading msg="Loading dashboard..." />}>
-										<ItemsPage />
-									</Suspense>
-								}
-							/>
-							<Route
-								path={"/items/:id"}
-								element={
-									<Suspense fallback={<Loading msg="Loading dashboard..." />}>
-										<ItemsPage />
-									</Suspense>
-								}
-							/>
-						</>
-					)}
+					<Route path={"/"} element={<HomePage />} />
+					<Route path={"/dashboard"} element={<DashboardPage />} />
+					<Route
+						path={"/items"}
+						element={
+							<Suspense fallback={<Loading msg="Loading dashboard..." />}>
+								<ItemsPage />
+							</Suspense>
+						}
+					/>
+					<Route
+						path={"/items/:id"}
+						element={
+							<Suspense fallback={<Loading msg="Loading dashboard..." />}>
+								<ItemsPage />
+							</Suspense>
+						}
+					/>
 				</Routes>
 			</Router>
 		</UserContext.Provider>
-	) : mutation.isSuccess && !user ? (
-		<Route path={"*"} element={<Navigate to={"/"} />} />
-	) : (
-		<Loading msg="Authenticating with server..." />
 	);
 }
 

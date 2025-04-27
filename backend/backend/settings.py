@@ -72,9 +72,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 AXOR_AUTH = dict(
     # General
-    APP_NAME = "your_app_name",
+    APP_NAME = "EAD",
     FRONTEND_URL = "http://localhost:3000",
     URI_PREFIX = "/api", # URI prefix for all API endpoints
+    APP_LOGO = "/static/logo.svg",
 
     # Cookies
     AUTH_COOKIE_NAME = 'axor_auth',
