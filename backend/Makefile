@@ -11,9 +11,9 @@ venv:
 
 setupdb:
 	find . -type d -name migrations -prune -not -path "./.venv/*" -exec rm -rf {} \;
+	rm -rf db.sqlite3
 	.venv/bin/python manage.py makemigrations $(apps)
 	.venv/bin/python manage.py migrate
-	.venv/bin/python manage.py migrate --database=errorlogger
 
 superuser:
 	.venv/bin/python manage.py createsuperuser

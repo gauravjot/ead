@@ -30,7 +30,7 @@ def addItemType(request):
     itemTypeSerializer = ItemTypeSerializer(data=dict(
         name=request.data['name'],
         description=request.data['description'],
-        template=None,
+        templates=None,
         created_by=user.id,
         created_at=datetime.now(pytz.utc),
         updated_at=datetime.now(pytz.utc),

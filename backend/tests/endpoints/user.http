@@ -1,0 +1,21 @@
+### Register user
+POST http://localhost:8000/api/user/register/
+Content-Type: application/json
+X-Requested-By: mobile
+
+{
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "john@test.com",
+  "password": "Pass1234!"
+}
+
+### Login user
+POST http://localhost:8000/api/user/login/
+Content-Type: application/json
+X-Requested-By: mobile
+
+{
+  "email": "john@test.com",
+  "password": "Pass1234!"
+}

@@ -1,0 +1,13 @@
+# Token
+@Token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfdG9rZW4iOiJRa2RYWDJabGNtMXZVMjVYWDFZemFFMDVaR2RDVjBGTlRUbE9MVkpsUTFNdFFqZFNMV0ZWYTNSbWIwSktjVE55TkRCSGVFWXRiVEZsVUdSVE5uWjJkbGN4T0hwRWVsRk5VMDF5VTJaS1kzTjZTemRuWjJjIn0.56DBr7RPrcllPcx2czADQiY1DdP5N0-1Lu-X6dIrmfc
+
+### Create an item type
+POST http://localhost:8000/api/item/type/add/
+Content-Type: application/json
+X-Requested-By: mobile
+Authorization: {{Token}}
+
+{
+  "name": "Test Item Type",
+  "description": "This is a test item type"
+}
