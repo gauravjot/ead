@@ -1,7 +1,9 @@
+import json
 from rest_framework import serializers
 from .models import Item, ItemType
 from .objs.item_template import ItemTemplate
-from .objs.item import ItemValue, Item
+from .objs.item import ItemValue
+from utils.user_serializer import UserSerializer
 
 
 class ItemTypeSerializer(serializers.ModelSerializer):
@@ -17,30 +19,35 @@ class ItemTypeSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
-    values = serializers.JSONField(read_only=True)
+    created_by_user = UserSerializer(source='created_by', read_only=True)
+    updated_by_user = UserSerializer(source='updated_by', read_only=True)
 
     class Meta:
         model = Item
-        fields = ['id', 'item_type', 'name', 'templates_value', 'added_by', 'added_at', 'updated_by', 'updated_at']
+        fields = ['id', 'item_type', 'name', 'templates_value', 'created_by',
+                  'created_by_user', 'created_at', 'updated_by', 'updated_by_user', 'updated_at']
         extra_kwargs = {
             'name': {'required': True},
             'templates_value': {'required': True},
             'item_type': {'required': True},
-            'added_by': {'required': True},
-            'added_at': {'required': True},
+            'created_by': {'required': True, 'write_only': True},
+            'created_at': {'required': True},
+            'updated_by': {'write_only': True},
         }
 
-    def read(self, templates: list[ItemTemplate]) -> list[ItemValue]:
+    def read(self, templates: list[ItemTemplate], formatting=True, filter_deleted: bool = True) -> list[ItemValue]:
         """
         Read the templates and return the values.
         """
-        result = []
-        templates_value: list[Item] = self.validated_data['templates_value']
+        result = dict(**self.data)
+        result['templates_value'] = []
         # match the templates_value with the provided list of templates
         for template in templates:
-            for template_value in templates_value:
-                if template.uuid == template_value.template:
-                    item_value = ItemValue(template_value.value, template)
-                    result.append(item_value)
-                    continue
+            # check if the template is deleted
+            if filter_deleted and template.is_deleted:
+                continue
+            for item in json.loads(self.data['templates_value']):
+                if str(template.uuid) == item['template']:  # compare uuids to match
+                    item_value = ItemValue(item['value'], template).serialize(formatting=formatting)
+                    result['templates_value'].append(item_value)
         return result

@@ -1,8 +1,9 @@
 # Token
-@Token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfdG9rZW4iOiJRa2RYWDJabGNtMXZVMjVYWDFZemFFMDVaR2RDVjBGTlRUbE9MVkpsUTFNdFFqZFNMV0ZWYTNSbWIwSktjVE55TkRCSGVFWXRiVEZsVUdSVE5uWjJkbGN4T0hwRWVsRk5VMDF5VTJaS1kzTjZTemRuWjJjIn0.56DBr7RPrcllPcx2czADQiY1DdP5N0-1Lu-X6dIrmfc
+@Token = Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBfdG9rZW4iOiJjSGd6Wkd0bU1VeFlWRXBmVjJSV2QzZE9SMFZJWVdOTVMxTnhNblpsYzFKbmRua3RlVEpWYnpWdE1tMDFaVWxEV25OTWIyVmtkRVZ1T0VGbGJIQmtkSE5UUkRWNVZsYzJSVTAwVDAxbFh5MHdiVTQzTjFFIn0.mIwIev1YyC7XhCssTrUKdDBRNi-M-Qhbsl7q8iTQWM4
+@BaseURL = http://localhost:8000/api
 
 ### Create an item type
-POST http://localhost:8000/api/item/type/add/
+POST {{BaseURL}}/item/type/add/
 Content-Type: application/json
 X-Requested-By: mobile
 Authorization: {{Token}}
@@ -11,3 +12,81 @@ Authorization: {{Token}}
   "name": "Test Item Type",
   "description": "This is a test item type"
 }
+
+### Get all item types
+GET {{BaseURL}}/item/type/all/
+Content-Type: application/json
+X-Requested-By: mobile
+Authorization: {{Token}}
+
+### Add a field to item type
+@ToAddItemTypeID = 1
+POST {{BaseURL}}/item/type/{{ToAddItemTypeID}}/template_fields/add/
+Content-Type: application/json
+X-Requested-By: mobile
+Authorization: {{Token}}
+
+{
+  "fields": [
+    {
+      "type": "email",
+      "name": "Email"
+    },
+    {
+      "type": "phone",
+      "name": "Phone Number",
+      "format": "NUM_LOCALE{en-US}"
+    }
+  ]
+}
+
+### Delete a field from item type
+@ToDeleteItemTypeID = 1
+@ToDeleteFieldID = b7433b13-6a4a-478d-b00c-f79391a341cc
+PUT {{BaseURL}}/item/type/{{ToDeleteItemTypeID}}/template_fields/delete/
+Content-Type: application/json
+X-Requested-By: mobile
+Authorization: {{Token}}
+
+{
+  "template": "{{ToDeleteFieldID}}"
+}
+
+
+################################## ITEM VALUES ##################################
+
+
+### Add a item value
+POST {{BaseURL}}/item/add/
+Content-Type: application/json
+X-Requested-By: mobile
+Authorization: {{Token}}
+
+{
+  "item_type": 1,
+  "name": "John Doe",
+  "templates_value": [
+    {
+      "template": "63dac0fd-fb2f-49da-906b-2cb8329737f2",
+      "value": "john@test.com"
+    },
+    {
+      "template": "01d5898e-7b0d-4dab-9106-4202027201c3",
+      "value": "+1234567890"
+    }
+  ]
+}
+
+### Get all item values
+@ToGetItemTypeID = 1
+GET {{BaseURL}}/item/type/{{ToGetItemTypeID}}/items/
+Content-Type: application/json
+X-Requested-By: mobile
+Authorization: {{Token}}
+
+### Get a specific item value
+@ToGetItemValueID = 1
+GET {{BaseURL}}/item/{{ToGetItemValueID}}/
+Content-Type: application/json
+X-Requested-By: mobile
+Authorization: {{Token}}

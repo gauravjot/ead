@@ -22,44 +22,41 @@ def validate_with_template(item_type: ItemTemplate, value: any):
     return value
 
 
-class Item:
-    """
-    This class prepares object to save in the database.
-    """
-
-    def __init__(self, value: any, template: uuid.UUID):
-        self.value = value
-        self.template = template
-
-    def serialize(self):
-        return {
-            'template_uuid': str(self.template),
-            'value': self.value,
-        }
-
-    def json_serialize(self):
-        return json.dumps(self.serialize())
-
-
 class ItemValue:
     """
-    This class process value from the database and formats it for the frontend.
+    This class process template values when saving and fetching from the database and apply formatting.
     """
 
     def __init__(self, value: any, template: ItemTemplate):
         self.value = value
         self.template = template
 
-    def serialize(self):
-        value = validate_with_template(self.template, self.value)
-        return {
-            'template_uuid': self.template.uuid,
-            'value': self.template.type_value(value),
-            'formatted_value': apply_formatting(self.template.type_value(value), self.template.format) if len(self.template.format) > 0 else value,
-        }
+    def typed_value(self):
+        return self.template.type_value(self.value)
 
-    def json_serialize(self):
-        return json.dumps(self.serialize())
+    def format_value(self):
+        # Check if the template has a format
+        # If not, return the value as is
+        if self.template.format is None or len(self.template.format) == 0:
+            return self.value
+        return apply_formatting(self.typed_value(), self.template.format)
+
+    def serialize(self, formatting: bool = False):
+        result = {
+            'template': str(self.template.uuid),
+            'value': self.typed_value(),
+        }
+        if formatting:
+            result['formatted_value'] = self.format_value()
+        return result
+
+    def deserialize(self, data):
+        """
+        Deserialize the data from the database to the object.
+        """
+        self.value = data['value']
+        self.template = ItemTemplate(**data['template'])
+        return self
 
 
 def apply_formatting(value: any, obj_format: str) -> str:
